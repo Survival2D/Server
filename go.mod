@@ -1,8 +1,8 @@
-module github.com/heroiclabs/nakama-project-template
+module surival2d/server
 
-go 1.15
+go 1.17
 
 require (
-	github.com/heroiclabs/nakama-common v1.15.0
+	github.com/heroiclabs/nakama-common v1.17.0
 	google.golang.org/protobuf v1.26.0
 )
