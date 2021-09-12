@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package src
 
 import (
 	"context"
@@ -28,7 +28,7 @@ const (
 	streamModeNotification = 0
 )
 
-func registerSessionEvents(db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {
+func RegisterSessionEvents(db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {
 	if err := initializer.RegisterEventSessionStart(eventSessionStartFunc(nk)); err != nil {
 		return err
 	}

@@ -18,20 +18,8 @@ import (
 	"context"
 	"database/sql"
 	"github.com/heroiclabs/nakama-common/runtime"
+	"surival2d/server/src"
 	"time"
-)
-
-var (
-	errInternalError  = runtime.NewError("internal server error", 13) // INTERNAL
-	errMarshal        = runtime.NewError("cannot marshal type", 13)   // INTERNAL
-	errNoInputAllowed = runtime.NewError("no input allowed", 3)       // INVALID_ARGUMENT
-	errNoUserIdFound  = runtime.NewError("no user ID in context", 3)  // INVALID_ARGUMENT
-	errUnmarshal      = runtime.NewError("cannot unmarshal type", 13) // INTERNAL
-)
-
-const (
-	rpcIdRewards   = "rewards"
-	rpcIdFindMatch = "find_match"
 )
 
 //noinspection GoUnusedExportedFunction
@@ -46,11 +34,11 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 	//	DiscardUnknown: false,
 	//}
 
-	if err := initializer.RegisterRpc(rpcIdRewards, rpcRewards); err != nil {
+	if err := initializer.RegisterRpc(src.RpcIdRewards, src.RpcRewards); err != nil {
 		return err
 	}
 
-	if err := initializer.RegisterRpc("healthcheck", RpcHealthcheck); err != nil {
+	if err := initializer.RegisterRpc("healthcheck", src.RpcHealthcheck); err != nil {
 		return err
 	}
 
@@ -58,7 +46,7 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 		return err
 	}
 
-	if err := registerSessionEvents(db, nk, initializer); err != nil {
+	if err := src.RegisterSessionEvents(db, nk, initializer); err != nil {
 		return err
 	}
 

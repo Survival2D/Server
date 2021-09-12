@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package src
 
 import (
 	"context"
@@ -28,7 +28,7 @@ type dailyReward struct {
 }
 
 // Fetch daily reward for the player. If a new reward is available send it to the player over a notification.
-func rpcRewards(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
+func RpcRewards(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, payload string) (string, error) {
 	userID, ok := ctx.Value(runtime.RUNTIME_CTX_USER_ID).(string)
 	if !ok {
 		return "", errNoUserIdFound
