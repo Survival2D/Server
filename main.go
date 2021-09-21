@@ -45,6 +45,9 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 	if err := initializer.RegisterRpc("TienTest", TienTest); err != nil {
 		return err
 	}
+	if err := initializer.RegisterRpc("NewTest", TienTest); err != nil {
+		return err
+	}
 
 	if err := src.RegisterSessionEvents(db, nk, initializer); err != nil {
 		return err
