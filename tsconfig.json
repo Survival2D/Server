@@ -1,6 +1,11 @@
 {
   "files": [
-    "./src/main.ts"
+    "./src/main.ts",
+    "src/clans.ts",
+    "src/quests.ts",
+    "src/deck.ts",
+    "src/economy.ts",
+    "src/match.ts"
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
@@ -28,10 +33,11 @@
     // "useDefineForClassFields": true,                  /* Emit ECMAScript-standard-compliant class fields. */
 
     /* Modules */
-//    "modules": "commonjs",
+    //    "modules": "commonjs",
     /* Specify what modules code is generated. */
     // "rootDir": "./",                                  /* Specify the root folder within your source files. */
-    // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given modules specifier. */
+    "moduleResolution": "node",
+    /* Specify how TypeScript looks up a file from a given modules specifier. */
     // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative modules names. */
     // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
