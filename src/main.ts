@@ -58,8 +58,44 @@ const InitModule: nkruntime.InitModule =
     initializer.registerRpc('load_user_cards', rpcLoadUserCards);
     initializer.registerRpc('add_random_card', rpcBuyRandomCard);
     initializer.registerRpc('handle_match_end', rpcHandleMatchEnd);
+
+    initializer.registerRpc('tien_test', tienTest);
+
     logger.warn('Pirate Panic TypeScript loaded.');
   }
+
+enum TienTestError {
+  SUCCESS,
+  UNKNOWN
+}
+
+interface TienTestReq {
+  userId: string;
+  time: number;
+}
+
+interface TienTestRes {
+  error: TienTestError;
+  result: string;
+}
+
+const tienTest: nkruntime.RpcFunction = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
+
+  let response: TienTestRes = {error: TienTestError.SUCCESS, result: ""};
+
+  if (!payload) {
+    response.error = TienTestError.UNKNOWN;
+    return JSON.stringify(response);
+  }
+
+  const request: TienTestReq = JSON.parse(payload);
+
+  logger.debug('client userid %d sent userid %s, time %d', ctx.userId, request.userId, request.time);
+  response.result = "Server got info on " + (new Date()).toDateString();
+
+  return JSON.stringify(response);
+}
+
 
 const afterAuthenticateDeviceFn: nkruntime.AfterHookFunction<nkruntime.Session, nkruntime.AuthenticateDeviceRequest> =
   function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: nkruntime.Session, req: nkruntime.AuthenticateDeviceRequest) {
