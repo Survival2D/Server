@@ -21,52 +21,52 @@ enum ClanNotificationCode {
  * Send an in-app notification to all clan members when a new member joins.
  */
 const afterJoinGroupFn: nkruntime.AfterHookFunction<void, nkruntime.JoinGroupRequest> =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.JoinGroupRequest) {
-    sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "New Member Joined!");
-  }
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.JoinGroupRequest) {
+      sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "New Member Joined!");
+    }
 
 /**
  * Send an in-app notification to all clan members when one or more members are kicked.
  */
 const afterKickGroupUsersFn: nkruntime.AfterHookFunction<void, nkruntime.KickGroupUsersRequest> =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.KickGroupUsersRequest) {
-    sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "Member(s) Have Been Kicked!");
-  }
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.KickGroupUsersRequest) {
+      sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "Member(s) Have Been Kicked!");
+    }
 
 /**
  * Send an in-app notification to all clan members when a member leaves.
  */
 const afterLeaveGroupFn: nkruntime.AfterHookFunction<void, nkruntime.LeaveGroupRequest> =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.LeaveGroupRequest) {
-    sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "Member Left!");
-  }
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.LeaveGroupRequest) {
+      sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "Member Left!");
+    }
 
 /**
  * Send an in-app notification to all clan members when one or more members are promoted.
  */
 const afterPromoteGroupUsersFn: nkruntime.AfterHookFunction<void, nkruntime.PromoteGroupUsersRequest> =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.PromoteGroupUsersRequest) {
-    sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "Member(s) Have Been Promoted!");
-  }
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, data: void, request: nkruntime.PromoteGroupUsersRequest) {
+      sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Refresh, "Member(s) Have Been Promoted!");
+    }
 
 /**
  * Send an in-app notification to the clan members when the superadmin deletes it.
  */
 const beforeDeleteGroupFn: nkruntime.BeforeHookFunction<nkruntime.DeleteGroupRequest> =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.DeleteGroupRequest): nkruntime.DeleteGroupRequest {
-    const members = nk.groupUsersList(request.groupId!, 100, 0);
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.DeleteGroupRequest): nkruntime.DeleteGroupRequest {
+      const members = nk.groupUsersList(request.groupId!, 100, 0);
 
-    // Check delete request user is a superadmin in the group.
-    members.groupUsers?.every(user => {
-      if (user.user.userId == ctx.userId) {
-        sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Delete, "Clan Deleted!");
-        return false;
-      }
-      return true;
-    });
+      // Check delete request user is a superadmin in the group.
+      members.groupUsers?.every(user => {
+        if (user.user.userId == ctx.userId) {
+          sendGroupNotification(nk, request.groupId ?? "", ClanNotificationCode.Delete, "Clan Deleted!");
+          return false;
+        }
+        return true;
+      });
 
-    return request
-  }
+      return request
+    }
 
 function sendGroupNotification(nk: nkruntime.Nakama, groupId: string, code: ClanNotificationCode, subject: string) {
   const members = nk.groupUsersList(groupId, 100);

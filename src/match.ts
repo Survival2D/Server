@@ -52,7 +52,7 @@ function rpcGetMatchScore(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: 
   let lastMatchReward = {} as nkruntime.WalletLedgerResult;
   for (let update of items.items) {
     if (update.metadata.source === 'match_reward'
-      && update.metadata.match_id === matchId) {
+        && update.metadata.match_id === matchId) {
       lastMatchReward = update;
     }
   }

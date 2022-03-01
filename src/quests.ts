@@ -77,12 +77,12 @@ let afterAddFriendsFn: nkruntime.AfterHookFunction<void, nkruntime.AddFriendsReq
     let persistent = true;
 
     nk.notificationSend(
-      ctx.userId,
-      subject,
-      content,
-      code,
-      senderId,
-      persistent,
+        ctx.userId,
+        subject,
+        content,
+        code,
+        senderId,
+        persistent,
     );
 
     logger.info('user %s completed add_friend quest!', ctx.userId);

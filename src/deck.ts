@@ -90,135 +90,135 @@ interface UpgradeCardRequest {
  * Swap a card in the user deck with one in its collection.
  */
 const rpcSwapDeckCard: nkruntime.RpcFunction =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
-    const request: SwapDeckCardRequest = JSON.parse(payload);
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
+      const request: SwapDeckCardRequest = JSON.parse(payload);
 
-    const userCards = loadUserCards(nk, logger, ctx.userId);
+      const userCards = loadUserCards(nk, logger, ctx.userId);
 
-    // Check the cards being swapper are valid.
-    if (Object.keys(userCards.deckCards).indexOf(request.cardOutId) < 0) {
-      throw Error('invalid out card');
+      // Check the cards being swapper are valid.
+      if (Object.keys(userCards.deckCards).indexOf(request.cardOutId) < 0) {
+        throw Error('invalid out card');
+      }
+      if (Object.keys(userCards.storedCards).indexOf(request.cardInId) < 0) {
+        throw Error('invalid in card');
+      }
+
+      // Swap the cards
+      let outCard = userCards.deckCards[request.cardOutId];
+      let inCard = userCards.storedCards[request.cardInId];
+      delete (userCards.deckCards[request.cardOutId]);
+      delete (userCards.storedCards[request.cardInId]);
+      userCards.deckCards[request.cardInId] = inCard;
+      userCards.storedCards[request.cardOutId] = outCard;
+
+      // Store the changes
+      storeUserCards(nk, logger, ctx.userId, userCards);
+
+      logger.debug("user '%s' deck card '%s' swapped with '%s'", ctx.userId);
+
+      return JSON.stringify(userCards);
     }
-    if (Object.keys(userCards.storedCards).indexOf(request.cardInId) < 0) {
-      throw Error('invalid in card');
-    }
-
-    // Swap the cards
-    let outCard = userCards.deckCards[request.cardOutId];
-    let inCard = userCards.storedCards[request.cardInId];
-    delete (userCards.deckCards[request.cardOutId]);
-    delete (userCards.storedCards[request.cardInId]);
-    userCards.deckCards[request.cardInId] = inCard;
-    userCards.storedCards[request.cardOutId] = outCard;
-
-    // Store the changes
-    storeUserCards(nk, logger, ctx.userId, userCards);
-
-    logger.debug("user '%s' deck card '%s' swapped with '%s'", ctx.userId);
-
-    return JSON.stringify(userCards);
-  }
 
 
 /**
  * Upgrade the level of a given card in the user collection.
  */
 const rpcUpgradeCard: nkruntime.RpcFunction =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
-    let request: UpgradeCardRequest = JSON.parse(payload);
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
+      let request: UpgradeCardRequest = JSON.parse(payload);
 
-    let userCards = loadUserCards(nk, logger, ctx.userId);
-    if (!userCards) {
-      logger.error('user %s card collection not found', ctx.userId);
-      throw Error('Internal server error');
+      let userCards = loadUserCards(nk, logger, ctx.userId);
+      if (!userCards) {
+        logger.error('user %s card collection not found', ctx.userId);
+        throw Error('Internal server error');
+      }
+
+      let card = userCards.deckCards[request.id];
+      if (card) {
+        card.level += 1;
+        userCards.deckCards[request.id] = card;
+      }
+
+      card = userCards.storedCards[request.id];
+      if (card) {
+        card.level += 1;
+        userCards.storedCards[request.id] = card;
+      }
+
+      if (!card) {
+        logger.error('invalid card');
+        throw Error('invalid card');
+      }
+
+      try {
+        storeUserCards(nk, logger, ctx.userId, userCards);
+      } catch (error) {
+        // Error logged in storeUserCards
+        throw Error('Internal server error');
+      }
+
+      logger.debug('user %s card %s upgraded', ctx.userId, JSON.stringify(card));
+
+      return JSON.stringify(card);
     }
-
-    let card = userCards.deckCards[request.id];
-    if (card) {
-      card.level += 1;
-      userCards.deckCards[request.id] = card;
-    }
-
-    card = userCards.storedCards[request.id];
-    if (card) {
-      card.level += 1;
-      userCards.storedCards[request.id] = card;
-    }
-
-    if (!card) {
-      logger.error('invalid card');
-      throw Error('invalid card');
-    }
-
-    try {
-      storeUserCards(nk, logger, ctx.userId, userCards);
-    } catch (error) {
-      // Error logged in storeUserCards
-      throw Error('Internal server error');
-    }
-
-    logger.debug('user %s card %s upgraded', ctx.userId, JSON.stringify(card));
-
-    return JSON.stringify(card);
-  }
 
 /**
  * Reset user card collection to the default set.
  */
 const rpcResetCardCollection: nkruntime.RpcFunction =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string) {
-    let collection = defaultCardCollection(nk, logger, ctx.userId);
-    storeUserCards(nk, logger, ctx.userId, collection);
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string) {
+      let collection = defaultCardCollection(nk, logger, ctx.userId);
+      storeUserCards(nk, logger, ctx.userId, collection);
 
-    logger.debug('user %s card collection has been reset', ctx.userId);
-    return JSON.stringify(collection);
-  }
+      logger.debug('user %s card collection has been reset', ctx.userId);
+      return JSON.stringify(collection);
+    }
 
 /**
  * Get user card collection.
  */
 const rpcLoadUserCards: nkruntime.RpcFunction =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
-    return JSON.stringify(loadUserCards(nk, logger, ctx.userId));
-  }
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string): string {
+      return JSON.stringify(loadUserCards(nk, logger, ctx.userId));
+    }
 
 /**
  * Add a random card to the user collection for 100 gems.
  */
 const rpcBuyRandomCard: nkruntime.RpcFunction =
-  function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string) {
-    let type = Math.floor(Math.random() * 4) + 1 as CardType;
+    function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, payload: string) {
+      let type = Math.floor(Math.random() * 4) + 1 as CardType;
 
-    let userCards: CardCollection;
-    try {
-      userCards = loadUserCards(nk, logger, ctx.userId);
-    } catch (error: any) {
-      logger.error('error loading user cards: %s', error.message);
-      throw Error('Internal server error');
+      let userCards: CardCollection;
+      try {
+        userCards = loadUserCards(nk, logger, ctx.userId);
+      } catch (error: any) {
+        logger.error('error loading user cards: %s', error.message);
+        throw Error('Internal server error');
+      }
+
+      let cardId = nk.uuidv4();
+      let newCard: Card = {
+        type,
+        level: 1,
+      }
+
+      userCards.storedCards[cardId] = newCard;
+
+      try {
+        // If no sufficient funds are available, this will throw an error.
+        nk.walletUpdate(ctx.userId, {[currencyKeyName]: -100});
+        // Store the new card to the collection.
+        storeUserCards(nk, logger, ctx.userId, userCards);
+      } catch (error: any) {
+        logger.error('error buying card: %s', error.message);
+        throw error;
+      }
+
+      logger.debug('user %s successfully bought a new card', ctx.userId);
+
+      return JSON.stringify({[cardId]: newCard});
     }
-
-    let cardId = nk.uuidv4();
-    let newCard: Card = {
-      type,
-      level: 1,
-    }
-
-    userCards.storedCards[cardId] = newCard;
-
-    try {
-      // If no sufficient funds are available, this will throw an error.
-      nk.walletUpdate(ctx.userId, {[currencyKeyName]: -100});
-      // Store the new card to the collection.
-      storeUserCards(nk, logger, ctx.userId, userCards);
-    } catch (error: any) {
-      logger.error('error buying card: %s', error.message);
-      throw error;
-    }
-
-    logger.debug('user %s successfully bought a new card', ctx.userId);
-
-    return JSON.stringify({[cardId]: newCard});
-  }
 
 function loadUserCards(nk: nkruntime.Nakama, logger: nkruntime.Logger, userId: string): CardCollection {
   let storageReadReq: nkruntime.StorageReadRequest = {

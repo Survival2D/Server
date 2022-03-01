@@ -16,14 +16,16 @@ class Matrix {
   }
 
   toString() {
-    let s = '';
+    let s = "";
     for (let i = 0; i < this.n; ++i) {
-      s += this.v.slice(i * this.n, (i + 1) * this.n)
-      .map(o => {
-        const val = String(o);
-        return "   ".substr(0, 3 - val.length) + val;
-      })
-      .join('') + '\n';
+      s +=
+        this.v
+          .slice(i * this.n, (i + 1) * this.n)
+          .map((o) => {
+            const val = String(o);
+            return "   ".substr(0, 3 - val.length) + val;
+          })
+          .join("") + "\n";
     }
     return s;
   }
@@ -36,13 +38,22 @@ function arrayFill(array: Array<any>, value: any): Array<any> {
   return array;
 }
 
-function dfs(v: number, used: Array<boolean>, matching: Array<number>, n: number, hasEdge: (v1: number, v2: number) => boolean) {
+function dfs(
+  v: number,
+  used: Array<boolean>,
+  matching: Array<number>,
+  n: number,
+  hasEdge: (v1: number, v2: number) => boolean
+) {
   if (used[v]) {
     return false;
   }
   used[v] = true;
   for (let i = 0; i < n; ++i) {
-    if (hasEdge(v, i) && (matching[i] === -1 || dfs(matching[i], used, matching, n, hasEdge))) {
+    if (
+      hasEdge(v, i) &&
+      (matching[i] === -1 || dfs(matching[i], used, matching, n, hasEdge))
+    ) {
       matching[i] = v;
       return true;
     }
@@ -50,7 +61,10 @@ function dfs(v: number, used: Array<boolean>, matching: Array<number>, n: number
   return false;
 }
 
-function kuhn(n: number, hasEdge: (v1: number, v2: number) => boolean): Array<number> {
+function kuhn(
+  n: number,
+  hasEdge: (v1: number, v2: number) => boolean
+): Array<number> {
   const matching = arrayFill(new Array<number>(n), -1);
   const used = arrayFill(new Array<boolean>(n), false);
 

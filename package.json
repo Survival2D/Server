@@ -1,26 +1,19 @@
 {
-  "name": "server",
+  "name": "survival2d",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Survival2D/Server.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Survival2D/Server/issues"
-  },
-  "homepage": "https://github.com/Survival2D/Server#readme",
+  "description": "",
   "devDependencies": {
-    "typescript": "^4.5.4"
+    "prettier": "^2.5.1",
+    "typescript": "^4.4.3"
   },
   "dependencies": {
-    "nakama-runtime": "github:heroiclabs/nakama-common"
+    "nakama-runtime": "git+https://github.com/heroiclabs/nakama-common.git"
   }
 }
