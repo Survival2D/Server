@@ -7,7 +7,7 @@ let joinOrCreateMatch: nkruntime.RpcFunction = function (
   let matches: nkruntime.Match[];
   const MatchesLimit = 1;
   const MinimumPlayers = 0;
-  var label: MatchLabel = { open: true };
+  const label: MatchLabel = { open: true };
   matches = nakama.matchList(
     MatchesLimit,
     true,
@@ -15,7 +15,7 @@ let joinOrCreateMatch: nkruntime.RpcFunction = function (
     MinimumPlayers,
     MaxPlayers - 1
   );
+  logger.debug("Matches: ", matches);
   if (matches.length > 0) return matches[0].matchId;
-
   return nakama.matchCreate(MatchModuleName);
 };
