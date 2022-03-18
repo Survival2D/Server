@@ -962,7 +962,17 @@ var joinOrCreateMatch = function (context, logger, nakama, payload) {
     var MinimumPlayers = 0;
     var label = { open: true };
     matches = nakama.matchList(MatchesLimit, true, JSON.stringify(label), MinimumPlayers, MaxPlayers - 1);
-    if (matches.length > 0)
-        return matches[0].matchId;
-    return nakama.matchCreate(MatchModuleName);
+    logger.debug("Matches: ", matches);
+    var matchId;
+    if (matches.length > 0) {
+        matchId = matches[0].matchId;
+    }
+    else {
+        matchId = nakama.matchCreate(MatchModuleName);
+    }
+    var ret = {
+        "matchId": matchId
+    };
+    logger.debug(JSON.stringify(ret));
+    return JSON.stringify(ret);
 };

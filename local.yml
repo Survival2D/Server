@@ -1,10 +1,12 @@
+name: Survival2D
 console:
   max_message_size_bytes: 409600
 database:
   address:
-    - "root@127.0.0.1:26257/defaultdb?sslmode=disable"
+    - "root@127.0.0.1:26257"
+#    - "root@127.0.0.1:26257/defaultdb?sslmode=disable"
 logger:
-  file: "./log/log.log"
+  file: "/nakama/data/log.log"
   level: "DEBUG"
   rotation: true
 runtime:
