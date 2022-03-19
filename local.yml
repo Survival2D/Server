@@ -3,11 +3,11 @@ console:
   max_message_size_bytes: 409600
 database:
   address:
-    - "root@127.0.0.1:26257"
+    - "root@cockroachdb:26257"
 #    - "root@127.0.0.1:26257/defaultdb?sslmode=disable"
 logger:
-  file: "/nakama/data/log.log"
-  level: "DEBUG"
+  file: "./log/log.log"
+  level: DEBUG
   rotation: true
 runtime:
   path: "."
@@ -17,3 +17,5 @@ session:
 socket:
   max_message_size_bytes: 4096 # reserved buffer
   max_request_size_bytes: 131072
+#metrics:
+#  prometheus_port: 9090
