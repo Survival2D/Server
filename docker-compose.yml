@@ -13,7 +13,7 @@ services:
       - "26257:26257"
       - "8080:8080"
   nakama:
-    image: heroiclabs/nakama:3.6.0
+    build: .
     entrypoint:
       - "/bin/sh"
       - "-ecx"
@@ -21,6 +21,8 @@ services:
         /nakama/nakama migrate up --database.address root@cockroachdb:26257 &&
         cd /nakama/data &&
         exec /nakama/nakama --config ./local.yml
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
     restart: "no"
     links:
       - "cockroachdb:db"
@@ -28,7 +30,7 @@ services:
       - cockroachdb
 #      - prometheus
     volumes:
-      - ./:/nakama/data
+      - ./log:/nakama/data/log
     expose:
       - "7349"
       - "7350"

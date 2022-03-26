@@ -1,4 +1,4 @@
-name: Survival2D
+name: "Survival2D"
 console:
   max_message_size_bytes: 409600
 database:
@@ -7,7 +7,9 @@ database:
 #    - "root@127.0.0.1:26257/defaultdb?sslmode=disable"
 logger:
   file: "./log/log.log"
-  level: DEBUG
+  level: "debug"
+  local_time: true
+  stdout: true
   rotation: true
 runtime:
   path: "."
