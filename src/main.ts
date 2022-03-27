@@ -19,5 +19,4 @@ function InitModule(
   });
 
   logger.info(LogicLoadedLoggerInfo);
-  logger.info("test");
 }

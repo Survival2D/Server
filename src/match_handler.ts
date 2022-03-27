@@ -56,7 +56,7 @@ let matchJoin: nkruntime.MatchJoinFunction = function (
     if (player != undefined) presencesOnMatch.push(player.presence);
   });
   for (let presence of presences) {
-    var account: nkruntime.Account = nakama.accountGetId(presence.userId);
+    let account: nkruntime.Account = nakama.accountGetId(presence.userId);
     let player: Player = {
       presence: presence,
       displayName: account.user.displayName,
@@ -65,9 +65,16 @@ let matchJoin: nkruntime.MatchJoinFunction = function (
     let nextPlayerNumber: number = getNextPlayerNumber(gameState.players);
     gameState.players[nextPlayerNumber] = player;
     gameState.playersWins[nextPlayerNumber] = 0;
+    let joinData: JoinData = {
+      position: {
+        x: 0,
+        y: 0,
+      },
+      userID: player.presence.userId,
+    };
     dispatcher.broadcastMessage(
       OperationCode.PlayerJoined,
-      JSON.stringify(player),
+      JSON.stringify(joinData),
       presencesOnMatch
     );
     presencesOnMatch.push(presence);
