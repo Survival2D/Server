@@ -69,7 +69,7 @@ let matchJoin: nkruntime.MatchJoinFunction = function (
       position: {
         x: 0,
         y: 0,
-      },
+      } as Position,
       userID: player.presence.userId,
     };
     dispatcher.broadcastMessage(
@@ -80,9 +80,23 @@ let matchJoin: nkruntime.MatchJoinFunction = function (
     presencesOnMatch.push(presence);
   }
 
+  const playersInMatch = gameState.players.map((player) => {
+    let data: PlayerAndPosition = {
+      position: {
+        x: 0,
+        y: 0,
+      } as Position,
+      userID: player.presence.userId,
+    };
+    return data;
+  });
+  const dataSendToNewPlayers: PlayerInMatchData = {
+    players: playersInMatch,
+  };
+
   dispatcher.broadcastMessage(
     OperationCode.Players,
-    JSON.stringify(gameState.players),
+    JSON.stringify(dataSendToNewPlayers),
     presences
   );
   gameState.countdown = DurationLobby * TickRate;
