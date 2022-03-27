@@ -19,5 +19,5 @@ function InitModule(
   });
 
   logger.info(LogicLoadedLoggerInfo);
-  logger.info("qert34535gdfret");
+  logger.info("test");
 }
