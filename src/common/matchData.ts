@@ -1,8 +1,3 @@
-interface Position {
-  x: number;
-  y: number;
-}
-
 interface PlayerAndPosition {
   userID: string;
   position: Position;

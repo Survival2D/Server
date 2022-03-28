@@ -12,6 +12,12 @@
     "outFile": "./build/index.js",
     "typeRoots": [
       "./node_modules"
+    ],
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015"
     ]
   },
   //  "files": [

@@ -10,11 +10,7 @@ interface GameState {
   scene: Scene;
   countdown: number;
   endMatch: boolean;
-}
-
-interface Player {
-  presence: nkruntime.Presence;
-  displayName: string;
+  map: GameMap;
 }
 
 interface TimeRemainingData {

@@ -13,6 +13,7 @@ let matchInit: nkruntime.MatchInitFunction = function (
     scene: Scene.Lobby,
     countdown: DurationLobby * TickRate,
     endMatch: false,
+    map: new GameMap(),
   };
 
   return {
@@ -57,10 +58,7 @@ let matchJoin: nkruntime.MatchJoinFunction = function (
   });
   for (let presence of presences) {
     let account: nkruntime.Account = nakama.accountGetId(presence.userId);
-    let player: Player = {
-      presence: presence,
-      displayName: account.user.displayName,
-    };
+    let player = new Player(presence, account.user.displayName);
 
     let nextPlayerNumber: number = getNextPlayerNumber(gameState.players);
     gameState.players[nextPlayerNumber] = player;
@@ -197,6 +195,12 @@ function processMatchLoop(
       break;
   }
 }
+
+function matchLoopTick(
+  gameState: GameState,
+  nakama: nkruntime.Nakama,
+  dispatcher: nkruntime.MatchDispatcher
+) {}
 
 function matchLoopBattle(
   gameState: GameState,
