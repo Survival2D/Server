@@ -1,14 +1,19 @@
+name: "Survival2D"
 console:
   max_message_size_bytes: 409600
 database:
   address:
     - root@cockroachdb:26257
 logger:
-  level: "DEBUG"
-#metrics:
-#  prometheus_port: 9100
+  file: "/log/log.log"
+  level: "debug"
+  local_time: true
+  stdout: false
+  rotation: true
 session:
   token_expiry_sec: 7200 # 2 hours
 socket:
   max_message_size_bytes: 4096 # reserved buffer
   max_request_size_bytes: 131072
+#metrics:
+#  prometheus_port: 9090

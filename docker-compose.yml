@@ -6,7 +6,7 @@ services:
     command: start-single-node --insecure --store=attrs=ssd,path=/var/lib/cockroach/
     restart: "no"
     volumes:
-      - data:/var/lib/cockroach
+      - ./data:/var/lib/cockroach
     expose:
       - "8080"
       - "26257"
@@ -19,20 +19,22 @@ services:
     container_name: survival2d
     depends_on:
       - database
-#      - metrics
+    #      - metrics
     entrypoint:
       - "/bin/sh"
       - "-ecx"
       - >
         /nakama/nakama migrate up --database.address root@cockroachdb:26257 &&
         exec /nakama/nakama --config /nakama/data/local.yml
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
     expose:
       - "7349"
       - "7350"
       - "7351"
       - "9100"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7350/"]
+      test: [ "CMD", "curl", "-f", "http://localhost:7350/" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -43,6 +45,8 @@ services:
       - "7350:7350"
       - "7351:7351"
     restart: unless-stopped
+    volumes:
+      - ./log:/log
 #  prometheus:
 #    container_name: metrics
 #    image: prom/prometheus
@@ -67,5 +71,5 @@ services:
 #    ports:
 #      - '9090:9090'
 
-volumes:
-  data:
+#volumes:
+#  data:
