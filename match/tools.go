@@ -1,3 +1,4 @@
+//go:build tools
 // +build tools
 
 // Copyright 2021 The Nakama Authors
@@ -14,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package src
+package match
 
 import (
 	_ "google.golang.org/protobuf/cmd/protoc-gen-go"

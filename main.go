@@ -18,7 +18,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/heroiclabs/nakama-common/runtime"
-	"surival2d/server/src"
+	"survival2d/match"
 	"time"
 )
 
@@ -34,11 +34,11 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 	//	DiscardUnknown: false,
 	//}
 
-	if err := initializer.RegisterRpc(src.RpcIdRewards, src.RpcRewards); err != nil {
+	if err := initializer.RegisterRpc(match.RpcIdRewards, match.RpcRewards); err != nil {
 		return err
 	}
 
-	if err := initializer.RegisterRpc("healthcheck", src.RpcHealthcheck); err != nil {
+	if err := initializer.RegisterRpc("healthcheck", match.RpcHealthcheck); err != nil {
 		return err
 	}
 
@@ -49,12 +49,12 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 		return err
 	}
 
-	if err := src.RegisterSessionEvents(db, nk, initializer); err != nil {
+	if err := match.RegisterSessionEvents(db, nk, initializer); err != nil {
 		return err
 	}
 
 	logger.Info("Hello Multiplayer!")
-	err := initializer.RegisterMatch("standard_match", src.NewMatch)
+	err := initializer.RegisterMatch("standard_match", match.NewMatch)
 	if err != nil {
 		logger.Error("[RegisterMatch] error: ", err.Error())
 		return err
@@ -66,6 +66,8 @@ func InitModule(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runti
 	}
 
 	logger.Info("Plugin loaded in '%d' msec.", time.Now().Sub(initStart).Milliseconds())
+
+	logger.Info("Init complete!")
 	return nil
 }
 

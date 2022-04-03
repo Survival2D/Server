@@ -1,4 +1,4 @@
-package src
+package match
 
 import (
 	"context"
@@ -10,7 +10,13 @@ type MatchState struct {
 	presences map[string]runtime.Presence
 }
 
-type Match struct{}
+type Match struct {
+}
+
+func (m *Match) MatchSignal(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, dispatcher runtime.MatchDispatcher, tick int64, state interface{}, data string) (interface{}, string) {
+	//TODO implement me
+	panic("implement me")
+}
 
 func NewMatch(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule) (m runtime.Match, err error) {
 	logger.Info("NewMatch")

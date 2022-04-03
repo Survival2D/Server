@@ -1,9 +1,8 @@
-module surival2d/server
+module survival2d
 
-go 1.17
+go 1.18
 
 require (
-	github.com/google/flatbuffers v2.0.0+incompatible
-	github.com/heroiclabs/nakama-common v1.17.0
-	google.golang.org/protobuf v1.26.0
+	github.com/heroiclabs/nakama-common v1.22.0
+	google.golang.org/protobuf v1.27.1
 )

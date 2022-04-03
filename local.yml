@@ -1,7 +1,12 @@
 console:
   max_message_size_bytes: 409600
+database:
+  address:
+    - root@cockroachdb:26257
 logger:
   level: "DEBUG"
+#metrics:
+#  prometheus_port: 9100
 session:
   token_expiry_sec: 7200 # 2 hours
 socket:

@@ -1,4 +1,4 @@
-package src
+package match
 
 import "github.com/heroiclabs/nakama-common/runtime"
 
