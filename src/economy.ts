@@ -12,21 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const currencyKeyName = 'gems'
+const currencyKeyName = "gems";
 
-const rpcAddUserGems: nkruntime.RpcFunction = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama): string {
+const rpcAddUserGems: nkruntime.RpcFunction = function (
+  ctx: nkruntime.Context,
+  logger: nkruntime.Logger,
+  nk: nkruntime.Nakama
+): string {
   let walletUpdateResult = updateWallet(nk, ctx.userId, 100, {});
   let updateString = JSON.stringify(walletUpdateResult);
 
-  logger.debug('Added 100 gems to user %s wallet: %s', ctx.userId, updateString);
+  logger.debug(
+    "Added 100 gems to user %s wallet: %s",
+    ctx.userId,
+    updateString
+  );
 
   return updateString;
-}
+};
 
-function updateWallet(nk: nkruntime.Nakama, userId: string, amount: number, metadata: { [key: string]: any }): nkruntime.WalletUpdateResult {
+function updateWallet(
+  nk: nkruntime.Nakama,
+  userId: string,
+  amount: number,
+  metadata: { [key: string]: any }
+): nkruntime.WalletUpdateResult {
   const changeset = {
     [currencyKeyName]: amount,
-  }
+  };
   let result = nk.walletUpdate(userId, changeset, metadata, true);
 
   return result;

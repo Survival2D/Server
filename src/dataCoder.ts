@@ -8,11 +8,12 @@ Also see https://stackoverflow.com/a/30106551
 function decodeMessageData<T>(data: string): T | undefined {
   try {
     return JSON.parse(
-        decodeURIComponent(
-            data.split('').map(
-                c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-            ).join('')
-        )
+      decodeURIComponent(
+        data
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      )
     ) as T;
   } catch (error) {
     return undefined;
@@ -22,12 +23,10 @@ function decodeMessageData<T>(data: string): T | undefined {
 // https://github.com/dop251/goja/issues/283
 function encodeMessageData<T>(data: T): string | undefined {
   try {
-    const urlEnc = encodeURIComponent(
-        JSON.stringify(data)
-    )/*.replace(
+    const urlEnc = encodeURIComponent(JSON.stringify(data)); /*.replace(
             /%([0-9A-F]{2})/g,
             (_match:string, p1) => String.fromCharCode(Number('0x' + p1))
-        )*/;
+        )*/
     return customReplace(urlEnc);
   } catch (error) {
     return undefined;
@@ -35,11 +34,11 @@ function encodeMessageData<T>(data: T): string | undefined {
 }
 
 function customReplace(urlEncoded: string): string {
-  let s = '';
+  let s = "";
   for (let i = 0; i < urlEncoded.length; ++i) {
     const char = urlEncoded.charAt(i);
-    if (char === '%') {
-      s += String.fromCharCode(Number('0x' + urlEncoded.substr(i + 1, 2)));
+    if (char === "%") {
+      s += String.fromCharCode(Number("0x" + urlEncoded.substr(i + 1, 2)));
       i += 2;
     } else {
       s += char;

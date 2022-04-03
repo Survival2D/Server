@@ -1,6 +1,6 @@
 // This file have to be in sync both on server and client
 
-type Stage = 'gettingReady' | 'inProgress' | 'results';
+type Stage = "gettingReady" | "inProgress" | "results";
 
 // NOTE: OpCode can't be equal to 0
 enum OpCode {
@@ -22,17 +22,15 @@ enum OpCode {
 }
 
 interface KickPlayerMessageData {
-  userId: string
+  userId: string;
 }
 
 interface HostChangedMessageData {
-  userId: string
+  userId: string;
 }
 
-interface StartGameMessageData {
-
-}
+interface StartGameMessageData {}
 
 interface StageChangedMessageData {
-  stage: Stage
+  stage: Stage;
 }
