@@ -18,8 +18,8 @@ services:
     build: .
     container_name: survival2d
     depends_on:
-      - database
-    #      - metrics
+      - cockroachdb
+    #      - prometheus
     entrypoint:
       - "/bin/sh"
       - "-ecx"
