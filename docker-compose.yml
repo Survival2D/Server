@@ -3,9 +3,9 @@ services:
   cockroachdb:
     image: cockroachdb/cockroach:latest-v20.2
     command: start-single-node --insecure --store=attrs=ssd,path=/var/lib/cockroach/
-    restart: "no"
+    restart: always
     volumes:
-      - data:/var/lib/cockroach
+      - ./data:/var/lib/cockroach
     expose:
       - "8080"
       - "26257"
@@ -23,19 +23,19 @@ services:
         exec /nakama/nakama --config ./local.yml
     environment:
       - TZ=Asia/Ho_Chi_Minh
-    restart: "no"
+    restart: always
     links:
       - "cockroachdb:db"
     depends_on:
       - cockroachdb
 #      - prometheus
     volumes:
+#      - ./data:/nakama/data
       - ./log:/nakama/data/log
     expose:
       - "7349"
       - "7350"
       - "7351"
-      - "9100"
     ports:
       - "7349:7349"
       - "7350:7350"
@@ -45,6 +45,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+#  nginx:
+#    image: jonasal/nginx-certbot:latest
+#    environment:
+#      CERTBOT_EMAIL: "minhtienit99@gmail.com"
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#      - "7349:7349"
+#      - "7350:7350"
+#      - "7351:7351"
+#    volumes:
+#      - nginx_secrets:/etc/letsencrypt
+#      - ./nginx_conf.d:/etc/nginx/user_conf.d
+#    links:
+#      - nakama
+#    depends_on:
+#      - nakama
 #  prometheus:
 #    image: prom/prometheus
 #    entrypoint: /bin/sh -c
@@ -67,5 +84,6 @@ services:
 #      EOF'
 #    ports:
 #      - '9090:9090'
-volumes:
-  data:
+#volumes:
+#  data:
+#  nginx_secrets: {}

@@ -1,5 +1,7 @@
 # Survival2D
 .idea
 node_modules
+vendor
+data
 log
 build
