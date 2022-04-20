@@ -1,17 +1,15 @@
 version: '3'
+
 services:
   cockroachdb:
     image: cockroachdb/cockroach:latest-v20.2
     command: start-single-node --insecure --store=attrs=ssd,path=/var/lib/cockroach/
     restart: always
     volumes:
-      - ./data:/var/lib/cockroach
+      - ./db:/var/lib/cockroach
     expose:
       - "8080"
       - "26257"
-    ports:
-      - "26257:26257"
-      - "8080:8080"
   nakama:
     build: .
     entrypoint:
@@ -28,62 +26,34 @@ services:
       - "cockroachdb:db"
     depends_on:
       - cockroachdb
-#      - prometheus
     volumes:
-#      - ./data:/nakama/data
-      - ./log:/nakama/data/log
+      - ./data:/nakama/data
     expose:
       - "7349"
       - "7350"
       - "7351"
-    ports:
-      - "7349:7349"
-      - "7350:7350"
-      - "7351:7351"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7350/"]
       interval: 10s
       timeout: 5s
       retries: 5
-#  nginx:
-#    image: jonasal/nginx-certbot:latest
-#    environment:
-#      CERTBOT_EMAIL: "minhtienit99@gmail.com"
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#      - "7349:7349"
-#      - "7350:7350"
-#      - "7351:7351"
-#    volumes:
-#      - nginx_secrets:/etc/letsencrypt
-#      - ./nginx_conf.d:/etc/nginx/user_conf.d
-#    links:
-#      - nakama
-#    depends_on:
-#      - nakama
-#  prometheus:
-#    image: prom/prometheus
-#    entrypoint: /bin/sh -c
-#    command: |
-#      'sh -s <<EOF
-#        cat > ./prometheus.yml <<EON
-#      global:
-#        scrape_interval:     15s
-#        evaluation_interval: 15s
-#      scrape_configs:
-#        - job_name: prometheus
-#          static_configs:
-#          - targets: ['localhost:9090']
-#        - job_name: nakama
-#          metrics_path: /
-#          static_configs:
-#          - targets: ['nakama:9100']
-#      EON
-#      prometheus --config.file=./prometheus.yml
-#      EOF'
-#    ports:
-#      - '9090:9090'
-#volumes:
-#  data:
-#  nginx_secrets: {}
+  nginx:
+    image: jonasal/nginx-certbot:latest
+    environment:
+      CERTBOT_EMAIL: "me@example.com"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "7349:7349"
+      - "7350:7350"
+      - "7351:7351"
+    volumes:
+      - nginx_secrets:/etc/letsencrypt
+      - ./nginx_conf.d:/etc/nginx/user_conf.d
+    links:
+      - nakama
+    depends_on:
+      - nakama
+
+volumes:
+  nginx_secrets: {}
