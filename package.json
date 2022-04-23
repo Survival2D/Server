@@ -10,9 +10,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "typescript": "^4.4.3"
+    "typescript": "^4.6.3"
   },
   "dependencies": {
-    "nakama-runtime": "git+https://github.com/heroiclabs/nakama-common.git"
+    "nakama-runtime": "github:heroiclabs/nakama-common"
   }
 }

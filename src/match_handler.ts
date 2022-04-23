@@ -294,7 +294,7 @@ function playerWon(
 ): void {
   if (gameState.scene != Scene.Battle || gameState.countdown > 0) return;
 
-  let data: PlayerWonData = JSON.parse(message.data);
+  let data: PlayerWonData = JSON.parse(String(message.data));
   let tick: number = data.tick;
   let playerNumber: number = data.playerNumber;
   if (gameState.roundDeclaredWins[tick] == undefined)
@@ -327,7 +327,7 @@ function draw(
 ): void {
   if (gameState.scene != Scene.Battle || gameState.countdown > 0) return;
 
-  let data: DrawData = JSON.parse(message.data);
+  let data: DrawData = JSON.parse(String(message.data));
   let tick: number = data.tick;
   if (gameState.roundDeclaredDraw[tick] == undefined)
     gameState.roundDeclaredDraw[tick] = 0;
