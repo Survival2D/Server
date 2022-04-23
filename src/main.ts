@@ -16,6 +16,7 @@ function InitModule(
     matchLeave,
     matchLoop,
     matchTerminate,
+    matchSignal
   });
 
   logger.info(LogicLoadedLoggerInfo);

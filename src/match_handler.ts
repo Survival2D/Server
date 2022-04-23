@@ -1,3 +1,9 @@
+import Context = nkruntime.Context;
+import Logger = nkruntime.Logger;
+import Nakama = nkruntime.Nakama;
+import MatchDispatcher = nkruntime.MatchDispatcher;
+import MatchState = nkruntime.MatchState;
+
 let matchInit: nkruntime.MatchInitFunction = function (
   context: nkruntime.Context,
   logger: nkruntime.Logger,
@@ -149,6 +155,12 @@ let matchTerminate: nkruntime.MatchTerminateFunction = function (
   tick: number,
   state: nkruntime.MatchState,
   graceSeconds: number
+) {
+  return { state };
+};
+
+let matchSignal: nkruntime.MatchSignalFunction = function (
+    ctx: Context, logger: Logger, nk: Nakama, dispatcher: MatchDispatcher, tick: number, state: MatchState, data: string
 ) {
   return { state };
 };
