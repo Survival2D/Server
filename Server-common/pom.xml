@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>Server-common</artifactId>
+  <dependencies>
+    <dependency>
+      <artifactId>ezyfox-server-support</artifactId>
+      <groupId>com.tvd12</groupId>
+      <version>${ezy.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>ezyfox-boot-autoconfigure</artifactId>
+      <groupId>com.tvd12</groupId>
+      <version>${ezy.boot.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tvd12</groupId>
+      <artifactId>ezydata-mongodb</artifactId>
+      <version>${ezy.version}</version>
+    </dependency>
+  </dependencies>
+
+  <modelVersion>4.0.0</modelVersion>
+  <name>Server-common</name>
+  <parent>
+    <artifactId>Server</artifactId>
+    <groupId>com.survival2d</groupId>
+    <version>SNAPSHOT</version>
+  </parent>
+
+  <url>https://youngmonkeys.org/</url>
+
+</project>
