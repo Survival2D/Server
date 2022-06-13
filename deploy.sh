@@ -1,5 +1,5 @@
-projectName=Server
-version=SNAPSHOT
+projectName=server
+version=1.0-SNAPSHOT
 # ezyfoxServerLocal=
 # ezyfoxServerRemote=
 # sshCredential=

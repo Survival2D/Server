@@ -8,5 +8,5 @@ import lombok.Data;
 @AllArgsConstructor
 @EzyObjectBinding
 public class GoResponse {
-  private String message;
+    private String message;
 }

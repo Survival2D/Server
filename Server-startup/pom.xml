@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>Server-startup</artifactId>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <dependencies>
-    <dependency>
-      <artifactId>Server-app-api</artifactId>
-      <groupId>com.survival2d</groupId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>Server-app-entry</artifactId>
-      <groupId>com.survival2d</groupId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>Server-plugin</artifactId>
-      <groupId>com.survival2d</groupId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>ezyfox-server-embedded</artifactId>
-      <groupId>com.tvd12</groupId>
-      <version>${ezy.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>ezyfox-server-java-client</artifactId>
-      <groupId>com.tvd12</groupId>
-      <scope>test</scope>
-      <version>${ezy.client.version}</version>
-    </dependency>
-  </dependencies>
+    <parent>
+        <groupId>com.survival2d</groupId>
+        <artifactId>server</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <name>Server-startup</name>
-  <parent>
-    <artifactId>Server</artifactId>
-    <groupId>com.survival2d</groupId>
-    <version>SNAPSHOT</version>
-  </parent>
+    <artifactId>server-startup</artifactId>
+    <name>server-startup</name>
+    <url>https://youngmonkeys.org/</url>
 
-  <url>https://youngmonkeys.org/</url>
+    <dependencies>
+        <dependency>
+            <groupId>com.survival2d</groupId>
+            <artifactId>server-app-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.survival2d</groupId>
+            <artifactId>server-app-entry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.survival2d</groupId>
+            <artifactId>server-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tvd12</groupId>
+            <artifactId>ezyfox-server-embedded</artifactId>
+            <version>${ezy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tvd12</groupId>
+            <artifactId>ezyfox-server-java-client</artifactId>
+            <version>${ezy.client.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

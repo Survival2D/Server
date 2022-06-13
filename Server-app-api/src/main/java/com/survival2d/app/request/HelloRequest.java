@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @EzyObjectBinding
 public class HelloRequest {
-  private String nickName;
+    private String nickName;
 }

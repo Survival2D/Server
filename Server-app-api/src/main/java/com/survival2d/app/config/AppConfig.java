@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @EzyPropertiesBean(prefix = "application")
 public class AppConfig {
-  private String helloPrefix;
-  private String goPrefix;
+    private String helloPrefix;
+    private String goPrefix;
 }
+

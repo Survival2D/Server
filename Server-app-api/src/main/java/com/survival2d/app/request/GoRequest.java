@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @EzyObjectBinding
 public class GoRequest {
-  private String nickName;
+    private String nickName;
 }

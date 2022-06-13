@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @EzyPropertiesBean(prefix = "application")
 public class PluginConfig {
-  private String welcomePrefix;
+    private String welcomePrefix;
 }

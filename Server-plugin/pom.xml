@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>Server-plugin</artifactId>
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <dependencies>
-    <dependency>
-      <artifactId>Server-common</artifactId>
-      <groupId>com.survival2d</groupId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+    <parent>
+        <groupId>com.survival2d</groupId>
+        <artifactId>server</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <name>Server-plugin</name>
-  <parent>
-    <artifactId>Server</artifactId>
-    <groupId>com.survival2d</groupId>
-    <version>SNAPSHOT</version>
-  </parent>
+    <artifactId>server-plugin</artifactId>
+    <name>server-plugin</name>
+    <url>https://youngmonkeys.org/</url>
 
-  <url>https://youngmonkeys.org/</url>
+    <dependencies>
+        <dependency>
+            <groupId>com.survival2d</groupId>
+            <artifactId>server-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

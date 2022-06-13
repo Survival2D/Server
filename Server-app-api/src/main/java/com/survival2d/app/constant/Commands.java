@@ -2,8 +2,8 @@ package com.survival2d.app.constant;
 
 public final class Commands {
 
-  public static final String HELLO = "hello";
-  public static final String GO = "go";
+    public static final String HELLO = "hello";
+    public static final String GO = "go";
 
-  private Commands() {}
+    private Commands() {}
 }

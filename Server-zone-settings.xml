@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://www.tvd12.com/schema/ezyfox/settings"
-  xsi:schemaLocation="http://www.tvd12.com/schema/ezyfox/settings
-  		ezy-zone-settings-1.0.0.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.tvd12.com/schema/ezyfox/settings
+  		ezy-zone-settings-1.0.0.xsd"
+        xmlns="http://www.tvd12.com/schema/ezyfox/settings">
 
-  <applications>
-    <application>
-      <config-file>config/config.properties</config-file>
-      <entry-loader>com.survival2d.app.AppEntryLoader</entry-loader>
-      <folder>Server-app-entry</folder>
-      <name>Server</name>
-    </application>
-  </applications>
+    <max-users>10000</max-users>
 
-  <max-users>10000</max-users>
+    <streaming>
+        <enable>true</enable>
+    </streaming>
 
-  <plugins>
-    <plugin>
-      <config-file>config/config.properties</config-file>
-      <entry-loader>com.survival2d.plugin.PluginEntryLoader</entry-loader>
-      <folder>Server-plugin</folder>
-      <listen-events>
-        <event>USER_LOGIN</event>
-        <event>USER_ADDED</event>
-        <event>USER_REMOVED</event>
-      </listen-events>
-      <name>Server</name>
-      <priority>-1</priority>
-    </plugin>
-  </plugins>
+    <user-management>
+        <allow-guest-login>true</allow-guest-login>
+        <guest-name-prefix>Guest#</guest-name-prefix>
+        <user-max-idle-time>15</user-max-idle-time>
+        <max-session-per-user>15</max-session-per-user>
+        <user-name-pattern>^[a-zA-Z0-9_.#]{3,64}$</user-name-pattern>
+    </user-management>
 
-  <streaming>
-    <enable>true</enable>
-  </streaming>
+    <applications>
+        <application>
+            <name>server</name>
+            <folder>server-app-entry</folder>
+            <entry-loader>com.survival2d.app.AppEntryLoader</entry-loader>
+            <config-file>config/config.properties</config-file>
+        </application>
+    </applications>
 
-  <user-management>
-    <allow-guest-login>true</allow-guest-login>
-    <guest-name-prefix>Guest#</guest-name-prefix>
-    <max-session-per-user>15</max-session-per-user>
-    <user-max-idle-time>15</user-max-idle-time>
-    <user-name-pattern>^[a-zA-Z0-9_.#]{3,64}$</user-name-pattern>
-  </user-management>
+    <plugins>
+        <plugin>
+            <name>server</name>
+            <folder>server-plugin</folder>
+            <priority>-1</priority>
+            <entry-loader>com.survival2d.plugin.PluginEntryLoader</entry-loader>
+            <config-file>config/config.properties</config-file>
+            <listen-events>
+                <event>USER_LOGIN</event>
+                <event>USER_ADDED</event>
+                <event>USER_REMOVED</event>
+            </listen-events>
+        </plugin>
+    </plugins>
 </settings>
