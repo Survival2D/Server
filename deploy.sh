@@ -1,4 +1,4 @@
-projectName=server
+projectName=survival2d
 version=1.0-SNAPSHOT
 # ezyfoxServerLocal=
 # ezyfoxServerRemote=

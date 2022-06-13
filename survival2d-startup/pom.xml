@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>survival2d-startup</artifactId>
+
+  <dependencies>
+    <dependency>
+      <artifactId>survival2d-app-api</artifactId>
+      <groupId>com.survival2d</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>survival2d-app-entry</artifactId>
+      <groupId>com.survival2d</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>survival2d-plugin</artifactId>
+      <groupId>com.survival2d</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>ezyfox-server-embedded</artifactId>
+      <groupId>com.tvd12</groupId>
+      <version>${ezy.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>ezyfox-server-java-client</artifactId>
+      <groupId>com.tvd12</groupId>
+      <scope>test</scope>
+      <version>${ezy.client.version}</version>
+    </dependency>
+  </dependencies>
+
+  <modelVersion>4.0.0</modelVersion>
+  <name>survival2d-startup</name>
+  <parent>
+    <artifactId>survival2d</artifactId>
+    <groupId>com.survival2d</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <url>https://youngmonkeys.org/</url>
+</project>
