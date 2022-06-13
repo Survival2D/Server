@@ -20,20 +20,20 @@ public class PluginEntry extends EzyDefaultPluginEntry {
     logger.info("\n=================== survival2d PLUGIN END CONFIG ================\n");
   }
 
-  @Override
-  protected void setupBeanContext(EzyPluginContext context, EzyBeanContextBuilder builder) {
-    EzyPluginSetting setting = context.getPlugin().getSetting();
-    builder.addProperties("survival2d-common-config.properties");
-    builder.addProperties(getConfigFile(setting));
-
-    Properties properties = builder.getProperties();
-    EzyZoneContext zoneContext = context.getParent();
-    zoneContext.setProperty(CommonConstants.PLUGIN_PROPERTIES, properties);
-  }
-
-  protected String getConfigFile(EzyPluginSetting setting) {
-    return setting.getConfigFile();
-  }
+//  @Override
+//  protected void setupBeanContext(EzyPluginContext context, EzyBeanContextBuilder builder) {
+//    EzyPluginSetting setting = context.getPlugin().getSetting();
+//    builder.addProperties("survival2d-common-config.properties");
+//    builder.addProperties(getConfigFile(setting));
+//
+//    Properties properties = builder.getProperties();
+//    EzyZoneContext zoneContext = context.getParent();
+//    zoneContext.setProperty(CommonConstants.PLUGIN_PROPERTIES, properties);
+//  }
+//
+//  protected String getConfigFile(EzyPluginSetting setting) {
+//    return setting.getConfigFile();
+//  }
 
   @Override
   protected String[] getScanablePackages() {

@@ -22,11 +22,11 @@ public class AppEntry extends EzyDefaultAppEntry {
 
   @Override
   protected void setupBeanContext(EzyAppContext context, EzyBeanContextBuilder builder) {
-    EzyZoneContext zoneContext = context.getParent();
-    Properties pluginProperties = zoneContext.getProperty(CommonConstants.PLUGIN_PROPERTIES);
+//    EzyZoneContext zoneContext = context.getParent();
+//    Properties pluginProperties = zoneContext.getProperty(CommonConstants.PLUGIN_PROPERTIES);
     EzyAppSetting setting = context.getApp().getSetting();
-    builder.addProperties("survival2d-common-config.properties");
-    builder.addProperties(pluginProperties);
+//    builder.addProperties("survival2d-common-config.properties");
+//    builder.addProperties(pluginProperties);
     builder.addProperties(getConfigFile(setting));
   }
 

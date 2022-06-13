@@ -12,8 +12,11 @@ import com.tvd12.ezyfoxserver.setting.EzyAppSetting;
 import com.tvd12.ezyfoxserver.setting.EzyAppSettingBuilder;
 import com.tvd12.ezyfoxserver.setting.EzyPluginSetting;
 import com.tvd12.ezyfoxserver.setting.EzyPluginSettingBuilder;
+import com.tvd12.ezyfoxserver.setting.EzySessionManagementSettingBuilder;
 import com.tvd12.ezyfoxserver.setting.EzySettingsBuilder;
 import com.tvd12.ezyfoxserver.setting.EzySimpleSettings;
+import com.tvd12.ezyfoxserver.setting.EzyUdpSettingBuilder;
+import com.tvd12.ezyfoxserver.setting.EzyWebSocketSettingBuilder;
 import com.tvd12.ezyfoxserver.setting.EzyZoneSettingBuilder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,7 +32,7 @@ public class ApplicationStartup {
         new EzyPluginSettingBuilder()
             .name(ZONE_APP_NAME)
             .addListenEvent(EzyEventType.USER_LOGIN)
-            .entryLoader(DecoratedPluginEntryLoader.class);
+            .entryLoader(PluginEntryLoader.class);
 
     EzyAppSettingBuilder appSettingBuilder =
         new EzyAppSettingBuilder().name(ZONE_APP_NAME).entryLoader(DecoratedAppEntryLoader.class);
@@ -40,33 +43,51 @@ public class ApplicationStartup {
             .application(appSettingBuilder.build())
             .plugin(pluginSettingBuilder.build());
 
-    EzySimpleSettings settings = new EzySettingsBuilder().zone(zoneSettingBuilder.build()).build();
+    EzyWebSocketSettingBuilder webSocketSettingBuilder =
+        new EzyWebSocketSettingBuilder().active(true);
+
+    EzyUdpSettingBuilder udpSettingBuilder = new EzyUdpSettingBuilder().active(true);
+
+    EzySessionManagementSettingBuilder sessionManagementSettingBuilder =
+        new EzySessionManagementSettingBuilder()
+            .sessionMaxRequestPerSecond(
+                new EzySessionManagementSettingBuilder.EzyMaxRequestPerSecondBuilder()
+                    .value(250)
+                    .build());
+
+    EzySimpleSettings settings =
+        new EzySettingsBuilder()
+            .zone(zoneSettingBuilder.build())
+            .websocket(webSocketSettingBuilder.build())
+            .udp(udpSettingBuilder.build())
+            .sessionManagement(sessionManagementSettingBuilder.build())
+            .build();
 
     EzyEmbeddedServer server = EzyEmbeddedServer.builder().settings(settings).build();
     server.start();
   }
 
-  public static class DecoratedPluginEntryLoader extends PluginEntryLoader {
-
-    @Override
-    public EzyPluginEntry load() throws Exception {
-      return new PluginEntry() {
-
-        @Override
-        protected String getConfigFile(EzyPluginSetting setting) {
-          return Paths.get(getPluginPath(setting), "config", "config.properties").toString();
-        }
-
-        private String getPluginPath(EzyPluginSetting setting) {
-          Path pluginPath = Paths.get("survival2d-plugin");
-          if (!Files.exists(pluginPath)) {
-            pluginPath = Paths.get("../survival2d-plugin");
-          }
-          return pluginPath.toString();
-        }
-      };
-    }
-  }
+//  public static class DecoratedPluginEntryLoader extends PluginEntryLoader {
+//
+//    @Override
+//    public EzyPluginEntry load() throws Exception {
+//      return new PluginEntry() {
+//
+//        @Override
+//        protected String getConfigFile(EzyPluginSetting setting) {
+//          return Paths.get(getPluginPath(setting), "config", "config.properties").toString();
+//        }
+//
+//        private String getPluginPath(EzyPluginSetting setting) {
+//          Path pluginPath = Paths.get("survival2d-plugin");
+//          if (!Files.exists(pluginPath)) {
+//            pluginPath = Paths.get("../survival2d-plugin");
+//          }
+//          return pluginPath.toString();
+//        }
+//      };
+//    }
+//  }
 
   public static class DecoratedAppEntryLoader extends AppEntryLoader {
 
