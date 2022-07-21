@@ -1,4 +1,0 @@
-resources:
-  enable: true
-  locations:
-    - client-phaser

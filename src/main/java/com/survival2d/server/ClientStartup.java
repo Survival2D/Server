@@ -5,9 +5,9 @@ import com.tvd12.ezyhttp.server.core.asm.ExceptionHandlerImplementer;
 import com.tvd12.ezyhttp.server.core.asm.RequestHandlerImplementer;
 
 public class ClientStartup {
-    public static void main(String[] args) throws Exception {
-        RequestHandlerImplementer.setDebug(true);
-        ExceptionHandlerImplementer.setDebug(true);
-        EzyHttpApplicationBootstrap.start(ClientStartup.class);
-    }
+  public static void main(String[] args) throws Exception {
+    RequestHandlerImplementer.setDebug(true);
+    ExceptionHandlerImplementer.setDebug(true);
+    EzyHttpApplicationBootstrap.start(ClientStartup.class);
+  }
 }

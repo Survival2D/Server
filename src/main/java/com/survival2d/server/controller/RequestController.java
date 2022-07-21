@@ -14,24 +14,24 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @EzyRequestController
 public class RequestController extends EzyLoggable {
-	private final WheelService wheelService;
-	private final EzyResponseFactory responseFactory;
-	
-	@EzyAutoBind
-	private PrizeService prizeService;
-	
-	@EzyDoHandle("spin")
-	public void spin(EzySession session, EzyUser user) {
-		int result = wheelService.spin();
-		
-		prizeService.createPrize(user.getName(), result);
-		
-		wheelService.decreaseQuantity(result);
-		
-		responseFactory.newObjectResponse()
-				.command("spin")
-				.param("result", result)
-				.session(session)
-				.execute();
-	}
+  private final WheelService wheelService;
+  private final EzyResponseFactory responseFactory;
+
+  @EzyAutoBind private PrizeService prizeService;
+
+  @EzyDoHandle("spin")
+  public void spin(EzySession session, EzyUser user) {
+    int result = wheelService.spin();
+
+    prizeService.createPrize(user.getName(), result);
+
+    wheelService.decreaseQuantity(result);
+
+    responseFactory
+        .newObjectResponse()
+        .command("spin")
+        .param("result", result)
+        .session(session)
+        .execute();
+  }
 }

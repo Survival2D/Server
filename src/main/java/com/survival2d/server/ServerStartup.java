@@ -13,52 +13,46 @@ import com.tvd12.ezyfoxserver.setting.EzySimpleSettings;
 import com.tvd12.ezyfoxserver.setting.EzyZoneSettingBuilder;
 import com.tvd12.ezyfoxserver.support.entry.EzyDefaultPluginEntry;
 
-@EzyPropertiesSources({"lucky-wheel.properties"})
+@EzyPropertiesSources({"server.properties"})
 public class ServerStartup {
 
-    private static final String ZONE_NAME = "survival2d";
-    private static final String PLUGIN_NAME = "survival2d";
+  private static final String ZONE_NAME = "survival2d";
+  private static final String PLUGIN_NAME = "survival2d";
 
-    public static void main(String[] args) throws Exception {
-        EzyPluginSettingBuilder pluginSettingBuilder = new EzyPluginSettingBuilder()
+  public static void main(String[] args) throws Exception {
+    EzyPluginSettingBuilder pluginSettingBuilder =
+        new EzyPluginSettingBuilder()
             .name(PLUGIN_NAME)
             .addListenEvent(EzyEventType.USER_LOGIN)
             .entryLoader(PluginEntryLoader.class);
 
-        EzyZoneSettingBuilder zoneSettingBuilder = new EzyZoneSettingBuilder()
-            .name(ZONE_NAME)
-            .plugin(pluginSettingBuilder.build());
+    EzyZoneSettingBuilder zoneSettingBuilder =
+        new EzyZoneSettingBuilder().name(ZONE_NAME).plugin(pluginSettingBuilder.build());
 
-        EzySimpleSettings settings = new EzySettingsBuilder()
-            .zone(zoneSettingBuilder.build())
-            .build();
+    EzySimpleSettings settings = new EzySettingsBuilder().zone(zoneSettingBuilder.build()).build();
 
-        EzyEmbeddedServer server = EzyEmbeddedServer.builder()
-            .settings(settings)
-            .build();
-        server.start();
+    EzyEmbeddedServer server = EzyEmbeddedServer.builder().settings(settings).build();
+    server.start();
+  }
+
+  public static class PluginEntryLoader extends EzyAbstractPluginEntryLoader {
+    @Override
+    public EzyPluginEntry load() throws Exception {
+      return new PluginEntry();
+    }
+  }
+
+  public static class PluginEntry extends EzyDefaultPluginEntry {
+
+    @Override
+    protected String[] getScanableBeanPackages() {
+      return new String[] {"com.survival2d.server"};
     }
 
-    public static class PluginEntryLoader extends EzyAbstractPluginEntryLoader {
-        @Override
-        public EzyPluginEntry load() throws Exception {
-            return new PluginEntry();
-        }
+    // this function will be removed when lucky-wheel update ezyfox-server to 1.2.0
+    @Override
+    protected void setupBeanContext(EzyPluginContext context, EzyBeanContextBuilder builder) {
+      builder.scan(getScanableBeanPackages());
     }
-
-    public static class PluginEntry extends EzyDefaultPluginEntry {
-
-        @Override
-        protected String[] getScanableBeanPackages() {
-            return new String[] {
-                "com.survival2d.server"
-            };
-        }
-
-        // this function will be removed when lucky-wheel update ezyfox-server to 1.2.0
-        @Override
-        protected void setupBeanContext(EzyPluginContext context, EzyBeanContextBuilder builder) {
-            builder.scan(getScanableBeanPackages());
-        }
-    }
+  }
 }

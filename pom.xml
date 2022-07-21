@@ -1,83 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <groupId>com.survival2d</groupId>
   <artifactId>server</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-
-      <ezy.version>1.2.3</ezy.version>
-      <ezy.boot.version>1.0.5</ezy.boot.version>
-      <ezy.http.version>1.0.4</ezy.http.version>
-
-  </properties>
 
   <dependencies>
     <dependency>
-      <groupId>com.tvd12</groupId>
       <artifactId>ezyfox-server-embedded</artifactId>
+      <groupId>com.tvd12</groupId>
       <version>${ezy.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.tvd12</groupId>
       <artifactId>ezyhttp-server-boot</artifactId>
+      <groupId>com.tvd12</groupId>
       <version>${ezy.http.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.tvd12</groupId>
       <artifactId>ezydata-mongodb</artifactId>
+      <groupId>com.tvd12</groupId>
       <version>${ezy.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.tvd12</groupId>
       <artifactId>ezyfox-boot-autoconfigure</artifactId>
+      <groupId>com.tvd12</groupId>
       <version>${ezy.boot.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
+      <groupId>org.projectlombok</groupId>
       <version>1.18.24</version>
     </dependency>
   </dependencies>
-  <profiles>
-    <profile>
-      <id>export</id>
-      <build>
-        <resources>
-          <resource>
-            <directory>src/main/resources</directory>
-            <excludes>
-              <exclude>application.yaml</exclude>
-              <exclude>logback.xml</exclude>
-            </excludes>
-          </resource>
-        </resources>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>install</phase>
-                <configuration>
-                  <tasks>
-                    <ant antfile="${project.basedir}/build.xml"/>
-                  </tasks>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+  <groupId>com.survival2d</groupId>
+  <modelVersion>4.0.0</modelVersion>
+
+  <properties>
+    <ezy.boot.version>1.0.5</ezy.boot.version>
+    <ezy.http.version>1.0.4</ezy.http.version>
+
+    <ezy.version>1.2.3</ezy.version>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+
+  </properties>
+
+  <version>1.0-SNAPSHOT</version>
 </project>
