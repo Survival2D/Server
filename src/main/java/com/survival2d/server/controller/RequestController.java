@@ -1,7 +1,9 @@
 package com.survival2d.server.controller;
 
+import com.survival2d.server.request.TestRequest;
 import com.survival2d.server.service.PrizeService;
 import com.survival2d.server.service.WheelService;
+import com.survival2d.server.util.GameUtil;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.core.annotation.EzyDoHandle;
 import com.tvd12.ezyfox.core.annotation.EzyRequestController;
@@ -33,5 +35,10 @@ public class RequestController extends EzyLoggable {
         .param("result", result)
         .session(session)
         .execute();
+  }
+
+  @EzyDoHandle("test")
+  public void test(TestRequest request, EzyUser user) {
+    logger.info("user {}, request: arr {}, obj {}", user.getName(), GameUtil.toGson(request.getArr()), GameUtil.toGson(request.getObj()));
   }
 }
