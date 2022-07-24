@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @EzyObjectBinding
 public class PlayerHitDataRequest {
-	int m;
-	int o;
-	String v;
-	float[] p;
+  int m;
+  int o;
+  String v;
+  float[] p;
 }

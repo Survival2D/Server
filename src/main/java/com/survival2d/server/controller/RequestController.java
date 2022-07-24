@@ -37,8 +37,13 @@ public class RequestController extends EzyLoggable {
         .execute();
   }
 
-  @EzyDoHandle("test")
-  public void test(TestRequest request, EzyUser user) {
-    logger.info("user {}, request: arr {}, obj {}", user.getName(), GameUtil.toGson(request.getArr()), GameUtil.toGson(request.getObj()));
-  }
+//  @EzyDoHandle("test")
+//  public void test(TestRequest request, EzyUser user) {
+//    logger.info(
+//        "user {}, request: arr {}, obj {}",
+//        user.getName(),
+//        GameUtil.toGson(request.getArr()),
+//        GameUtil.toGson(request.getObj()));
+//    responseFactory.newObjectResponse().execute();
+//  }
 }

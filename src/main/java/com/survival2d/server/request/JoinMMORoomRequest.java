@@ -7,6 +7,5 @@ import lombok.Data;
 @EzyObjectBinding
 public class JoinMMORoomRequest {
 
-	private int roomId;
-	
+  private int roomId;
 }
