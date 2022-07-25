@@ -1,42 +1,56 @@
 <configuration>
   <appender class="ch.qos.logback.core.ConsoleAppender" name="console">
     <encoder>
-      <pattern>
-        %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} %msg%n
-      </pattern>
+      <pattern>%d [%t] %-5level %logger{36} %msg%n</pattern>
     </encoder>
   </appender>
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="file">
+    <encoder>
+      <pattern>%d [%t] %-5level %logger{36} %msg%n</pattern>
+    </encoder>
+    <file>log/file.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>log/file/file.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>1GB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="info">
+    <encoder>
+      <pattern>%d [%t] %-5level %logger{36} %msg%n</pattern>
+    </encoder>
+    <file>log/info.log</file>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>log/info/info.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>1GB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="debug">
+    <encoder>
+      <pattern>%d [%t] %-5level %logger{36} %msg%n</pattern>
+    </encoder>
+    <file>log/debug.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>log/debug/debug.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>1GB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
 
-  <root level="info">
+  <logger level="info" name="com.survival2d.server">
     <appender-ref ref="console"/>
+    <appender-ref ref="file"/>
+  </logger>
+
+  <root>
+    <appender-ref ref="info"/>
+    <appender-ref ref="debug"/>
   </root>
 </configuration>
-<!--<Configuration debug="false">-->
-<!--<Appenders>-->
-<!--  <Console name="CONSOLE" target="SYSTEM_OUT">-->
-<!--    <PatternLayout pattern="%d %-5p [%t] %c - %m%n"/>-->
-<!--  </Console>-->
-<!--  <RollingFile-->
-<!--    fileName="log/log.log"-->
-<!--    filePattern="log/log.%d{dd-MMM}.log"-->
-<!--    ignoreExceptions="false"-->
-<!--    name="ROLLING_FILE">-->
-<!--    <DefaultRolloverStrategy max="5"/>-->
-<!--    <PatternLayout>-->
-<!--      <Pattern>%d %-5p [%t] %c - %m%n</Pattern>-->
-<!--    </PatternLayout>-->
-<!--    <Policies>-->
-<!--      <TimeBasedTriggeringPolicy interval="1"/>-->
-<!--    </Policies>-->
-<!--  </RollingFile>-->
-<!--  <Async name="ASYNC">-->
-<!--    <AppenderRef ref="ROLLING_FILE"/>-->
-<!--    <AppenderRef ref="CONSOLE"/>-->
-<!--  </Async>-->
-<!--</Appenders>-->
-<!--<Loggers>-->
-<!--  <Root level="debug">-->
-<!--    <AppenderRef ref="ASYNC"/>-->
-<!--  </Root>-->
-<!--</Loggers>-->
-<!--</Configuration>-->
