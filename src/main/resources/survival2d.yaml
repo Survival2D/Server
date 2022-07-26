@@ -6,3 +6,5 @@ database:
       naming:
         case: UNDERSCORE
         ignored_suffix: Entity
+server:
+  enableAuth: false
