@@ -1,6 +1,8 @@
 package com.survival2d.server.constant;
 
 public final class Commands {
+  public static final String MOVE = "move";
+  /*** Old Commands ***/
 
   public static final String JOIN_LOBBY = "joinLobby";
   public static final String ANOTHER_EXIT_MMO_ROOM = "anotherExitMMORoom";

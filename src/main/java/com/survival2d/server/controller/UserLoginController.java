@@ -15,6 +15,7 @@ import com.tvd12.ezyfoxserver.context.EzyPluginContext;
 import com.tvd12.ezyfoxserver.controller.EzyAbstractPluginEventController;
 import com.tvd12.ezyfoxserver.event.EzyUserLoginEvent;
 import com.tvd12.ezyfoxserver.exception.EzyLoginErrorException;
+import com.tvd12.test.util.RandomUtil;
 
 @EzySingleton
 @EzyEventHandler(USER_LOGIN)
@@ -24,39 +25,57 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
 
   @Override
   public void handle(EzyPluginContext ctx, EzyUserLoginEvent event) {
-    logger.info("{} login in", event.getUsername());
 
     String username = event.getUsername();
-    if (EzyStrings.isNoContent(username)) {
-      throw new EzyLoginErrorException(EzyLoginError.INVALID_USERNAME);
-    }
-
-    String password = event.getPassword();
-    if (LoginConfig.isEnableAuth && EzyStrings.isNoContent(password)) {
-      throw new EzyLoginErrorException(EzyLoginError.INVALID_PASSWORD);
-    }
-
-    String encodedPassword = encodePassword(password);
-    User user = userService.getUser(username);
-    if (user == null) {
-      logger.info("User doesn't exist in db, create a new one!");
-      user = userService.createUser(username, encodedPassword);
-      userService.saveUser(user);
-      return;
-    }
+    logger.info("{} login in", username);
 
     if (LoginConfig.isEnableAuth) {
-      if (!user.getPassword().equals(encodedPassword)) {
-        throw new EzyLoginErrorException(EzyLoginError.INVALID_PASSWORD);
-      }
-      logger.info("user and password match, accept user: {}", username);
-      return;
+      String password = event.getPassword();
+      loginWithAuth(username, password);
+    } else {
+      loginWithoutAuth(username);
     }
-
-    logger.info("Server not enable authentication, login directly");
   }
 
   private String encodePassword(String password) {
     return EzySHA256.cryptUtfToLowercase(password);
+  }
+
+  private void loginWithAuth(String username, String password) {
+    if (EzyStrings.isNoContent(username)) {
+      throw new EzyLoginErrorException(EzyLoginError.INVALID_USERNAME);
+    }
+    if (LoginConfig.isEnableAuth && EzyStrings.isNoContent(password)) {
+      throw new EzyLoginErrorException(EzyLoginError.INVALID_PASSWORD);
+    }
+    User user = userService.getUser(username);
+    String encodedPassword = encodePassword(password);
+    if (user == null) {
+      createUser(username, encodedPassword);
+      return;
+    }
+    if (!user.getPassword().equals(encodedPassword)) {
+      logger.info("User {} login with wrong password", username);
+      throw new EzyLoginErrorException(EzyLoginError.INVALID_PASSWORD);
+    }
+    logger.info("User {} login with right password", username);
+  }
+
+  private void loginWithoutAuth(String username) {
+    if (EzyStrings.isNoContent(username)) {
+      username = RandomUtil.randomShortAlphabetString();
+    }
+    User user = userService.getUser(username);
+    if (user == null) {
+      createUser(username, encodePassword(""));
+      return;
+    }
+    logger.info("Server not enable authentication, user {} login directly", username);
+  }
+
+  private void createUser(String username, String encodedPassword) {
+    logger.info("User {} doesn't exist in db, create a new one!", username);
+    User user = userService.createUser(username, encodedPassword);
+    userService.saveUser(user);
   }
 }
