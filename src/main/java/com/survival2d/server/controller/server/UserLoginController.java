@@ -1,4 +1,4 @@
-package com.survival2d.server.controller;
+package com.survival2d.server.controller.server;
 
 import static com.tvd12.ezyfoxserver.constant.EzyEventNames.USER_LOGIN;
 

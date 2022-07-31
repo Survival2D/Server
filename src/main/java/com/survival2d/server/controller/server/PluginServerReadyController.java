@@ -1,4 +1,4 @@
-package com.survival2d.server.controller;
+package com.survival2d.server.controller.server;
 
 import com.tvd12.ezyfox.core.annotation.EzyEventHandler;
 import com.tvd12.ezyfoxserver.constant.EzyEventNames;

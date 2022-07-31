@@ -1,4 +1,4 @@
-package com.survival2d.server.controller;
+package com.survival2d.server.controller.client;
 
 import com.survival2d.server.request.TestRequest;
 import com.survival2d.server.util.GameUtil;

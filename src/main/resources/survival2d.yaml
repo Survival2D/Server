@@ -8,3 +8,7 @@ database:
         ignored_suffix: Entity
 server:
   enableAuth: false
+game:
+  room:
+    max_players: 4
+    distance_of_interest: 1000
