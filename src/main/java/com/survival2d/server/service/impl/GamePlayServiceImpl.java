@@ -1,5 +1,7 @@
 package com.survival2d.server.service.impl;
 
+import static com.survival2d.server.game.PlayerLogic.velocity;
+
 import com.survival2d.server.game.PlayerLogic;
 import com.survival2d.server.game.constant.GameConstants;
 import com.survival2d.server.game.shared.PlayerHitData;
@@ -13,6 +15,7 @@ import com.tvd12.ezyfox.util.EzyLoggable;
 import com.tvd12.gamebox.entity.MMOPlayer;
 import com.tvd12.gamebox.entity.Player;
 import com.tvd12.gamebox.manager.PlayerManager;
+import com.tvd12.gamebox.math.Vec2;
 import com.tvd12.gamebox.math.Vec3;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +26,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import lombok.Setter;
+import lombok.val;
 
 @Setter
 @EzySingleton
@@ -139,5 +143,19 @@ public class GamePlayServiceImpl extends EzyLoggable implements GamePlayService 
             globalPlayersPositionHistory.get(playerName).clear();
           }
         });
+  }
+
+  @Override
+  public Vec3 playerMove(String name, Vec2 direction) {
+    val player = roomService.getPlayer(name);
+    direction.multiply(1 / direction.length()); //Convert to unit vector
+    synchronized (player) {
+      Vec3 currentPosition = player.getPosition();
+      Vec3 nextPosition = new Vec3(currentPosition.x + direction.x * velocity,
+          currentPosition.y + direction.y * velocity, currentPosition.z);
+      logger.info("next position = {}", nextPosition);
+      player.setPosition(nextPosition);
+      return nextPosition;
+    }
   }
 }

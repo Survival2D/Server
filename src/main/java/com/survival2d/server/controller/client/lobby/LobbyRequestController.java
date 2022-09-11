@@ -3,6 +3,11 @@ package com.survival2d.server.controller.client.lobby;
 import com.survival2d.server.constant.Commands;
 import com.survival2d.server.exception.JoinNotWaitingRoomException;
 import com.survival2d.server.request.JoinMMORoomRequest;
+import com.survival2d.server.response.AnotherJoinMMOResponse;
+import com.survival2d.server.response.CreateMMORoomResponse;
+import com.survival2d.server.response.GetMMORoomIdListResponse;
+import com.survival2d.server.response.JoinLobbyResponse;
+import com.survival2d.server.response.JoinMMORoomResponse;
 import com.survival2d.server.service.LobbyService;
 import com.survival2d.server.service.RoomService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
@@ -15,6 +20,7 @@ import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import com.tvd12.gamebox.constant.RoomStatus;
 import com.tvd12.gamebox.entity.MMORoom;
 import java.util.List;
+import lombok.val;
 
 @EzyRequestController
 public class LobbyRequestController extends EzyLoggable {
@@ -30,12 +36,8 @@ public class LobbyRequestController extends EzyLoggable {
 
     lobbyService.addNewPlayer(user.getName());
     long lobbyRoomId = lobbyService.getRoomId();
-
-    responseFactory
-        .newObjectResponse()
-        .command(Commands.JOIN_LOBBY)
-        .param("lobbyRoomId", lobbyRoomId)
-        .user(user)
+    val response = JoinLobbyResponse.builder().lobbyRoomId(lobbyRoomId).build();
+    responseFactory.newObjectResponse().command(Commands.JOIN_LOBBY).data(response).user(user)
         .execute();
   }
 
@@ -43,11 +45,11 @@ public class LobbyRequestController extends EzyLoggable {
   public void createMMORoom(EzyUser user) {
     logger.info("user {} create an MMO room", user);
     MMORoom room = roomService.newMMORoom(user);
-
+    val response = CreateMMORoomResponse.builder().roomId(room.getId()).build();
     responseFactory
         .newObjectResponse()
         .command(Commands.CREATE_MMO_ROOM)
-        .param("roomId", room.getId())
+        .data(response)
         .user(user)
         .execute();
   }
@@ -56,10 +58,12 @@ public class LobbyRequestController extends EzyLoggable {
   public void getMMORoomIdList(EzyUser user) {
     logger.info("user {} get MMO room list", user);
     List<Long> mmoRoomIdList = roomService.getMMORoomIdList();
+    val response = GetMMORoomIdListResponse.builder().roomIds(mmoRoomIdList).build();
+
     responseFactory
         .newArrayResponse()
         .command(Commands.GET_MMO_ROOM_ID_LIST)
-        .param(mmoRoomIdList)
+        .data(response)
         .user(user)
         .execute();
   }
@@ -77,14 +81,14 @@ public class LobbyRequestController extends EzyLoggable {
     responseFactory
         .newObjectResponse()
         .command(Commands.JOIN_MMO_ROOM)
-        .param("roomId", roomId)
+        .data(JoinMMORoomResponse.builder().roomId(roomId).build())
         .user(user)
         .execute();
 
     responseFactory
         .newObjectResponse()
         .command(Commands.ANOTHER_JOIN_MMO_ROOM)
-        .param("playerName", user.getName())
+        .data(AnotherJoinMMOResponse.builder().playerName(user.getName()).build())
         .usernames(EzyLists.filter(playerNames, it -> !it.equals(user.getName())))
         .execute();
   }

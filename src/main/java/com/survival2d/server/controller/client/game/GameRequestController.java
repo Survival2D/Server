@@ -3,9 +3,12 @@ package com.survival2d.server.controller.client.game;
 import com.survival2d.server.constant.Commands;
 import com.survival2d.server.game.shared.PlayerHitData;
 import com.survival2d.server.game.shared.PlayerInputData;
-import com.survival2d.server.game.shared.PlayerSpawnData;
 import com.survival2d.server.request.PlayerHitDataRequest;
 import com.survival2d.server.request.PlayerInputDataRequest;
+import com.survival2d.server.request.PlayerMoveRequest;
+import com.survival2d.server.response.GetMMORoomResponse;
+import com.survival2d.server.response.MoveResponse;
+import com.survival2d.server.response.StartGameResponse;
 import com.survival2d.server.service.GamePlayService;
 import com.survival2d.server.service.RoomService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
@@ -18,9 +21,11 @@ import com.tvd12.gamebox.constant.RoomStatus;
 import com.tvd12.gamebox.entity.MMOPlayer;
 import com.tvd12.gamebox.entity.MMORoom;
 import com.tvd12.gamebox.entity.Player;
+import com.tvd12.gamebox.math.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Setter;
+import lombok.val;
 
 @Setter
 @EzyRequestController
@@ -38,12 +43,12 @@ public class GameRequestController extends EzyLoggable {
     MMORoom currentRoom = (MMORoom) roomService.getCurrentRoom(user.getName());
     List<String> players = roomService.getRoomPlayerNames(currentRoom);
     Player master = roomService.getMaster(currentRoom);
+    val response = GetMMORoomResponse.builder().players(players).master(master.getName()).build();
 
     responseFactory
         .newObjectResponse()
         .command(Commands.GET_MMO_ROOM_PLAYERS)
-        .param("players", players)
-        .param("master", master.getName())
+        .data(response)
         .user(user)
         .execute();
   }
@@ -56,13 +61,22 @@ public class GameRequestController extends EzyLoggable {
     List<String> playerNames = roomService.getRoomPlayerNames(currentRoom);
     gamePlayService.resetPlayersPositionHistory(playerNames);
 
-    List<PlayerSpawnData> data = gamePlayService.spawnPlayers(playerNames);
-
     responseFactory
-        .newArrayResponse()
+        .newObjectResponse()
         .command(Commands.START_GAME)
-        .data(data)
+        .data(StartGameResponse.builder().data(gamePlayService.spawnPlayers(playerNames)).build())
         .usernames(playerNames)
+        .execute();
+  }
+
+  @EzyDoHandle(Commands.PLAYER_MOVE)
+  public void handlePlayerMove(EzyUser user, PlayerMoveRequest request) {
+    Vec3 position = gamePlayService.playerMove(user.getName(), request.getDirection());
+    responseFactory.newObjectResponse().command(Commands.PLAYER_MOVE)
+        .data(MoveResponse.builder()
+            .name(user.getName())
+            .position(position)
+            .build())
         .execute();
   }
 
