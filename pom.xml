@@ -7,32 +7,32 @@
     <dependency>
       <artifactId>ezyfox-server-embedded</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>${ezy.version}</version>
+      <version>1.2.4</version>
     </dependency>
     <dependency>
       <artifactId>ezyhttp-server-boot</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>${ezy.http.version}</version>
+      <version>1.0.5</version>
     </dependency>
     <dependency>
       <artifactId>ezydata-mongodb</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>${ezy.version}</version>
+      <version>1.2.4</version>
     </dependency>
     <dependency>
       <artifactId>ezyfox-boot-autoconfigure</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>${ezy.boot.version}</version>
+      <version>1.0.6</version>
     </dependency>
     <dependency>
       <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
-      <version>${lombok.version}</version>
+      <version>1.18.24</version>
     </dependency>
     <dependency>
       <artifactId>game-box</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>${game-box.version}</version>
+      <version>1.1.5</version>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -49,11 +49,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-    <ezy.boot.version>1.0.5</ezy.boot.version>
-    <ezy.http.version>1.0.4</ezy.http.version>
-    <ezy.version>1.2.3</ezy.version>
-    <game-box.version>1.1.4</game-box.version>
-    <lombok.version>1.18.24</lombok.version>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
   </properties>
