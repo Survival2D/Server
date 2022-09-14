@@ -1,13 +1,7 @@
 package com.survival2d.server.request;
 
-import com.survival2d.server.match.Vector;
-import com.survival2d.server.request.entity.Object;
-import com.survival2d.server.request.reader.TestRequestReader;
-import com.tvd12.ezyfox.binding.EzyUnmarshaller;
-import com.tvd12.ezyfox.binding.annotation.EzyArrayBinding;
-import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
-import com.tvd12.ezyfox.binding.annotation.EzyReader;
-import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
+import com.survival2d.server.game.entity.Vector;
+import com.survival2d.server.game.entity.Object;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;

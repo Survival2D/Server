@@ -9,11 +9,11 @@
       <groupId>com.tvd12</groupId>
       <version>1.2.4</version>
     </dependency>
-    <dependency>
-      <artifactId>ezyhttp-server-boot</artifactId>
-      <groupId>com.tvd12</groupId>
-      <version>1.0.5</version>
-    </dependency>
+    <!--    <dependency>-->
+    <!--      <artifactId>ezyhttp-server-boot</artifactId>-->
+    <!--      <groupId>com.tvd12</groupId>-->
+    <!--      <version>1.0.5</version>-->
+    <!--    </dependency>-->
     <dependency>
       <artifactId>ezydata-mongodb</artifactId>
       <groupId>com.tvd12</groupId>
@@ -30,19 +30,20 @@
       <version>1.18.24</version>
     </dependency>
     <dependency>
-      <artifactId>game-box</artifactId>
-      <groupId>com.tvd12</groupId>
-      <version>1.1.5</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.9.0</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
+    </dependency>
+    <!--TODO: gỡ bỏ game-box-->
+    <dependency>
       <groupId>com.tvd12</groupId>
-      <artifactId>test-util</artifactId>
-      <version>1.1.7</version>
+      <artifactId>game-box</artifactId>
+      <version>1.1.5</version>
     </dependency>
   </dependencies>
   <groupId>com.survival2d</groupId>
