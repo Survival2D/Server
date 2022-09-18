@@ -36,6 +36,10 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
       String password = event.getPassword();
       loginWithAuth(username, password);
     } else {
+      if (EzyStrings.isNoContent(username)) {
+        username = RandomStringUtils.randomAlphabetic(DEFAULT_RANDOM_USERNAME_LENGTH);
+      }
+      event.setUsername(username);
       loginWithoutAuth(username);
     }
   }
@@ -65,9 +69,6 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
   }
 
   private void loginWithoutAuth(String username) {
-    if (EzyStrings.isNoContent(username)) {
-      username = RandomStringUtils.randomAlphabetic(DEFAULT_RANDOM_USERNAME_LENGTH);
-    }
     User user = userService.getUser(username);
     if (user == null) {
       createUser(username, encodePassword(""));
