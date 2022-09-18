@@ -12,8 +12,10 @@ import lombok.val;
 @Slf4j
 @EzySingleton
 public class FindMatchServiceImpl implements FindMatchService {
+
   private final Set<Long> matchingTeams = new HashSet<>();
-  @EzyAutoBind MatchingService matchingService;
+  @EzyAutoBind
+  MatchingService matchingService;
 
   @Override
   @Synchronized
@@ -21,13 +23,15 @@ public class FindMatchServiceImpl implements FindMatchService {
     if (matchingTeams.contains(teamId)) {
       log.warn("Team {} is already in matchingTeams", teamId);
     }
-    if (matchingTeams.isEmpty()) {
+    matchingTeams.add(teamId);
+    if (matchingTeams.size() < 2) {
       return Optional.empty();
     }
     val optTeam = matchingTeams.stream().filter(id -> id != teamId).findFirst();
     if (!optTeam.isPresent()) {
       return Optional.empty();
     }
+    log.info("Match teams {} and {} together", teamId, optTeam.get());
     matchingTeams.remove(teamId);
     matchingTeams.remove(optTeam.get());
     val matchId = matchingService.newMatch();
