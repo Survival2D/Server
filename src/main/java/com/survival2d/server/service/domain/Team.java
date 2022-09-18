@@ -3,11 +3,11 @@ package com.survival2d.server.service.domain;
 import java.util.List;
 
 public interface Team {
-  public List<Long> getPlayers();
+  public List<String> getPlayers();
 
-  public void addPlayer(long playerId);
+  public void addPlayer(String username);
 
-  public boolean removePlayer(long playerId);
+  public boolean removePlayer(String username);
 
   //  public Optional<String> getCaptain();
 }

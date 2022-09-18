@@ -9,5 +9,5 @@ import lombok.Data;
 @EzyObjectBinding
 public class CreateTeamResponse {
 
-  int teamId;
+  long teamId;
 }

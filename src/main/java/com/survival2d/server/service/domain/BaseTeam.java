@@ -5,22 +5,26 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
-@Getter
 public abstract class BaseTeam implements Team {
-  private final long teamId;
-  private final List<Long> players = new ArrayList<>(GameConstant.TEAM_PLAYER);
+  @Getter private final long id;
+  private final List<String> playerUsernames = new ArrayList<>(GameConstant.TEAM_PLAYER);
 
   protected BaseTeam(long teamId) {
-    this.teamId = teamId;
+    id = teamId;
   }
 
   @Override
-  public void addPlayer(long playerId) {
-    players.add(playerId);
+  public void addPlayer(String username) {
+    playerUsernames.add(username);
   }
 
   @Override
-  public boolean removePlayer(long playerId) {
-    return players.remove(playerId);
+  public boolean removePlayer(String username) {
+    return playerUsernames.remove(username);
+  }
+
+  @Override
+  public List<String> getPlayers() {
+    return new ArrayList<>(playerUsernames);
   }
 }

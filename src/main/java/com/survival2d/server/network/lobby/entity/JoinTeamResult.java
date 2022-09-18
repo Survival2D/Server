@@ -2,5 +2,6 @@ package com.survival2d.server.network.lobby.entity;
 
 public enum JoinTeamResult {
   SUCCESS,
-  FAILURE,
+  TEAM_NOT_FOUND,
+  ERROR_WHEN_JOIN,
 }
