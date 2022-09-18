@@ -15,7 +15,7 @@ public class PlayerMoveRequest {
   Vec2 direction;
 
   @EzyReaderImpl
-  static class PlayerMoveRequestReader implements EzyReader<Object, PlayerMoveRequest> {
+  public static class PlayerMoveRequestReader implements EzyReader<Object, PlayerMoveRequest> {
 
     @Override
     public PlayerMoveRequest read(EzyUnmarshaller ezyUnmarshaller, Object o) {
