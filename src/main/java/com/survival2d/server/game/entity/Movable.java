@@ -1,5 +1,8 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.base.HasPosition;
+import com.survival2d.server.game.entity.math.Vector;
+
 public interface Movable extends HasPosition {
 
   // public void moveBy(double x, double y){

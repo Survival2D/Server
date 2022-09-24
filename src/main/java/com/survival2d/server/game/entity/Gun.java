@@ -1,5 +1,7 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.math.Vector;
+
 public class Gun extends Weapon {
 
   GunType type;

@@ -1,13 +1,14 @@
 package com.survival2d.server.service.domain;
 
 import com.survival2d.server.constant.GameConstant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 
 public abstract class BaseTeam implements Team {
   @Getter private final long id;
-  private final List<String> playerUsernames = new ArrayList<>(GameConstant.TEAM_PLAYER);
+  private final Set<String> playerUsernames = new HashSet<>(GameConstant.TEAM_PLAYER);
 
   protected BaseTeam(long teamId) {
     id = teamId;
@@ -24,7 +25,7 @@ public abstract class BaseTeam implements Team {
   }
 
   @Override
-  public List<String> getPlayers() {
-    return new ArrayList<>(playerUsernames);
+  public Collection<String> getPlayers() {
+    return new HashSet<>(playerUsernames);
   }
 }

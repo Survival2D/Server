@@ -1,9 +1,9 @@
 package com.survival2d.server.service.domain;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface Team {
-  public List<String> getPlayers();
+  public Collection<String> getPlayers();
 
   public void addPlayer(String username);
 

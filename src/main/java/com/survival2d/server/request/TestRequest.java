@@ -1,7 +1,6 @@
 package com.survival2d.server.request;
 
-import com.survival2d.server.game.entity.Vector;
-import com.survival2d.server.game.entity.Object;
+import com.survival2d.server.game.entity.math.Vector;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import lombok.Setter;
 public class TestRequest {
 
   List<Integer> arr;
-  Object obj;
+  TempObject obj;
 //@EzyReader(TestReader.class)
   List<Test> tests;
 
