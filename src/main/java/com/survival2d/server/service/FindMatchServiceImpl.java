@@ -1,5 +1,6 @@
 package com.survival2d.server.service;
 
+import com.google.common.collect.Lists;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ public class FindMatchServiceImpl implements FindMatchService {
     log.info("Match teams {} and {} together", teamId, optTeam.get());
     matchingTeams.remove(teamId);
     matchingTeams.remove(optTeam.get());
-    val matchId = matchingService.newMatch();
+    val matchId = matchingService.createMatch(Lists.newArrayList(teamId, optTeam.get()));
     return Optional.of(matchId);
   }
 

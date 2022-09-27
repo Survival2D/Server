@@ -35,15 +35,14 @@
       <version>2.9.0</version>
     </dependency>
     <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.1-jre</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.12.0</version>
-    </dependency>
-    <!--TODO: gỡ bỏ game-box-->
-    <dependency>
-      <groupId>com.tvd12</groupId>
-      <artifactId>game-box</artifactId>
-      <version>1.1.5</version>
     </dependency>
   </dependencies>
   <groupId>com.survival2d</groupId>

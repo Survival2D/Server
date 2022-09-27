@@ -1,5 +1,8 @@
 package com.survival2d.server.service;
 
+import java.util.List;
+
 public interface MatchingService {
-  long newMatch();
+
+  long createMatch(List<Long> teamIds);
 }

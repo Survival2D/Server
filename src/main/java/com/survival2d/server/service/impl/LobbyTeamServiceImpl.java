@@ -2,7 +2,6 @@ package com.survival2d.server.service.impl;
 
 import com.survival2d.server.service.LobbyTeamService;
 import com.survival2d.server.service.domain.LobbyTeam;
-import com.tvd12.ezyfox.annotation.EzyAutoImpl;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
 import java.util.HashMap;
 import java.util.Map;

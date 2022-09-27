@@ -24,6 +24,10 @@ public class Vector {
     return new Vector(v.x / length, v.y / length);
   }
 
+  public static Vector multiply(Vector v, double n) {
+    return new Vector(v.x * n, v.y * n);
+  }
+
   public void add(Vector v) {
     this.x += v.x;
     this.y += v.y;

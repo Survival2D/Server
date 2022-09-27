@@ -1,15 +1,10 @@
 package com.survival2d.server.game.entity.base;
 
 
-import com.survival2d.server.game.entity.Property;
+public interface HasHP {
 
-public interface HasHP extends MapObject {
+  double getHP();
 
-  default double getHP() {
-    return (double) get(Property.HP);
-  }
-
-  default void setHP(double hp) {
-    set(Property.HP, hp);
-  }
+  void setHP(double hp);
+  void reduceHp(double hp);
 }

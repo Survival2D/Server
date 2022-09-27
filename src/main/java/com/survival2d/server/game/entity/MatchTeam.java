@@ -1,26 +1,10 @@
 package com.survival2d.server.game.entity;
 
-import com.survival2d.server.service.domain.BaseTeam;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.survival2d.server.service.domain.Team;
+import java.util.Optional;
 
-public class MatchTeam extends BaseTeam {
+public interface MatchTeam extends Team {
 
-  private final Map<String, Player> players = new ConcurrentHashMap<>();
+  Optional<Player> getPlayer(String name);
 
-  public MatchTeam(long teamId) {
-    super(teamId);
-  }
-
-  @Override
-  public void addPlayer(String username) {
-    super.addPlayer(username);
-    players.computeIfAbsent(username, PlayerImpl::new);
-  }
-
-  @Override
-  public boolean removePlayer(String username) {
-    players.remove(username);
-    return super.removePlayer(username);
-  }
 }
