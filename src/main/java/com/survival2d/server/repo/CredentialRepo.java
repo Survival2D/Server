@@ -6,8 +6,8 @@ import com.tvd12.ezydata.mongodb.EzyMongoRepository;
 import com.tvd12.ezyfox.database.annotation.EzyRepository;
 
 
-
 @EzyRepository
 public interface CredentialRepo
-        extends EzyMongoRepository<GamePlayerId, Credential> {
+    extends EzyMongoRepository<GamePlayerId, Credential> {
+
 }

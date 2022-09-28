@@ -11,8 +11,9 @@ import lombok.val;
 
 @EzySingleton
 public class LobbyTeamServiceImpl implements LobbyTeamService {
-  private final Map<Long, LobbyTeam> teamIdToTeam = new HashMap<>();
+
   private static final AtomicLong currentTeamId = new AtomicLong();
+  private final Map<Long, LobbyTeam> teamIdToTeam = new HashMap<>();
   private final Map<String, Long> usernameToTeam = new HashMap<>();
 
   @Override
@@ -34,7 +35,9 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
   @Override
   public boolean joinTeam(String username, long teamId) {
     val optTeam = getTeam(teamId);
-    if (!optTeam.isPresent()) return false;
+    if (!optTeam.isPresent()) {
+      return false;
+    }
     val team = optTeam.get();
     team.addPlayer(username);
     usernameToTeam.put(username, teamId);
@@ -44,10 +47,14 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
   @Override
   public boolean quitTeam(String username, long teamId) {
     val optTeam = getTeam(teamId);
-    if (!optTeam.isPresent()) return false;
+    if (!optTeam.isPresent()) {
+      return false;
+    }
     val team = optTeam.get();
     val result = team.removePlayer(username);
-    if (result) usernameToTeam.remove(username);
+    if (result) {
+      usernameToTeam.remove(username);
+    }
     return result;
   }
 

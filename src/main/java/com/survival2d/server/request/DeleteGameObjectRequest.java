@@ -8,7 +8,8 @@ import lombok.Setter;
 @Setter
 @EzyObjectBinding
 public class DeleteGameObjectRequest {
-    private String gameName;
-    private long gameId;
-    private int objectId;
+
+  private String gameName;
+  private long gameId;
+  private int objectId;
 }

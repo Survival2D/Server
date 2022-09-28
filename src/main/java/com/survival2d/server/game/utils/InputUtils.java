@@ -3,6 +3,7 @@ package com.survival2d.server.game.utils;
 import com.tvd12.gamebox.math.Vec3;
 
 public class InputUtils {
+
   public static Vec3 ComputeMovementFromInput(
       boolean upInput, boolean leftInput, boolean downInput, boolean rightInput) {
     Vec3 answer = new Vec3();

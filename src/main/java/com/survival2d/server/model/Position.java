@@ -10,7 +10,8 @@ import lombok.ToString;
 @ToString
 @EzyObjectBinding
 public class Position {
-    private double x;
-    private double y;
-    private double z;
+
+  private double x;
+  private double y;
+  private double z;
 }

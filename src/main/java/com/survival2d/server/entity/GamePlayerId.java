@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GamePlayerId {
-    private String game;
-    private String player;
+
+  private String game;
+  private String player;
 }

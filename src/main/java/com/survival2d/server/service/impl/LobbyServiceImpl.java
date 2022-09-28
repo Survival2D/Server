@@ -14,9 +14,11 @@ import lombok.Setter;
 @EzySingleton
 public class LobbyServiceImpl implements LobbyService {
 
-  @EzyAutoBind private NormalRoom lobbyRoom;
+  @EzyAutoBind
+  private NormalRoom lobbyRoom;
 
-  @EzyAutoBind private RoomService roomService;
+  @EzyAutoBind
+  private RoomService roomService;
 
   @Override
   public void addNewPlayer(String playerName) {

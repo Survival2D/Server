@@ -1,9 +1,7 @@
 package com.survival2d.server.controller.client;
 
-import com.survival2d.server.request.TestRequest;
 import com.survival2d.server.service.PrizeService;
 import com.survival2d.server.service.WheelService;
-import com.survival2d.server.util.GameUtil;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.core.annotation.EzyDoHandle;
 import com.tvd12.ezyfox.core.annotation.EzyRequestController;
@@ -16,10 +14,12 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @EzyRequestController
 public class RequestController extends EzyLoggable {
+
   private final WheelService wheelService;
   private final EzyResponseFactory responseFactory;
 
-  @EzyAutoBind private PrizeService prizeService;
+  @EzyAutoBind
+  private PrizeService prizeService;
 
   @EzyDoHandle("spin")
   public void spin(EzySession session, EzyUser user) {

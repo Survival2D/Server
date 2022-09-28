@@ -31,11 +31,14 @@ import lombok.val;
 @EzyRequestController
 public class GameRequestController extends EzyLoggable {
 
-  @EzyAutoBind private RoomService roomService;
+  @EzyAutoBind
+  private RoomService roomService;
 
-  @EzyAutoBind private GamePlayService gamePlayService;
+  @EzyAutoBind
+  private GamePlayService gamePlayService;
 
-  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
   @EzyDoHandle(Commands.GET_MMO_ROOM_PLAYERS)
   public void getMMORoomPlayers(EzyUser user) {

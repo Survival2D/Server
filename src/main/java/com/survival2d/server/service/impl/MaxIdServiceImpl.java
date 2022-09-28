@@ -10,7 +10,8 @@ import lombok.Setter;
 @EzySingleton("maxIdService")
 public class MaxIdServiceImpl implements MaxIdService {
 
-  @EzyAutoBind private EzyMaxIdRepository maxIdRepository;
+  @EzyAutoBind
+  private EzyMaxIdRepository maxIdRepository;
 
   @Override
   public void loadAll() {

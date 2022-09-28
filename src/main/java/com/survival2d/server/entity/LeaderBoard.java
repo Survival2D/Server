@@ -13,17 +13,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LeaderBoard {
-    @EzyCollectionId(composite = true)
-    private Id id;
-    private long score;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Id {
-        private String game;
-        private long gameId;
-        private String player;
-    }
+  @EzyCollectionId(composite = true)
+  private Id id;
+  private long score;
+
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class Id {
+
+    private String game;
+    private long gameId;
+    private String player;
+  }
 }

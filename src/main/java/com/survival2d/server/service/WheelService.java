@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @EzySingleton
 public class WheelService {
+
   // because if we random in wheel.fragments.size (it's too small) so
   // we will get a lot of duplicate random, so we need choose a large size to ensure the random
   private static final int RANDOM_MAX_VALUE = 1000000;
@@ -25,7 +26,8 @@ public class WheelService {
   private Wheel wheel;
   private List<WheelFragment> emptyFragments;
   private List<Integer> randomRanges;
-  @EzyAutoBind private WheelRepo wheelRepo;
+  @EzyAutoBind
+  private WheelRepo wheelRepo;
 
   @EzyPostInit
   public void postInit() {
@@ -63,7 +65,9 @@ public class WheelService {
     int randomIndex = calculateFragmentIndexFromRandomRange();
     synchronized (lock) {
       WheelFragment fragment = wheel.getFragments().get(randomIndex);
-      if (fragment.getPrizeType() == WheelPrizeType.EMPTY) return randomIndex;
+      if (fragment.getPrizeType() == WheelPrizeType.EMPTY) {
+        return randomIndex;
+      }
       if (fragment.getQuantity() > 0) {
         int remain = fragment.getQuantity() - 1;
         fragment.setQuantity(remain);

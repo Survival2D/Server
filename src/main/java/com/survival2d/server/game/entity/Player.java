@@ -6,11 +6,14 @@ import com.survival2d.server.game.entity.math.Vector;
 public interface Player extends Movable {
 
   String getName();
+
   Vector getDirection();
+
   double getRotation();
-  PlayerState getState();
 
   void setRotation(double rotation);
+
+  PlayerState getState();
 
   double getSpeed();
 }

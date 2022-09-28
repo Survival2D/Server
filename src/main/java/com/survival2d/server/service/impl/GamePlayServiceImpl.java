@@ -32,11 +32,15 @@ import lombok.val;
 @EzySingleton
 public class GamePlayServiceImpl extends EzyLoggable implements GamePlayService {
 
-  @EzyAutoBind RoomService roomService;
+  @EzyAutoBind
+  RoomService roomService;
 
-  @EzyAutoBind private PlayerManager<Player> globalPlayerManager;
+  @EzyAutoBind
+  private PlayerManager<Player> globalPlayerManager;
 
-  /** Map playerName to playerPositionHistory */
+  /**
+   * Map playerName to playerPositionHistory
+   */
   private Map<String, SortedMap<Integer, Vec3>> globalPlayersPositionHistory = new HashMap<>();
 
   @Override
@@ -68,14 +72,14 @@ public class GamePlayServiceImpl extends EzyLoggable implements GamePlayService 
                     new PlayerSpawnData(
                         playerName,
                         new Vec3(
-                                ThreadLocalRandom.current().nextFloat() * 10,
-                                0,
-                                ThreadLocalRandom.current().nextFloat() * 10)
+                            ThreadLocalRandom.current().nextFloat() * 10,
+                            0,
+                            ThreadLocalRandom.current().nextFloat() * 10)
                             .toArray(),
                         new Vec3(
-                                ThreadLocalRandom.current().nextFloat(),
-                                ThreadLocalRandom.current().nextFloat(),
-                                ThreadLocalRandom.current().nextFloat())
+                            ThreadLocalRandom.current().nextFloat(),
+                            ThreadLocalRandom.current().nextFloat(),
+                            ThreadLocalRandom.current().nextFloat())
                             .toArray()))
             .collect(Collectors.toList());
 
@@ -128,9 +132,9 @@ public class GamePlayServiceImpl extends EzyLoggable implements GamePlayService 
 
     // Check if attackPosition is near my player's position
     MMOPlayer myPlayer = roomService.getPlayer(playerName);
-		return !(myPlayer.getPosition().distance(attackPosition)
-				> GameConstants.HAMMER_DISTANCE_UPPER_BOUND);
-	}
+    return !(myPlayer.getPosition().distance(attackPosition)
+        > GameConstants.HAMMER_DISTANCE_UPPER_BOUND);
+  }
 
   @Override
   public void resetPlayersPositionHistory(List<String> playerNames) {

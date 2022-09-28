@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @EzyObjectBinding
 public class WheelFragment {
+
   private int index;
   private WheelPrizeType prizeType;
   private int prizeValue;

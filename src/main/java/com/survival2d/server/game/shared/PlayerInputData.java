@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PlayerInputData {
+
   boolean[] inputs;
   int time;
 

@@ -6,5 +6,6 @@ public interface HasHP {
   double getHP();
 
   void setHP(double hp);
+
   void reduceHp(double hp);
 }

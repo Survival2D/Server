@@ -9,6 +9,7 @@ import lombok.Data;
 @Builder
 @EzyObjectBinding
 public class PlayerMoveResponse {
+
   private String username;
   private Vector position;
   private double rotation;

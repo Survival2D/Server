@@ -8,12 +8,12 @@ import com.tvd12.ezyfoxserver.event.EzyServerReadyEvent;
 
 @EzyEventHandler(event = EzyEventNames.SERVER_READY)
 public class PluginServerReadyController
-        extends EzyAbstractPluginEventController<EzyServerReadyEvent> {
+    extends EzyAbstractPluginEventController<EzyServerReadyEvent> {
 
-    @Override
-    public void handle(EzyPluginContext ctx, EzyServerReadyEvent event) {
-        logger.info("SURVIVAL2D PLUGIN - SERVER READY");
-        logger.trace("SURVIVAL2D PLUGIN - SERVER READY");
-    }
-    
+  @Override
+  public void handle(EzyPluginContext ctx, EzyServerReadyEvent event) {
+    logger.info("SURVIVAL2D PLUGIN - SERVER READY");
+    logger.trace("SURVIVAL2D PLUGIN - SERVER READY");
+  }
+
 }

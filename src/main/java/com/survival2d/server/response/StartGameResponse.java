@@ -10,5 +10,6 @@ import lombok.Data;
 @Builder
 @EzyObjectBinding
 public class StartGameResponse {
+
   List<PlayerSpawnData> data;
 }

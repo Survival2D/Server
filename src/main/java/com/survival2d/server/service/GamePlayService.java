@@ -8,6 +8,7 @@ import com.tvd12.gamebox.math.Vec3;
 import java.util.List;
 
 public interface GamePlayService {
+
   void handlePlayerInputData(String playerName, PlayerInputData inputData, float[] nextRotation);
 
   List<PlayerSpawnData> spawnPlayers(List<String> playerNames);

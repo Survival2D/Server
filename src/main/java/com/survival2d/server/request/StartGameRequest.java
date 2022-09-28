@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @EzyObjectBinding
 public class StartGameRequest {
-    private String gameName;
-    private long gameId;
+
+  private String gameName;
+  private long gameId;
 }

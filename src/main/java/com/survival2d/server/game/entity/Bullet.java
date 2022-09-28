@@ -2,15 +2,17 @@ package com.survival2d.server.game.entity;
 
 import com.survival2d.server.game.entity.base.Movable;
 import com.survival2d.server.game.entity.math.Vector;
-import java.util.Map;
+import lombok.Data;
 
+@Data
 public class Bullet implements Movable {
+
+  Vector position;
 
   Vector rawPosition;
   Vector direction;
 
-  protected Bullet(Map<String, Object> properties) {
-    super(properties);
+  public Bullet(Vector rawPosition, Vector direction) {
   }
 
   public void move() {

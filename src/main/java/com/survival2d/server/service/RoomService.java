@@ -8,6 +8,7 @@ import com.tvd12.gamebox.entity.Player;
 import java.util.List;
 
 public interface RoomService {
+
   NormalRoom removePlayer(String username);
 
   void addPlayer(MMOPlayer player);

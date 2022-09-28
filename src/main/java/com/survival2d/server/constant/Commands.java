@@ -1,6 +1,7 @@
 package com.survival2d.server.constant;
 
 public final class Commands {
+
   public static final String MOVE = "move";
   /*** Old Commands ***/
 
@@ -18,5 +19,6 @@ public final class Commands {
   public static final String PLAYER_BEING_ATTACKED = "b";
   public static final String PLAYER_ATTACK_DATA = "a";
 
-  private Commands() {}
+  private Commands() {
+  }
 }

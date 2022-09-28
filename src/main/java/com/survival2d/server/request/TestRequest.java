@@ -11,12 +11,13 @@ import lombok.Setter;
 public class TestRequest {
 
   List<Integer> arr;
-  TempObject obj;
+  //  TempObject obj;
 //@EzyReader(TestReader.class)
   List<Test> tests;
 
-//  @EzyObjectBinding
+  //  @EzyObjectBinding
   static class Test {
+
     String name = "empty";
     Vector position = new Vector(0, 0);
   }

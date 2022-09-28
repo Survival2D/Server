@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @EzyObjectBinding
 public class PlayerInputDataRequest {
+
   int t;
   boolean[] k;
   float[] r;

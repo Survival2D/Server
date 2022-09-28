@@ -75,12 +75,12 @@ public class ServerStartup {
 
     @Override
     protected String[] getScanableBeanPackages() {
-      return new String[] {"com.survival2d.server"};
+      return new String[]{"com.survival2d.server"};
     }
 
     @Override
     protected String[] getScanableBindingPackages() {
-      return new String[] {"com.survival2d.server"};
+      return new String[]{"com.survival2d.server"};
     }
 
     @Override
@@ -101,12 +101,12 @@ public class ServerStartup {
 
     @Override
     protected String[] getScanableBeanPackages() {
-      return new String[] {"com.survival2d.server"};
+      return new String[]{"com.survival2d.server"};
     }
 
     @Override
     protected String[] getScanableBindingPackages() {
-      return new String[] {"com.survival2d.server"};
+      return new String[]{"com.survival2d.server"};
     }
 
     @Override

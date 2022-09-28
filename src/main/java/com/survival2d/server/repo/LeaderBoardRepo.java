@@ -7,5 +7,6 @@ import com.tvd12.ezyfox.database.annotation.EzyRepository;
 
 @EzyRepository
 public interface LeaderBoardRepo
-        extends EzyMongoRepository<LeaderBoard.Id, LeaderBoard> {
+    extends EzyMongoRepository<LeaderBoard.Id, LeaderBoard> {
+
 }

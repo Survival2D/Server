@@ -13,7 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerCurrentGame {
-    @EzyId
-    private GamePlayerId id;
-    private long currentGameId;
+
+  @EzyId
+  private GamePlayerId id;
+  private long currentGameId;
 }

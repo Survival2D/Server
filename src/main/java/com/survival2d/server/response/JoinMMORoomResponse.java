@@ -8,5 +8,6 @@ import lombok.Data;
 @Builder
 @EzyObjectBinding
 public class JoinMMORoomResponse {
+
   long roomId;
 }
