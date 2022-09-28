@@ -2,7 +2,7 @@ package com.survival2d.server.game.entity;
 
 import com.survival2d.server.game.entity.base.MapObject;
 import com.survival2d.server.game.entity.math.Vector;
-import com.survival2d.server.network.match.GameCommand;
+import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
@@ -36,7 +36,7 @@ public class MatchImpl implements Match {
 //    val team = teams.computeIfAbsent(teamId, key -> new MatchTeamImpl(teamId));
 //    team.addPlayer(playerId);
 //    playerIdToTeam.put(playerId, teamId);
-    players.putIfAbsent(playerId, new PlayerImpl(playerId));
+    players.putIfAbsent(playerId, new PlayerImpl(playerId, teamId));
   }
 
   @Override
@@ -56,8 +56,8 @@ public class MatchImpl implements Match {
     val moveBy = Vector.multiply(unitDirection, player.getSpeed());
     player.moveBy(moveBy);
     player.setRotation(rotation);
-    appResponseFactory.newObjectResponse().command(GameCommand.PLAYER_MOVE)
-        .data(PlayerMoveResponse.builder().username(player.getName()).position(player.getPosition())
+    appResponseFactory.newObjectResponse().command(MatchCommand.PLAYER_MOVE)
+        .data(PlayerMoveResponse.builder().username(player.getPlayerId()).position(player.getPosition())
             .rotation(player.getRotation()).build())
         .usernames(getAllPlayers())
         .execute();

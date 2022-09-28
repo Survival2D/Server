@@ -22,7 +22,7 @@ public class MatchTeamImpl implements MatchTeam {
 
   @Override
   public void addPlayer(String username) {
-    players.computeIfAbsent(username, PlayerImpl::new);
+//    players.computeIfAbsent(username, PlayerImpl::new);
   }
 
   @Override

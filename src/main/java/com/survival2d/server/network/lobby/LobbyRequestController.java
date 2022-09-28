@@ -10,6 +10,7 @@ import com.survival2d.server.network.lobby.response.FindMatchResponse;
 import com.survival2d.server.network.lobby.response.GetUserInfoResponse;
 import com.survival2d.server.network.lobby.response.JoinTeamResponse;
 import com.survival2d.server.network.lobby.response.NewUserJoinTeamResponse;
+import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.request.JoinMMORoomRequest;
 import com.survival2d.server.response.AnotherJoinMMOResponse;
 import com.survival2d.server.response.CreateMMORoomResponse;
@@ -19,6 +20,7 @@ import com.survival2d.server.response.JoinMMORoomResponse;
 import com.survival2d.server.service.FindMatchService;
 import com.survival2d.server.service.LobbyService;
 import com.survival2d.server.service.LobbyTeamService;
+import com.survival2d.server.service.MatchingService;
 import com.survival2d.server.service.RoomService;
 import com.survival2d.server.service.domain.LobbyTeam;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
@@ -51,6 +53,8 @@ public class LobbyRequestController extends EzyLoggable {
   private LobbyTeamService lobbyTeamService;
   @EzyAutoBind
   private FindMatchService findMatchService;
+  @EzyAutoBind
+  private MatchingService matchingService;
 
   @EzyDoHandle(LobbyCommand.GET_USER_INFO)
   public void getUserInfo(EzyUser user) {
@@ -130,13 +134,19 @@ public class LobbyRequestController extends EzyLoggable {
       return;
     }
     val matchId = optMatchId.get();
+    val match = matchingService.getMatchById(matchId).get();
     responseFactory
         .newObjectResponse()
         .command(LobbyCommand.FIND_MATCH)
         .data(FindMatchResponse.builder().result(FindMatchResult.SUCCESS).matchId(matchId).build())
         .usernames(team.getPlayers())
         .execute();
-    //TODO response to players in other team
+    responseFactory
+        .newObjectResponse()
+        .command(MatchCommand.MATCH_INFO)
+        .data(match)
+        .usernames(match.getAllPlayers())
+        .execute();
   }
 
   @EzyDoHandle(Commands.JOIN_LOBBY)

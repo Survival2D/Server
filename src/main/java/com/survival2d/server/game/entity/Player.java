@@ -5,7 +5,7 @@ import com.survival2d.server.game.entity.math.Vector;
 
 public interface Player extends Movable {
 
-  String getName();
+  String getPlayerId();
 
   Vector getDirection();
 
@@ -16,4 +16,6 @@ public interface Player extends Movable {
   PlayerState getState();
 
   double getSpeed();
+
+  long getTeam();
 }
