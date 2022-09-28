@@ -32,6 +32,7 @@ import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import com.tvd12.gamebox.constant.RoomStatus;
 import com.tvd12.gamebox.entity.MMORoom;
+import java.util.Collection;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -135,17 +136,18 @@ public class LobbyRequestController extends EzyLoggable {
     }
     val matchId = optMatchId.get();
     val match = matchingService.getMatchById(matchId).get();
+    val allPlayers = match.getAllPlayers();;
     responseFactory
         .newObjectResponse()
         .command(LobbyCommand.FIND_MATCH)
         .data(FindMatchResponse.builder().result(FindMatchResult.SUCCESS).matchId(matchId).build())
-        .usernames(team.getPlayers())
+        .usernames(allPlayers)
         .execute();
     responseFactory
         .newObjectResponse()
         .command(MatchCommand.MATCH_INFO)
         .data(match)
-        .usernames(match.getAllPlayers())
+        .usernames(allPlayers)
         .execute();
   }
 

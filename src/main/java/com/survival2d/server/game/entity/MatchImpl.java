@@ -41,8 +41,7 @@ public class MatchImpl implements Match {
 
   @Override
   public Collection<String> getAllPlayers() {
-    return teams.values().stream().flatMap(team -> team.getPlayers().stream())
-        .collect(Collectors.toList());
+    return players.keySet();
   }
 
   @Override
