@@ -9,7 +9,6 @@ import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
 import lombok.Data;
 
 @Data
-@EzyObjectBinding
 public class PlayerMoveRequest {
 
   Vector direction;

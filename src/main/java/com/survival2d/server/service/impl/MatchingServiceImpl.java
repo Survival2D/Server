@@ -6,6 +6,7 @@ import com.survival2d.server.service.LobbyTeamService;
 import com.survival2d.server.service.MatchingService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
+import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,11 +24,13 @@ public class MatchingServiceImpl implements MatchingService {
   private final Map<String, Long> playerIdToMatchId = new ConcurrentHashMap<>();
   @EzyAutoBind
   LobbyTeamService teamService;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
   @Override
   public long createMatch(List<Long> teamIds) {
     val matchId = currentMatchId.getAndIncrement();
-    val match = new MatchImpl(matchId);
+    val match = new MatchImpl(matchId, responseFactory);
     matchIdToMatch.put(matchId, match);
     teamIds.stream().map(teamId -> teamService.getTeam(teamId).get()).forEach(team -> {
       team.getPlayers().forEach(playerId -> {

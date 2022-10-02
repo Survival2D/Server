@@ -5,11 +5,13 @@ import com.survival2d.server.network.match.request.PlayerMoveRequest;
 import com.survival2d.server.service.MatchingService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.core.annotation.EzyDoHandle;
+import com.tvd12.ezyfox.core.annotation.EzyRequestController;
 import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+@EzyRequestController
 @Slf4j
 public class MatchRequestController {
 

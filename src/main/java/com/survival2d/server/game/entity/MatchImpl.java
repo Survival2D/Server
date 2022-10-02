@@ -4,12 +4,10 @@ import com.survival2d.server.game.entity.base.MapObject;
 import com.survival2d.server.game.entity.math.Vector;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
-import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,12 +21,12 @@ public class MatchImpl implements Match {
   private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
   private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  @EzyAutoBind
-  private EzyResponseFactory appResponseFactory;
+  private final transient EzyResponseFactory responseFactory;
   private long currentTick;
 
-  public MatchImpl(long id) {
+  public MatchImpl(long id, EzyResponseFactory responseFactory) {
     this.id = id;
+    this.responseFactory = responseFactory;
   }
 
   @Override
@@ -51,12 +49,15 @@ public class MatchImpl implements Match {
       log.error("player {} is null", playerId);
       return;
     }
-    val unitDirection = Vector.unit(direction);
-    val moveBy = Vector.multiply(unitDirection, player.getSpeed());
-    player.moveBy(moveBy);
+    if (!Vector.isZero(direction)) {
+      val unitDirection = Vector.unit(direction);
+      val moveBy = Vector.multiply(unitDirection, player.getSpeed());
+      player.moveBy(moveBy);
+    }
     player.setRotation(rotation);
-    appResponseFactory.newObjectResponse().command(MatchCommand.PLAYER_MOVE)
-        .data(PlayerMoveResponse.builder().username(player.getPlayerId()).position(player.getPosition())
+    responseFactory.newObjectResponse().command(MatchCommand.PLAYER_MOVE)
+        .data(PlayerMoveResponse.builder().username(player.getPlayerId())
+            .position(player.getPosition())
             .rotation(player.getRotation()).build())
         .usernames(getAllPlayers())
         .execute();
