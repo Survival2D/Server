@@ -62,6 +62,7 @@ public class ServerStartup {
             .zone(zoneSettingBuilder.build())
             .websocket(webSocketSettingBuilder.build())
             .udp(udpSettingBuilder.build())
+            .sessionManagement(sessionManagementSettingBuilder.build())
             .build();
 
     EzyEmbeddedServer server = EzyEmbeddedServer.builder().settings(settings).build();
