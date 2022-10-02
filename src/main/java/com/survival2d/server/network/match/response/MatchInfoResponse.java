@@ -20,8 +20,8 @@ public class MatchInfoResponse {
   public static class MatchWriter implements EzyWriter<Match, EzyHashMap> {
 
     @Override
-    public EzyHashMap write(EzyMarshaller ezyMarshaller, Match o) {
-      val data = "{map: " + GsonHolder.getNormalGson().toJson(o) + "}";
+    public EzyHashMap write(EzyMarshaller ezyMarshaller, Match match) {
+      val data = "{map: " + GsonHolder.getNormalGson().toJson(match) + "}";
       val map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
       return map;
     }

@@ -2,7 +2,7 @@ package com.survival2d.server.network.lobby;
 
 import com.survival2d.server.constant.Commands;
 import com.survival2d.server.exception.JoinNotWaitingRoomException;
-import com.survival2d.server.network.lobby.entity.FindMatchResult;
+import com.survival2d.server.network.lobby.entity.ResponseError;
 import com.survival2d.server.network.lobby.entity.JoinTeamResult;
 import com.survival2d.server.network.lobby.request.JoinTeamRequest;
 import com.survival2d.server.network.lobby.response.CreateTeamResponse;
@@ -32,7 +32,6 @@ import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import com.tvd12.gamebox.constant.RoomStatus;
 import com.tvd12.gamebox.entity.MMORoom;
-import java.util.Collection;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -140,7 +139,7 @@ public class LobbyRequestController extends EzyLoggable {
     responseFactory
         .newObjectResponse()
         .command(LobbyCommand.FIND_MATCH)
-        .data(FindMatchResponse.builder().result(FindMatchResult.SUCCESS).matchId(matchId).build())
+        .data(FindMatchResponse.builder().result(ResponseError.SUCCESS).matchId(matchId).build())
         .usernames(allPlayers)
         .execute();
     responseFactory
