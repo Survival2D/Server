@@ -12,7 +12,7 @@ public class PlayerImpl implements Player {
   Vector position = new Vector(ThreadLocalRandom.current().nextDouble() * 100, ThreadLocalRandom.current().nextDouble() * 100);
   PlayerState state;
   double rotation;
-  double speed = 1;
+  double speed = 10;
   Vector direction;
   long team;
 
