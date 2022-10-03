@@ -17,27 +17,28 @@ import lombok.val;
 @EzySingleton
 public class MatchingServiceImpl implements MatchingService {
 
-  @EzyAutoBind
-
-  private final AtomicLong currentMatchId = new AtomicLong();
+  @EzyAutoBind private final AtomicLong currentMatchId = new AtomicLong();
   private final Map<Long, Match> matchIdToMatch = new ConcurrentHashMap<>();
   private final Map<String, Long> playerIdToMatchId = new ConcurrentHashMap<>();
-  @EzyAutoBind
-  LobbyTeamService teamService;
-  @EzyAutoBind
-  private EzyResponseFactory responseFactory;
+  @EzyAutoBind LobbyTeamService teamService;
+  @EzyAutoBind private EzyResponseFactory responseFactory;
 
   @Override
   public long createMatch(List<Long> teamIds) {
     val matchId = currentMatchId.getAndIncrement();
     val match = new MatchImpl(matchId, responseFactory);
     matchIdToMatch.put(matchId, match);
-    teamIds.stream().map(teamId -> teamService.getTeam(teamId).get()).forEach(team -> {
-      team.getPlayers().forEach(playerId -> {
-        match.addPlayer(team.getId(), playerId);
-        playerIdToMatchId.put(playerId, matchId);
-      });
-    });
+    teamIds.stream()
+        .map(teamId -> teamService.getTeam(teamId).get())
+        .forEach(
+            team -> {
+              team.getPlayers()
+                  .forEach(
+                      playerId -> {
+                        match.addPlayer(team.getId(), playerId);
+                        playerIdToMatchId.put(playerId, matchId);
+                      });
+            });
     return matchId;
   }
 

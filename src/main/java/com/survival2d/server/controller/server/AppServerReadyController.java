@@ -7,8 +7,7 @@ import com.tvd12.ezyfoxserver.controller.EzyAbstractAppEventController;
 import com.tvd12.ezyfoxserver.event.EzyServerReadyEvent;
 
 @EzyEventHandler(event = EzyEventNames.SERVER_READY)
-public class AppServerReadyController
-    extends EzyAbstractAppEventController<EzyServerReadyEvent> {
+public class AppServerReadyController extends EzyAbstractAppEventController<EzyServerReadyEvent> {
 
   @Override
   public void handle(EzyAppContext ctx, EzyServerReadyEvent event) {

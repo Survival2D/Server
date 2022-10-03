@@ -1,7 +1,7 @@
 package com.survival2d.server.game.entity;
 
-import com.survival2d.server.game.entity.math.Vector;
 import java.util.Collection;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 public interface Match {
 
@@ -9,5 +9,5 @@ public interface Match {
 
   Collection<String> getAllPlayers();
 
-  void onPlayerMove(String playerId, Vector direction, double rotation);
+  void onPlayerMove(String playerId, Vector2D direction, double rotation);
 }

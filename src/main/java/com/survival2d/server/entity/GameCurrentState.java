@@ -14,7 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GameCurrentState {
 
-  @EzyId
-  private GameId id;
+  @EzyId private GameId id;
   private GameState state;
 }

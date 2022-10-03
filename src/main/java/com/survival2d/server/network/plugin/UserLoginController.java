@@ -23,8 +23,7 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
 
   public static final int DEFAULT_RANDOM_USERNAME_LENGTH = 10;
 
-  @EzyAutoBind
-  private UserService userService;
+  @EzyAutoBind private UserService userService;
 
   @Override
   public void handle(EzyPluginContext ctx, EzyUserLoginEvent event) {

@@ -7,5 +7,5 @@ import lombok.Data;
 @EzyObjectBinding
 public class JoinTeamRequest {
 
-  int teamId; //TeamId = -1 là join team bất kỳ còn slot
+  int teamId; // TeamId = -1 là join team bất kỳ còn slot
 }

@@ -19,11 +19,9 @@ import java.util.List;
 @EzyEventHandler(USER_REMOVED)
 public class UserRemovedController extends EzyAbstractAppEventController<EzyUserRemovedEvent> {
 
-  @EzyAutoBind
-  private RoomService roomService;
+  @EzyAutoBind private RoomService roomService;
 
-  @EzyAutoBind
-  private EzyResponseFactory responseFactory;
+  @EzyAutoBind private EzyResponseFactory responseFactory;
 
   @Override
   public void handle(EzyAppContext ctx, EzyUserRemovedEvent event) {

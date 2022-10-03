@@ -17,8 +17,7 @@ public class MMORoomFactory {
   @EzyProperty("game.room.distance_of_interest")
   private double distanceOfInterest;
 
-  @EzyAutoBind
-  private MMORoomUpdatedHandler roomUpdatedHandler;
+  @EzyAutoBind private MMORoomUpdatedHandler roomUpdatedHandler;
 
   public MMORoom newMMORoom() {
     return MMORoom.builder()

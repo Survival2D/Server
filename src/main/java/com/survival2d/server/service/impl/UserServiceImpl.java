@@ -13,11 +13,9 @@ import lombok.Setter;
 @EzySingleton("userService")
 public class UserServiceImpl implements UserService {
 
-  @EzyAutoBind
-  private UserRepo userRepo;
+  @EzyAutoBind private UserRepo userRepo;
 
-  @EzyAutoBind
-  private MaxIdService maxIdService;
+  @EzyAutoBind private MaxIdService maxIdService;
 
   @Override
   public void saveUser(User user) {

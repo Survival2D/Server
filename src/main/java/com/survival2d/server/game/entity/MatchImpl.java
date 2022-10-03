@@ -1,9 +1,9 @@
 package com.survival2d.server.game.entity;
 
 import com.survival2d.server.game.entity.base.MapObject;
-import com.survival2d.server.game.entity.math.Vector;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
+import com.survival2d.server.util.vector.VectorUtil;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import java.util.Collection;
 import java.util.Map;
@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @Getter
 @Slf4j
@@ -31,9 +32,9 @@ public class MatchImpl implements Match {
 
   @Override
   public void addPlayer(long teamId, String playerId) {
-//    val team = teams.computeIfAbsent(teamId, key -> new MatchTeamImpl(teamId));
-//    team.addPlayer(playerId);
-//    playerIdToTeam.put(playerId, teamId);
+    //    val team = teams.computeIfAbsent(teamId, key -> new MatchTeamImpl(teamId));
+    //    team.addPlayer(playerId);
+    //    playerIdToTeam.put(playerId, teamId);
     players.putIfAbsent(playerId, new PlayerImpl(playerId, teamId));
   }
 
@@ -43,22 +44,27 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void onPlayerMove(String playerId, Vector direction, double rotation) {
+  public void onPlayerMove(String playerId, Vector2D direction, double rotation) {
     val player = players.get(playerId);
     if (player == null) {
       log.error("player {} is null", playerId);
       return;
     }
-    if (!Vector.isZero(direction)) {
-      val unitDirection = Vector.unit(direction);
-      val moveBy = Vector.multiply(unitDirection, player.getSpeed());
+    if (!direction.equals(Vector2D.ZERO)) {
+      val unitDirection = direction.normalize();
+      val moveBy = VectorUtil.multiply(unitDirection, player.getSpeed());
       player.moveBy(moveBy);
     }
     player.setRotation(rotation);
-    responseFactory.newObjectResponse().command(MatchCommand.PLAYER_MOVE)
-        .data(PlayerMoveResponse.builder().username(player.getPlayerId())
-            .position(player.getPosition())
-            .rotation(player.getRotation()).build())
+    responseFactory
+        .newObjectResponse()
+        .command(MatchCommand.PLAYER_MOVE)
+        .data(
+            PlayerMoveResponse.builder()
+                .username(player.getPlayerId())
+                .position(player.getPosition())
+                .rotation(player.getRotation())
+                .build())
         .usernames(getAllPlayers())
         .execute();
   }

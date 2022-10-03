@@ -1,19 +1,21 @@
 package com.survival2d.server.game.entity;
 
-import com.survival2d.server.game.entity.math.Vector;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
-import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @Data
 public class PlayerImpl implements Player {
 
   String playerId;
-  Vector position = new Vector(ThreadLocalRandom.current().nextDouble() * 100, ThreadLocalRandom.current().nextDouble() * 100);
+  Vector2D position =
+      new Vector2D(
+          ThreadLocalRandom.current().nextDouble() * 100,
+          ThreadLocalRandom.current().nextDouble() * 100);
   PlayerState state;
   double rotation;
   double speed = 10;
-  Vector direction;
+  Vector2D direction;
   long team;
 
   public PlayerImpl(String playerId, long team) {

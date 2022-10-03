@@ -16,6 +16,7 @@ public class LeaderBoard {
 
   @EzyCollectionId(composite = true)
   private Id id;
+
   private long score;
 
   @Getter

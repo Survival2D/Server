@@ -1,6 +1,6 @@
 package com.survival2d.server.game.entity;
 
-import com.survival2d.server.game.entity.math.Vector;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 public class Gun extends Weapon {
 
@@ -14,7 +14,7 @@ public class Gun extends Weapon {
     return numBullet - numBulletToLoad;
   }
 
-  public void shoot(Vector rawPosition, Vector direction) {
+  public void shoot(Vector2D rawPosition, Vector2D direction) {
     Bullet bullet = new Bullet(rawPosition, direction);
   }
 }

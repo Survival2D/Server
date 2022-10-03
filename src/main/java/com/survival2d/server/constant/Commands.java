@@ -6,6 +6,7 @@ public final class Commands {
   /*** Old Commands ***/
 
   public static final String JOIN_LOBBY = "joinLobby";
+
   public static final String ANOTHER_EXIT_MMO_ROOM = "anotherExitMMORoom";
   public static final String CREATE_MMO_ROOM = "createMMORoom";
   public static final String GET_MMO_ROOM_ID_LIST = "getMMORoomIdList";
@@ -19,6 +20,5 @@ public final class Commands {
   public static final String PLAYER_BEING_ATTACKED = "b";
   public static final String PLAYER_ATTACK_DATA = "a";
 
-  private Commands() {
-  }
+  private Commands() {}
 }

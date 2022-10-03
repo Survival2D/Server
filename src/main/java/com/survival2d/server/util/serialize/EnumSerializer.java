@@ -15,8 +15,8 @@ public class EnumSerializer implements JsonSerializer<Enum<?>> {
   private static final EnumSerializer instance = new EnumSerializer();
 
   @Override
-  public JsonElement serialize(Enum<?> anEnum, Type type,
-      JsonSerializationContext jsonSerializationContext) {
+  public JsonElement serialize(
+      Enum<?> anEnum, Type type, JsonSerializationContext jsonSerializationContext) {
     return new JsonPrimitive(anEnum.ordinal());
   }
 }

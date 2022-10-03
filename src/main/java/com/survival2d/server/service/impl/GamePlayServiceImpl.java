@@ -32,15 +32,11 @@ import lombok.val;
 @EzySingleton
 public class GamePlayServiceImpl extends EzyLoggable implements GamePlayService {
 
-  @EzyAutoBind
-  RoomService roomService;
+  @EzyAutoBind RoomService roomService;
 
-  @EzyAutoBind
-  private PlayerManager<Player> globalPlayerManager;
+  @EzyAutoBind private PlayerManager<Player> globalPlayerManager;
 
-  /**
-   * Map playerName to playerPositionHistory
-   */
+  /** Map playerName to playerPositionHistory */
   private Map<String, SortedMap<Integer, Vec3>> globalPlayersPositionHistory = new HashMap<>();
 
   @Override
@@ -72,14 +68,14 @@ public class GamePlayServiceImpl extends EzyLoggable implements GamePlayService 
                     new PlayerSpawnData(
                         playerName,
                         new Vec3(
-                            ThreadLocalRandom.current().nextFloat() * 10,
-                            0,
-                            ThreadLocalRandom.current().nextFloat() * 10)
+                                ThreadLocalRandom.current().nextFloat() * 10,
+                                0,
+                                ThreadLocalRandom.current().nextFloat() * 10)
                             .toArray(),
                         new Vec3(
-                            ThreadLocalRandom.current().nextFloat(),
-                            ThreadLocalRandom.current().nextFloat(),
-                            ThreadLocalRandom.current().nextFloat())
+                                ThreadLocalRandom.current().nextFloat(),
+                                ThreadLocalRandom.current().nextFloat(),
+                                ThreadLocalRandom.current().nextFloat())
                             .toArray()))
             .collect(Collectors.toList());
 
@@ -152,11 +148,14 @@ public class GamePlayServiceImpl extends EzyLoggable implements GamePlayService 
   @Override
   public Vec3 playerMove(String name, Vec2 direction) {
     val player = roomService.getPlayer(name);
-    direction.multiply(1 / direction.length()); //Convert to unit vector
+    direction.multiply(1 / direction.length()); // Convert to unit vector
     synchronized (player) {
       Vec3 currentPosition = player.getPosition();
-      Vec3 nextPosition = new Vec3(currentPosition.x + direction.x * velocity,
-          currentPosition.y + direction.y * velocity, currentPosition.z);
+      Vec3 nextPosition =
+          new Vec3(
+              currentPosition.x + direction.x * velocity,
+              currentPosition.y + direction.y * velocity,
+              currentPosition.z);
       logger.info("next position = {}", nextPosition);
       player.setPosition(nextPosition);
       return nextPosition;

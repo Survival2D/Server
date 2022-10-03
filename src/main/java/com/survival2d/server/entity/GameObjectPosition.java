@@ -17,6 +17,7 @@ public class GameObjectPosition {
 
   @EzyCollectionId(composite = true)
   private Id id;
+
   private String player;
   private String objectName;
   private int objectType;

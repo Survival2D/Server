@@ -1,9 +1,9 @@
 package com.survival2d.server.network.match.response;
 
-import com.survival2d.server.game.entity.math.Vector;
 import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @Data
 @Builder
@@ -11,6 +11,6 @@ import lombok.Data;
 public class PlayerMoveResponse {
 
   private String username;
-  private Vector position;
+  private Vector2D position;
   private double rotation;
 }

@@ -18,8 +18,7 @@ public class RequestController extends EzyLoggable {
   private final WheelService wheelService;
   private final EzyResponseFactory responseFactory;
 
-  @EzyAutoBind
-  private PrizeService prizeService;
+  @EzyAutoBind private PrizeService prizeService;
 
   @EzyDoHandle("spin")
   public void spin(EzySession session, EzyUser user) {
@@ -37,13 +36,13 @@ public class RequestController extends EzyLoggable {
         .execute();
   }
 
-//  @EzyDoHandle("test")
-//  public void test(TestRequest request, EzyUser user) {
-//    logger.info(
-//        "user {}, request: arr {}, obj {}",
-//        user.getName(),
-//        GameUtil.toGson(request.getArr()),
-//        GameUtil.toGson(request.getObj()));
-//    responseFactory.newObjectResponse().execute();
-//  }
+  //  @EzyDoHandle("test")
+  //  public void test(TestRequest request, EzyUser user) {
+  //    logger.info(
+  //        "user {}, request: arr {}, obj {}",
+  //        user.getName(),
+  //        GameUtil.toGson(request.getArr()),
+  //        GameUtil.toGson(request.getObj()));
+  //    responseFactory.newObjectResponse().execute();
+  //  }
 }

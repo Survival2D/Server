@@ -25,20 +25,15 @@ import lombok.Setter;
 @SuppressWarnings({"unchecked"})
 public class RoomServiceImpl extends EzyLoggable implements RoomService {
 
-  @EzyAutoBind
-  private MMOVirtualWorld mmoVirtualWorld;
+  @EzyAutoBind private MMOVirtualWorld mmoVirtualWorld;
 
-  @EzyAutoBind
-  private MMORoomFactory gameRoomFactory;
+  @EzyAutoBind private MMORoomFactory gameRoomFactory;
 
-  @EzyAutoBind
-  private PlayerManager<Player> globalPlayerManager;
+  @EzyAutoBind private PlayerManager<Player> globalPlayerManager;
 
-  @EzyAutoBind
-  private RoomManager<NormalRoom> globalRoomManager;
+  @EzyAutoBind private RoomManager<NormalRoom> globalRoomManager;
 
-  @EzyAutoBind
-  private NormalRoom lobbyRoom;
+  @EzyAutoBind private NormalRoom lobbyRoom;
 
   @Override
   public NormalRoom removePlayer(String username) {
@@ -141,7 +136,7 @@ public class RoomServiceImpl extends EzyLoggable implements RoomService {
    * MMOPlayer join MMORoom
    *
    * @param playerName name of player to join MMO room
-   * @param roomId     id of an MMORoom
+   * @param roomId id of an MMORoom
    */
   @Override
   public MMORoom playerJoinMMORoom(String playerName, long roomId) {

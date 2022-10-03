@@ -12,11 +12,9 @@ import lombok.Setter;
 @EzySingleton("prizeService")
 public class PrizeServiceImpl implements PrizeService {
 
-  @EzyAutoBind
-  private PrizeRepo prizeRepo;
+  @EzyAutoBind private PrizeRepo prizeRepo;
 
-  @EzyAutoBind
-  private MaxIdService maxIdService;
+  @EzyAutoBind private MaxIdService maxIdService;
 
   @Override
   public void savePrize(Prize record) {

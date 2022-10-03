@@ -1,17 +1,16 @@
 package com.survival2d.server.network.match.request;
 
-import com.survival2d.server.game.entity.math.Vector;
 import com.survival2d.server.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyReader;
 import com.tvd12.ezyfox.binding.EzyUnmarshaller;
-import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
 import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
 import lombok.Data;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @Data
 public class PlayerMoveRequest {
 
-  Vector direction;
+  Vector2D direction;
   double rotation;
 
   @EzyReaderImpl

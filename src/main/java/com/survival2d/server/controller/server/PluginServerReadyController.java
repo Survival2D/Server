@@ -15,5 +15,4 @@ public class PluginServerReadyController
     logger.info("SURVIVAL2D PLUGIN - SERVER READY");
     logger.trace("SURVIVAL2D PLUGIN - SERVER READY");
   }
-
 }

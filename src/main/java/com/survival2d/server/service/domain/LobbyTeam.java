@@ -8,8 +8,7 @@ import lombok.Getter;
 
 public class LobbyTeam implements Team {
 
-  @Getter
-  private final long id;
+  @Getter private final long id;
   private final Set<String> playerUsernames = new HashSet<>(GameConstant.TEAM_PLAYER);
 
   public LobbyTeam(long teamId) {

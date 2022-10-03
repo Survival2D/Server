@@ -6,10 +6,11 @@ import lombok.Getter;
 
 public class GsonHolder {
 
-  @Getter
-  private static final Gson normalGson = new Gson();
+  @Getter private static final Gson normalGson = new Gson();
 
   @Getter
-  private static final Gson responseGson = new GsonBuilder().registerTypeHierarchyAdapter(
-      Enum.class, EnumSerializer.getInstance()).create();
+  private static final Gson responseGson =
+      new GsonBuilder()
+          .registerTypeHierarchyAdapter(Enum.class, EnumSerializer.getInstance())
+          .create();
 }

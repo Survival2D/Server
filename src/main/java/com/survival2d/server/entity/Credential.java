@@ -14,7 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Credential {
 
-  @EzyId
-  private GamePlayerId id;
+  @EzyId private GamePlayerId id;
   private String password;
 }

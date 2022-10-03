@@ -16,8 +16,7 @@ import lombok.Setter;
 @EzyConfigurationBefore(priority = 1)
 public class GameConfig extends EzyLoggable {
 
-  @EzyAutoBind
-  private NormalRoom lobbyRoom;
+  @EzyAutoBind private NormalRoom lobbyRoom;
 
   @EzySingleton("globalRoomManager")
   public RoomManager<NormalRoom> globalRoomManager() {

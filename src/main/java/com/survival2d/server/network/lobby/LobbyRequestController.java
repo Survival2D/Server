@@ -2,8 +2,8 @@ package com.survival2d.server.network.lobby;
 
 import com.survival2d.server.constant.Commands;
 import com.survival2d.server.exception.JoinNotWaitingRoomException;
-import com.survival2d.server.network.lobby.entity.ResponseError;
 import com.survival2d.server.network.lobby.entity.JoinTeamResult;
+import com.survival2d.server.network.lobby.entity.ResponseError;
 import com.survival2d.server.network.lobby.request.JoinTeamRequest;
 import com.survival2d.server.network.lobby.response.CreateTeamResponse;
 import com.survival2d.server.network.lobby.response.FindMatchResponse;
@@ -41,20 +41,14 @@ import lombok.var;
 @Slf4j
 public class LobbyRequestController extends EzyLoggable {
 
-  @EzyAutoBind
-  private LobbyService lobbyService;
+  @EzyAutoBind private LobbyService lobbyService;
 
-  @EzyAutoBind
-  private RoomService roomService;
+  @EzyAutoBind private RoomService roomService;
 
-  @EzyAutoBind
-  private EzyResponseFactory responseFactory;
-  @EzyAutoBind
-  private LobbyTeamService lobbyTeamService;
-  @EzyAutoBind
-  private FindMatchService findMatchService;
-  @EzyAutoBind
-  private MatchingService matchingService;
+  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind private LobbyTeamService lobbyTeamService;
+  @EzyAutoBind private FindMatchService findMatchService;
+  @EzyAutoBind private MatchingService matchingService;
 
   @EzyDoHandle(LobbyCommand.GET_USER_INFO)
   public void getUserInfo(EzyUser user) {
@@ -135,7 +129,7 @@ public class LobbyRequestController extends EzyLoggable {
     }
     val matchId = optMatchId.get();
     val match = matchingService.getMatchById(matchId).get();
-    val allPlayers = match.getAllPlayers();;
+    val allPlayers = match.getAllPlayers();
     responseFactory
         .newObjectResponse()
         .command(LobbyCommand.FIND_MATCH)
@@ -157,7 +151,11 @@ public class LobbyRequestController extends EzyLoggable {
     lobbyService.addNewPlayer(user.getName());
     long lobbyRoomId = lobbyService.getRoomId();
     val response = JoinLobbyResponse.builder().lobbyRoomId(lobbyRoomId).build();
-    responseFactory.newObjectResponse().command(Commands.JOIN_LOBBY).data(response).user(user)
+    responseFactory
+        .newObjectResponse()
+        .command(Commands.JOIN_LOBBY)
+        .data(response)
+        .user(user)
         .execute();
   }
 

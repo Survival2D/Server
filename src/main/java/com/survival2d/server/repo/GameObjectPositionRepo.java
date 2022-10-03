@@ -11,14 +11,8 @@ public interface GameObjectPositionRepo
     extends EzyMongoRepository<GameObjectPosition.Id, GameObjectPosition> {
 
   @EzyQuery("{$and:[{'_id.game':?0},{'_id.gameId':?1}]}")
-  List<GameObjectPosition> findByGameAndGameId(
-      String game,
-      long gameId
-  );
+  List<GameObjectPosition> findByGameAndGameId(String game, long gameId);
 
   @EzyQuery("{$and:[{'_id.game':?0},{'_id.gameId':?1}]}")
-  int deleteByGameAndGameId(
-      String game,
-      long gameId
-  );
+  int deleteByGameAndGameId(String game, long gameId);
 }

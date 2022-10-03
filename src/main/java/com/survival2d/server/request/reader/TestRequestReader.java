@@ -11,12 +11,12 @@ public class TestRequestReader implements EzyReader<Object, TestRequest> {
 
   @Override
   public TestRequest read(EzyUnmarshaller ezyUnmarshaller, Object o) {
-//    try {
-//      String content = o.toString();
-//      return new ObjectMapper().readValue(content, TestRequest.class);
-//    } catch (JsonProcessingException e) {
-//      throw new RuntimeException(e);
-//    }
+    //    try {
+    //      String content = o.toString();
+    //      return new ObjectMapper().readValue(content, TestRequest.class);
+    //    } catch (JsonProcessingException e) {
+    //      throw new RuntimeException(e);
+    //    }
     return new Gson().fromJson(o.toString(), TestRequest.class);
   }
 }
