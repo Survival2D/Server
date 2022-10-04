@@ -15,7 +15,8 @@ import lombok.val;
 public class FindMatchServiceImpl implements FindMatchService {
 
   private final Set<Long> matchingTeams = new HashSet<>();
-  @EzyAutoBind MatchingService matchingService;
+  @EzyAutoBind
+  MatchingService matchingService;
 
   @Override
   @Synchronized

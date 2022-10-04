@@ -1,10 +1,14 @@
 package com.survival2d.server.util.vector;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+import org.locationtech.jts.math.Vector2D;
 
 public class VectorUtil {
-  public static Vector2D multiply(Vector2D vector, double scalar) {
-    return new Vector2D(vector.getX() * scalar, vector.getY() * scalar);
+
+  public static final Vector2D ZERO = new Vector2D(0, 0);
+
+  public static boolean isZero(Vector2D vector) {
+    return vector.equals(ZERO);
   }
 
 }

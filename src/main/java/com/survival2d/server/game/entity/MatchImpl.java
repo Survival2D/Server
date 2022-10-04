@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.locationtech.jts.math.Vector2D;
+
 
 @Getter
 @Slf4j
@@ -50,9 +51,9 @@ public class MatchImpl implements Match {
       log.error("player {} is null", playerId);
       return;
     }
-    if (!direction.equals(Vector2D.ZERO)) {
+    if (!VectorUtil.isZero(direction)) {
       val unitDirection = direction.normalize();
-      val moveBy = VectorUtil.multiply(unitDirection, player.getSpeed());
+      val moveBy = unitDirection.multiply(player.getSpeed());
       player.moveBy(moveBy);
     }
     player.setRotation(rotation);

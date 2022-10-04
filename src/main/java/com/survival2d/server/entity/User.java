@@ -8,7 +8,8 @@ import lombok.Data;
 @EzyCollection
 public class User {
 
-  @EzyId Long id;
+  @EzyId
+  Long id;
 
   String username;
   String password;

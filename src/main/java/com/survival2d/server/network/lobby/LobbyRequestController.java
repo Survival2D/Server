@@ -41,14 +41,20 @@ import lombok.var;
 @Slf4j
 public class LobbyRequestController extends EzyLoggable {
 
-  @EzyAutoBind private LobbyService lobbyService;
+  @EzyAutoBind
+  private LobbyService lobbyService;
 
-  @EzyAutoBind private RoomService roomService;
+  @EzyAutoBind
+  private RoomService roomService;
 
-  @EzyAutoBind private EzyResponseFactory responseFactory;
-  @EzyAutoBind private LobbyTeamService lobbyTeamService;
-  @EzyAutoBind private FindMatchService findMatchService;
-  @EzyAutoBind private MatchingService matchingService;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  private LobbyTeamService lobbyTeamService;
+  @EzyAutoBind
+  private FindMatchService findMatchService;
+  @EzyAutoBind
+  private MatchingService matchingService;
 
   @EzyDoHandle(LobbyCommand.GET_USER_INFO)
   public void getUserInfo(EzyUser user) {

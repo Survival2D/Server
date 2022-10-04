@@ -33,17 +33,23 @@ import lombok.Setter;
 @EzyRequestController
 public class UserRequestController extends EzyLoggable {
 
-  @EzyAutoBind private EzyResponseFactory appResponseFactory;
+  @EzyAutoBind
+  private EzyResponseFactory appResponseFactory;
 
-  @EzyAutoBind private GameObjectPositionRepo gameObjectPositionRepo;
+  @EzyAutoBind
+  private GameObjectPositionRepo gameObjectPositionRepo;
 
-  @EzyAutoBind private PlayerCurrentGameRepo playerCurrentGameRepo;
+  @EzyAutoBind
+  private PlayerCurrentGameRepo playerCurrentGameRepo;
 
-  @EzyAutoBind private GameCurrentStateRepo gameCurrentStateRepo;
+  @EzyAutoBind
+  private GameCurrentStateRepo gameCurrentStateRepo;
 
-  @EzyAutoBind private LeaderBoardRepo leaderBoardRepo;
+  @EzyAutoBind
+  private LeaderBoardRepo leaderBoardRepo;
 
-  @EzyAutoBind private EzyMaxIdRepository maxIdRepository;
+  @EzyAutoBind
+  private EzyMaxIdRepository maxIdRepository;
 
   @EzyDoHandle("getGameId")
   public void getGameId(GetGameIdRequest request, EzyUser user) {

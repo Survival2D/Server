@@ -3,7 +3,8 @@ package com.survival2d.server.request;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.locationtech.jts.math.Vector2D;
+
 
 @Getter
 @Setter

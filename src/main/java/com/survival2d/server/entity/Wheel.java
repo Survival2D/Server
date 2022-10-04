@@ -9,6 +9,7 @@ import lombok.Data;
 @EzyCollection
 public class Wheel {
 
-  @EzyId private String id;
+  @EzyId
+  private String id;
   private List<WheelFragment> fragments;
 }

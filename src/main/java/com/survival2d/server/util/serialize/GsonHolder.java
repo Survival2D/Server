@@ -6,7 +6,8 @@ import lombok.Getter;
 
 public class GsonHolder {
 
-  @Getter private static final Gson normalGson = new Gson();
+  @Getter
+  private static final Gson normalGson = new Gson();
 
   @Getter
   private static final Gson responseGson =

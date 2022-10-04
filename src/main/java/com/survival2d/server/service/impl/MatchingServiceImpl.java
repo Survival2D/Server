@@ -17,11 +17,14 @@ import lombok.val;
 @EzySingleton
 public class MatchingServiceImpl implements MatchingService {
 
-  @EzyAutoBind private final AtomicLong currentMatchId = new AtomicLong();
+  @EzyAutoBind
+  private final AtomicLong currentMatchId = new AtomicLong();
   private final Map<Long, Match> matchIdToMatch = new ConcurrentHashMap<>();
   private final Map<String, Long> playerIdToMatchId = new ConcurrentHashMap<>();
-  @EzyAutoBind LobbyTeamService teamService;
-  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  LobbyTeamService teamService;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
   @Override
   public long createMatch(List<Long> teamIds) {

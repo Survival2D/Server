@@ -13,7 +13,8 @@ import com.tvd12.gamebox.handler.SyncPositionRoomUpdatedHandler;
 @EzyConfigurationBefore(priority = 0)
 public class MMOVirtualWorldConfig extends EzyLoggable {
 
-  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
   @EzySingleton
   public MMOVirtualWorld mmoVirtualWorld() {

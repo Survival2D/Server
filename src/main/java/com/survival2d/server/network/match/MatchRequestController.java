@@ -14,8 +14,10 @@ import lombok.val;
 @Slf4j
 public class MatchRequestController {
 
-  @EzyAutoBind MatchingService matchingService;
-  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  MatchingService matchingService;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
   //  @EzyDoHandle(MatchCommand.MATCH_INFO)
   //  public void handleMatchInfo(EzyUser user){

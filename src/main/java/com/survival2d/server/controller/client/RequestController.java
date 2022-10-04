@@ -18,7 +18,8 @@ public class RequestController extends EzyLoggable {
   private final WheelService wheelService;
   private final EzyResponseFactory responseFactory;
 
-  @EzyAutoBind private PrizeService prizeService;
+  @EzyAutoBind
+  private PrizeService prizeService;
 
   @EzyDoHandle("spin")
   public void spin(EzySession session, EzyUser user) {

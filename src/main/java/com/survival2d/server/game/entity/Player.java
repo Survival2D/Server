@@ -1,7 +1,8 @@
 package com.survival2d.server.game.entity;
 
 import com.survival2d.server.game.entity.base.Movable;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.locationtech.jts.math.Vector2D;
+
 
 public interface Player extends Movable {
 

@@ -9,7 +9,8 @@ import lombok.Data;
 @EzyCollection
 public class Prize {
 
-  @EzyId Long id;
+  @EzyId
+  Long id;
 
   private Date date = new Date();
   private String username;

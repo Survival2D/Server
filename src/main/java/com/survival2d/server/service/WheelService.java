@@ -26,7 +26,8 @@ public class WheelService {
   private Wheel wheel;
   private List<WheelFragment> emptyFragments;
   private List<Integer> randomRanges;
-  @EzyAutoBind private WheelRepo wheelRepo;
+  @EzyAutoBind
+  private WheelRepo wheelRepo;
 
   @EzyPostInit
   public void postInit() {

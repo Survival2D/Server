@@ -5,7 +5,8 @@ import com.tvd12.ezyfox.binding.EzyReader;
 import com.tvd12.ezyfox.binding.EzyUnmarshaller;
 import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
 import lombok.Data;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.locationtech.jts.math.Vector2D;
+
 
 @Data
 public class PlayerMoveRequest {

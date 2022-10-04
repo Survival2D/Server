@@ -1,8 +1,10 @@
 package com.survival2d.server.game.entity.base;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+import org.locationtech.jts.math.Vector2D;
 
 public interface Movable extends HasPosition {
+
   default void moveBy(Vector2D v) {
     setPosition(getPosition().add(v));
   }
