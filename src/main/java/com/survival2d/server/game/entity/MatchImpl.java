@@ -1,12 +1,16 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.constant.GameConstant;
+import com.survival2d.server.game.action.PlayerAction;
 import com.survival2d.server.game.entity.base.MapObject;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
+import com.survival2d.server.util.EzyFoxUtil;
 import com.survival2d.server.util.vector.VectorUtil;
-import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,28 +24,35 @@ public class MatchImpl implements Match {
 
   private final long id;
   private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
+  @Deprecated
   private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
+  @Deprecated
   private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
+
+  private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests = new ConcurrentHashMap<>();
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  private final transient EzyResponseFactory responseFactory;
+  private Timer timer;
+  private TimerTask timerTask;
   private long currentTick;
 
-  public MatchImpl(long id, EzyResponseFactory responseFactory) {
+  public MatchImpl(long id) {
     this.id = id;
-    this.responseFactory = responseFactory;
   }
 
   @Override
   public void addPlayer(long teamId, String playerId) {
-    //    val team = teams.computeIfAbsent(teamId, key -> new MatchTeamImpl(teamId));
-    //    team.addPlayer(playerId);
-    //    playerIdToTeam.put(playerId, teamId);
     players.putIfAbsent(playerId, new PlayerImpl(playerId, teamId));
   }
 
   @Override
   public Collection<String> getAllPlayers() {
     return players.keySet();
+  }
+
+  @Override
+  public void onReceivePlayerAction(String playerId, PlayerAction action) {
+    val playerActionMap = playerRequests.computeIfAbsent(playerId, k -> new ConcurrentHashMap<>());
+    playerActionMap.put(action.getClass(), action);
   }
 
   @Override
@@ -57,7 +68,7 @@ public class MatchImpl implements Match {
       player.moveBy(moveBy);
     }
     player.setRotation(rotation);
-    responseFactory
+    EzyFoxUtil.getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_MOVE)
         .data(
@@ -68,5 +79,43 @@ public class MatchImpl implements Match {
                 .build())
         .usernames(getAllPlayers())
         .execute();
+  }
+
+  public void onPlayerSwitchWeapon(String playerId, int weaponId) {
+    val player = players.get(playerId);
+    if (player == null) {
+      log.error("player {} is null", playerId);
+      return;
+    }
+    player.switchWeapon(weaponId);
+  }
+
+  private void start() {
+    timer = new Timer();
+    timerTask = new TimerTask() {
+      @Override
+      public void run() {
+        update();
+      }
+    };
+    timer.scheduleAtFixedRate(timerTask, 0, GameConstant.PERIOD_PER_TICK);
+    sendMatchStart();
+  }
+
+  private void sendMatchStart() {
+    EzyFoxUtil.getResponseFactory()
+        .newObjectResponse()
+        .command(MatchCommand.MATCH_START)
+        .usernames(getAllPlayers())
+        .execute();
+  }
+
+  public void end() {
+    timerTask.cancel();
+    timer.cancel();
+  }
+
+  public void update() {
+    currentTick++;
   }
 }

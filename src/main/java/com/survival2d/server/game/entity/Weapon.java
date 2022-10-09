@@ -1,5 +1,7 @@
 package com.survival2d.server.game.entity;
 
-public class Weapon {
+public abstract class Weapon {
 
+
+  public abstract AttachType getAttachType();
 }

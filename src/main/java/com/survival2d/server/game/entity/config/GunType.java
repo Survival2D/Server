@@ -1,4 +1,4 @@
-package com.survival2d.server.game.entity;
+package com.survival2d.server.game.entity.config;
 
 import lombok.Getter;
 

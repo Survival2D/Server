@@ -29,7 +29,7 @@ public class MatchingServiceImpl implements MatchingService {
   @Override
   public long createMatch(List<Long> teamIds) {
     val matchId = currentMatchId.getAndIncrement();
-    val match = new MatchImpl(matchId, responseFactory);
+    val match = new MatchImpl(matchId);
     matchIdToMatch.put(matchId, match);
     teamIds.stream()
         .map(teamId -> teamService.getTeam(teamId).get())

@@ -1,9 +1,11 @@
-package com.survival2d.server.game.entity;
+package com.survival2d.server.game.entity.weapon;
 
 
+import com.survival2d.server.game.entity.Bullet;
+import com.survival2d.server.game.entity.config.GunType;
 import org.locationtech.jts.math.Vector2D;
 
-public class Gun extends Weapon {
+public class Gun extends RangeWeapon {
 
   GunType type;
   int remainBullets;

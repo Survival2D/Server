@@ -1,5 +1,8 @@
 package com.survival2d.server.game.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
 import org.locationtech.jts.math.Vector2D;
@@ -17,10 +20,27 @@ public class PlayerImpl implements Player {
   double rotation;
   double speed = 10;
   Vector2D direction;
+  List<Weapon> weapons = new ArrayList<>();
+  int currentWeaponIndex;
   long team;
 
   public PlayerImpl(String playerId, long team) {
     this.playerId = playerId;
     this.team = team;
+  }
+
+  @Override
+  public void switchWeapon(int index) {
+    if (index > 0 && index < weapons.size()) {
+      currentWeaponIndex = index;
+    }
+  }
+
+  @Override
+  public Optional<Weapon> getCurrentWeapon() {
+    if (currentWeaponIndex < 0 || currentWeaponIndex >= weapons.size()) {
+      return Optional.empty();
+    }
+    return Optional.of(weapons.get(currentWeaponIndex));
   }
 }

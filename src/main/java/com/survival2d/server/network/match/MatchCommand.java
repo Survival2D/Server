@@ -6,4 +6,5 @@ public class MatchCommand {
   public static final String GAME_START = "gameStart";
   public static final String MATCH_INFO = "matchInfo";
   public static final String PLAYER_MOVE = "playerMove";
+  public static final String MATCH_START = "matchStart";
 }

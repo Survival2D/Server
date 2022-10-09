@@ -1,6 +1,7 @@
 package com.survival2d.server.game.entity;
 
 import com.survival2d.server.game.entity.base.Movable;
+import java.util.Optional;
 import org.locationtech.jts.math.Vector2D;
 
 
@@ -19,4 +20,8 @@ public interface Player extends Movable {
   double getSpeed();
 
   long getTeam();
+
+  void switchWeapon(int index);
+
+  Optional<Weapon> getCurrentWeapon();
 }

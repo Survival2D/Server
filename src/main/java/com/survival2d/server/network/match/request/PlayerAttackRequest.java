@@ -1,11 +1,14 @@
 package com.survival2d.server.network.match.request;
 
 import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
+import java.util.Vector;
 import lombok.Data;
+import org.locationtech.jts.math.Vector2D;
+
 
 @Data
 @EzyObjectBinding
-public class MatchInfoRequest {
+public class PlayerAttackRequest {
 
-  private long matchId;
+  private Vector2D direction;
 }
