@@ -7,7 +7,7 @@
     <dependency>
       <artifactId>ezyfox-server-embedded</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>1.2.4</version>
+      <version>1.2.5</version>
     </dependency>
     <!--    <dependency>-->
     <!--      <artifactId>ezyhttp-server-boot</artifactId>-->
@@ -17,12 +17,12 @@
     <dependency>
       <artifactId>ezydata-mongodb</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>1.2.4</version>
+      <version>1.2.5</version>
     </dependency>
     <dependency>
       <artifactId>ezyfox-boot-autoconfigure</artifactId>
       <groupId>com.tvd12</groupId>
-      <version>1.0.6</version>
+      <version>1.0.7</version>
     </dependency>
     <dependency>
       <artifactId>lombok</artifactId>
@@ -44,20 +44,27 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.12.0</version>
     </dependency>
+    <!--TODO: remove game-box-->
     <dependency>
       <groupId>com.tvd12</groupId>
       <artifactId>game-box</artifactId>
-      <version>1.1.5</version>
+      <version>1.1.6</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.apache.commons</groupId>-->
-<!--      <artifactId>commons-math3</artifactId>-->
-<!--      <version>3.6.1</version>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.commons</groupId>-->
+    <!--      <artifactId>commons-math3</artifactId>-->
+    <!--      <version>3.6.1</version>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>org.locationtech.jts</groupId>
       <artifactId>jts-core</artifactId>
       <version>1.19.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.9.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <groupId>com.survival2d</groupId>
