@@ -2,6 +2,9 @@ package com.survival2d.server.game.entity;
 
 import com.survival2d.server.constant.GameConstant;
 import com.survival2d.server.game.action.PlayerAction;
+import com.survival2d.server.game.action.PlayerAttack;
+import com.survival2d.server.game.action.PlayerChangeWeapon;
+import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.game.entity.base.MapObject;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
@@ -117,5 +120,32 @@ public class MatchImpl implements Match {
 
   public void update() {
     currentTick++;
+    updatePlayers();
+  }
+
+  private void updatePlayers() {
+    for (val player : players.values()) {
+      val playerActionMap = playerRequests.get(player.getPlayerId());
+      if (playerActionMap == null) {
+        continue;
+      }
+      for (val action : playerActionMap.values()) {
+        handlePlayerAction(player.getPlayerId(), action);
+      }
+    }
+
+  }
+
+  private void handlePlayerAction(String playerId, PlayerAction action) {
+    if (action instanceof PlayerMove) {
+      val playerMove = (PlayerMove) action;
+      onPlayerMove(playerId, playerMove.getDirection(), playerMove.getRotation());
+    } else if (action instanceof PlayerAttack) {
+      val playerAttack = (PlayerAttack) action;
+      //TODO
+    } else if (action instanceof PlayerChangeWeapon) {
+      val playerChangeWeapon = (PlayerChangeWeapon) action;
+      onPlayerSwitchWeapon(playerId, playerChangeWeapon.getWeaponIndex());
+    }
   }
 }
