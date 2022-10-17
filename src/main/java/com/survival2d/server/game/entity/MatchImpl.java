@@ -6,6 +6,8 @@ import com.survival2d.server.game.action.PlayerAttack;
 import com.survival2d.server.game.action.PlayerChangeWeapon;
 import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.game.entity.base.MapObject;
+import com.survival2d.server.game.entity.weapon.MeleeWeapon;
+import com.survival2d.server.game.entity.weapon.RangeWeapon;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.util.EzyFoxUtil;
@@ -74,6 +76,31 @@ public class MatchImpl implements Match {
     EzyFoxUtil.getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_MOVE)
+        .data(
+            PlayerMoveResponse.builder()
+                .username(player.getPlayerId())
+                .position(player.getPosition())
+                .rotation(player.getRotation())
+                .build())
+        .usernames(getAllPlayers())
+        .execute();
+  }
+
+  @Override
+  public void onPlayerAttach(String playerId, Vector2D direction) {
+    val player = players.get(playerId);
+    val currentWeapon = player.getCurrentWeapon().get();
+    if (currentWeapon instanceof MeleeWeapon) {
+      //TODO: tạo damage xung quanh
+    } else if (currentWeapon instanceof RangeWeapon) {
+      //TODO: tạo đạn
+    }
+    val unitDirection = direction.normalize();
+    val moveBy = unitDirection.multiply(player.getSpeed());
+    player.moveBy(moveBy);
+    EzyFoxUtil.getResponseFactory()
+        .newObjectResponse()
+        .command(MatchCommand.PLAYER_ATTACK)
         .data(
             PlayerMoveResponse.builder()
                 .username(player.getPlayerId())

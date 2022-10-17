@@ -14,4 +14,6 @@ public interface Match {
   void onReceivePlayerAction(String playerId, PlayerAction action);
 
   void onPlayerMove(String playerId, Vector2D direction, double rotation);
+
+  void onPlayerAttach(String playerId, Vector2D direction);
 }
