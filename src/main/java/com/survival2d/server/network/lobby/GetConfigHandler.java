@@ -13,7 +13,7 @@ public class GetConfigHandler {
   @EzyDoHandle(LobbyCommand.GET_CONFIG)
   public void handleGetConfig(EzyUser user) {
     val response = GetConfigResponse.builder().map(MapConfig.getInstance()).build();
-    EzyFoxUtil.getResponseFactory()
+    EzyFoxUtil.getInstance().getResponseFactory()
         .newObjectResponse()
         .command(LobbyCommand.GET_CONFIG)
         .user(user)

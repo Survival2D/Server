@@ -22,26 +22,25 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.locationtech.jts.math.Vector2D;
 
-
 @Getter
 @Slf4j
 public class MatchImpl implements Match {
 
   private final long id;
   private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
-  @Deprecated
-  private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
-  @Deprecated
-  private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
+  @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
+  @Deprecated private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
 
-  private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests = new ConcurrentHashMap<>();
+  private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
+      new ConcurrentHashMap<>();
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  private Timer timer;
-  private TimerTask timerTask;
+  private Timer timer = new Timer();
+  private TimerTask gameLoopTask;
   private long currentTick;
 
   public MatchImpl(long id) {
     this.id = id;
+    init();
   }
 
   @Override
@@ -73,7 +72,7 @@ public class MatchImpl implements Match {
       player.moveBy(moveBy);
     }
     player.setRotation(rotation);
-    EzyFoxUtil.getResponseFactory()
+    EzyFoxUtil.getInstance().getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_MOVE)
         .data(
@@ -91,14 +90,14 @@ public class MatchImpl implements Match {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon instanceof MeleeWeapon) {
-      //TODO: tạo damage xung quanh
+      // TODO: tạo damage xung quanh
     } else if (currentWeapon instanceof RangeWeapon) {
-      //TODO: tạo đạn
+      // TODO: tạo đạn
     }
     val unitDirection = direction.normalize();
     val moveBy = unitDirection.multiply(player.getSpeed());
     player.moveBy(moveBy);
-    EzyFoxUtil.getResponseFactory()
+    EzyFoxUtil.getInstance().getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_ATTACK)
         .data(
@@ -120,20 +119,31 @@ public class MatchImpl implements Match {
     player.switchWeapon(weaponId);
   }
 
-  private void start() {
-    timer = new Timer();
-    timerTask = new TimerTask() {
-      @Override
-      public void run() {
-        update();
-      }
-    };
-    timer.scheduleAtFixedRate(timerTask, 0, GameConstant.PERIOD_PER_TICK);
+  public void init() {
+    timer.schedule(
+        new TimerTask() {
+          @Override
+          public void run() {
+            start();
+          }
+        },
+        3000);
+  }
+
+  public void start() {
     sendMatchStart();
+    gameLoopTask =
+        new TimerTask() {
+          @Override
+          public void run() {
+            update();
+          }
+        };
+    timer.scheduleAtFixedRate(gameLoopTask, 0, GameConstant.PERIOD_PER_TICK);
   }
 
   private void sendMatchStart() {
-    EzyFoxUtil.getResponseFactory()
+    EzyFoxUtil.getInstance().getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.MATCH_START)
         .usernames(getAllPlayers())
@@ -141,7 +151,7 @@ public class MatchImpl implements Match {
   }
 
   public void end() {
-    timerTask.cancel();
+    gameLoopTask.cancel();
     timer.cancel();
   }
 
@@ -160,7 +170,6 @@ public class MatchImpl implements Match {
         handlePlayerAction(player.getPlayerId(), action);
       }
     }
-
   }
 
   private void handlePlayerAction(String playerId, PlayerAction action) {
@@ -169,7 +178,7 @@ public class MatchImpl implements Match {
       onPlayerMove(playerId, playerMove.getDirection(), playerMove.getRotation());
     } else if (action instanceof PlayerAttack) {
       val playerAttack = (PlayerAttack) action;
-      //TODO
+      // TODO
     } else if (action instanceof PlayerChangeWeapon) {
       val playerChangeWeapon = (PlayerChangeWeapon) action;
       onPlayerSwitchWeapon(playerId, playerChangeWeapon.getWeaponIndex());

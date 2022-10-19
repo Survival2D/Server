@@ -1,5 +1,6 @@
 package com.survival2d.server.network.match;
 
+import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.network.match.request.PlayerMoveRequest;
 import com.survival2d.server.service.MatchingService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
@@ -52,6 +53,6 @@ public class MatchRequestController {
       return;
     }
     val match = optMatch.get();
-    match.onPlayerMove(playerId, request.getDirection(), request.getRotation());
+    match.onReceivePlayerAction(playerId, new PlayerMove(request.getDirection(), request.getRotation()));
   }
 }

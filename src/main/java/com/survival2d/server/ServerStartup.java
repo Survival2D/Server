@@ -4,6 +4,7 @@ import com.tvd12.ezyfox.bean.EzyBeanContextBuilder;
 import com.tvd12.ezyfoxserver.constant.EzyEventType;
 import com.tvd12.ezyfoxserver.context.EzyAppContext;
 import com.tvd12.ezyfoxserver.context.EzyPluginContext;
+import com.tvd12.ezyfoxserver.context.EzyServerContext;
 import com.tvd12.ezyfoxserver.embedded.EzyEmbeddedServer;
 import com.tvd12.ezyfoxserver.ext.EzyAbstractAppEntryLoader;
 import com.tvd12.ezyfoxserver.ext.EzyAbstractPluginEntryLoader;
@@ -19,14 +20,16 @@ import com.tvd12.ezyfoxserver.setting.EzyWebSocketSettingBuilder;
 import com.tvd12.ezyfoxserver.setting.EzyZoneSettingBuilder;
 import com.tvd12.ezyfoxserver.support.entry.EzySimpleAppEntry;
 import com.tvd12.ezyfoxserver.support.entry.EzySimplePluginEntry;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ServerStartup {
 
-  private static final String ZONE_NAME = "survival2d";
-  private static final String APP_NAME = "survival2d";
+  public static final String ZONE_NAME = "survival2d";
+  public static final String APP_NAME = "survival2d";
   private static final String PLUGIN_NAME = "survival2d";
+  @Getter private static EzyServerContext serverContext;
 
   public static void main(String[] args) throws Exception {
     log.trace("Start config server");
@@ -68,7 +71,7 @@ public class ServerStartup {
     EzyEmbeddedServer server = EzyEmbeddedServer.builder().settings(settings).build();
 
     log.trace("Config complete! Start server...");
-    server.start();
+    serverContext = server.start();
     log.trace("Start server complete!");
   }
 
@@ -76,12 +79,12 @@ public class ServerStartup {
 
     @Override
     protected String[] getScanableBeanPackages() {
-      return new String[]{"com.survival2d.server"};
+      return new String[] {"com.survival2d.server"};
     }
 
     @Override
     protected String[] getScanableBindingPackages() {
-      return new String[]{"com.survival2d.server"};
+      return new String[] {"com.survival2d.server"};
     }
 
     @Override
@@ -102,12 +105,12 @@ public class ServerStartup {
 
     @Override
     protected String[] getScanableBeanPackages() {
-      return new String[]{"com.survival2d.server"};
+      return new String[] {"com.survival2d.server"};
     }
 
     @Override
     protected String[] getScanableBindingPackages() {
-      return new String[]{"com.survival2d.server"};
+      return new String[] {"com.survival2d.server"};
     }
 
     @Override
