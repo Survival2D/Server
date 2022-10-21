@@ -7,7 +7,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
 import org.locationtech.jts.math.Vector2D;
 
-
 @Data
 public class PlayerImpl implements Player {
 

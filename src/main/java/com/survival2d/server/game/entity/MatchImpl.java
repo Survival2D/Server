@@ -11,6 +11,7 @@ import com.survival2d.server.game.entity.weapon.RangeWeapon;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.util.EzyFoxUtil;
+import com.survival2d.server.util.serialize.ExcludeFromGson;
 import com.survival2d.server.util.vector.VectorUtil;
 import java.util.Collection;
 import java.util.Map;
@@ -25,17 +26,19 @@ import org.locationtech.jts.math.Vector2D;
 @Getter
 @Slf4j
 public class MatchImpl implements Match {
-
   private final long id;
-  private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
-  @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
-  @Deprecated private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
+  @ExcludeFromGson private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
+  @ExcludeFromGson @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
+  @ExcludeFromGson @Deprecated
+  private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
 
+  @ExcludeFromGson
   private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
       new ConcurrentHashMap<>();
+
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  private Timer timer = new Timer();
-  private TimerTask gameLoopTask;
+  @ExcludeFromGson private Timer timer = new Timer();
+  @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
 
   public MatchImpl(long id) {
@@ -46,6 +49,7 @@ public class MatchImpl implements Match {
   @Override
   public void addPlayer(long teamId, String playerId) {
     players.putIfAbsent(playerId, new PlayerImpl(playerId, teamId));
+    playerRequests.put(playerId, new ConcurrentHashMap<>());
   }
 
   @Override
@@ -55,7 +59,7 @@ public class MatchImpl implements Match {
 
   @Override
   public void onReceivePlayerAction(String playerId, PlayerAction action) {
-    val playerActionMap = playerRequests.computeIfAbsent(playerId, k -> new ConcurrentHashMap<>());
+    val playerActionMap = playerRequests.get(playerId);
     playerActionMap.put(action.getClass(), action);
   }
 
@@ -72,7 +76,8 @@ public class MatchImpl implements Match {
       player.moveBy(moveBy);
     }
     player.setRotation(rotation);
-    EzyFoxUtil.getInstance().getResponseFactory()
+    EzyFoxUtil.getInstance()
+        .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_MOVE)
         .data(
@@ -97,7 +102,8 @@ public class MatchImpl implements Match {
     val unitDirection = direction.normalize();
     val moveBy = unitDirection.multiply(player.getSpeed());
     player.moveBy(moveBy);
-    EzyFoxUtil.getInstance().getResponseFactory()
+    EzyFoxUtil.getInstance()
+        .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_ATTACK)
         .data(
@@ -143,7 +149,8 @@ public class MatchImpl implements Match {
   }
 
   private void sendMatchStart() {
-    EzyFoxUtil.getInstance().getResponseFactory()
+    EzyFoxUtil.getInstance()
+        .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.MATCH_START)
         .usernames(getAllPlayers())
@@ -169,6 +176,7 @@ public class MatchImpl implements Match {
       for (val action : playerActionMap.values()) {
         handlePlayerAction(player.getPlayerId(), action);
       }
+      playerActionMap.clear();
     }
   }
 
