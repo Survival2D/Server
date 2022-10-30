@@ -6,9 +6,11 @@ import com.survival2d.server.game.action.PlayerAttack;
 import com.survival2d.server.game.action.PlayerChangeWeapon;
 import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.game.entity.base.MapObject;
+import com.survival2d.server.game.entity.config.BulletType;
 import com.survival2d.server.game.entity.weapon.MeleeWeapon;
 import com.survival2d.server.game.entity.weapon.RangeWeapon;
 import com.survival2d.server.network.match.MatchCommand;
+import com.survival2d.server.network.match.response.PlayerAttackResponse;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.util.EzyFoxUtil;
 import com.survival2d.server.util.serialize.ExcludeFromGson;
@@ -29,6 +31,7 @@ public class MatchImpl implements Match {
   private final long id;
   @ExcludeFromGson private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
   @ExcludeFromGson @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
+
   @ExcludeFromGson @Deprecated
   private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
 
@@ -37,6 +40,7 @@ public class MatchImpl implements Match {
       new ConcurrentHashMap<>();
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
+  private long currentMapObjectId;
   @ExcludeFromGson private Timer timer = new Timer();
   @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
@@ -95,23 +99,37 @@ public class MatchImpl implements Match {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon instanceof MeleeWeapon) {
-      // TODO: tạo damage xung quanh
+      createDamage(player.getPosition(), 10, 10);
     } else if (currentWeapon instanceof RangeWeapon) {
-      // TODO: tạo đạn
+      createBullet(player.getPosition(), direction, BulletType.NORMAL);
     }
-    val unitDirection = direction.normalize();
-    val moveBy = unitDirection.multiply(player.getSpeed());
-    player.moveBy(moveBy);
+  }
+
+  public void addMapObject(MapObject mapObject) {
+    mapObject.setId(currentMapObjectId++);
+    objects.put(mapObject.getId(), mapObject);
+  }
+
+  @Override
+  public void createDamage(Vector2D position, double radius, double damage) {
     EzyFoxUtil.getInstance()
         .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_ATTACK)
-        .data(
-            PlayerMoveResponse.builder()
-                .username(player.getPlayerId())
-                .position(player.getPosition())
-                .rotation(player.getRotation())
-                .build())
+        .data(PlayerAttackResponse.builder().build())//TODO
+        .usernames(getAllPlayers())
+        .execute();
+  }
+
+  @Override
+  public void createBullet(Vector2D position, Vector2D direction, BulletType type) {
+    val bullet = new Bullet(position, direction, type);
+    addMapObject(bullet);
+    EzyFoxUtil.getInstance()
+        .getResponseFactory()
+        .newObjectResponse()
+        .command(MatchCommand.CREATE_BULLET)
+        .data(PlayerCreateBullet.builder().build())//TODO
         .usernames(getAllPlayers())
         .execute();
   }
@@ -165,6 +183,19 @@ public class MatchImpl implements Match {
   public void update() {
     currentTick++;
     updatePlayers();
+    updateMapObjects();
+  }
+
+  private void updateMapObjects() {
+    for (val mapObject : objects.values()) {
+      if (mapObject instanceof Bullet) {
+        val bullet = (Bullet) mapObject;
+        bullet.move();
+        if (bullet.isDestroyed()) {
+          objects.remove(bullet.getId());
+        }
+      }
+    }
   }
 
   private void updatePlayers() {
@@ -186,7 +217,7 @@ public class MatchImpl implements Match {
       onPlayerMove(playerId, playerMove.getDirection(), playerMove.getRotation());
     } else if (action instanceof PlayerAttack) {
       val playerAttack = (PlayerAttack) action;
-      // TODO
+      onPlayerAttach(playerId, playerAttack.getDirection());
     } else if (action instanceof PlayerChangeWeapon) {
       val playerChangeWeapon = (PlayerChangeWeapon) action;
       onPlayerSwitchWeapon(playerId, playerChangeWeapon.getWeaponIndex());
