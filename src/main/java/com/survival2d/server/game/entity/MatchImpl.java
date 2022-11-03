@@ -10,6 +10,7 @@ import com.survival2d.server.game.entity.config.BulletType;
 import com.survival2d.server.game.entity.weapon.MeleeWeapon;
 import com.survival2d.server.game.entity.weapon.RangeWeapon;
 import com.survival2d.server.network.match.MatchCommand;
+import com.survival2d.server.network.match.response.CreateBulletResponse;
 import com.survival2d.server.network.match.response.PlayerAttackResponse;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.util.EzyFoxUtil;
@@ -129,7 +130,7 @@ public class MatchImpl implements Match {
         .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.CREATE_BULLET)
-        .data(PlayerCreateBullet.builder().build())//TODO
+        .data(CreateBulletResponse.builder().build())//TODO
         .usernames(getAllPlayers())
         .execute();
   }
