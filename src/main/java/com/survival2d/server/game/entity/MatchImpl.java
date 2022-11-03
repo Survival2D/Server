@@ -117,7 +117,7 @@ public class MatchImpl implements Match {
         .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_ATTACK)
-        .data(PlayerAttackResponse.builder().build())//TODO
+        .data(PlayerAttackResponse.builder().build()) // TODO
         .usernames(getAllPlayers())
         .execute();
   }
@@ -130,7 +130,7 @@ public class MatchImpl implements Match {
         .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.CREATE_BULLET)
-        .data(CreateBulletResponse.builder().build())//TODO
+        .data(CreateBulletResponse.builder().bullet(bullet).build())
         .usernames(getAllPlayers())
         .execute();
   }
