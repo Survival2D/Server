@@ -4,7 +4,6 @@ import com.survival2d.server.game.entity.Bullet;
 import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
 import lombok.Builder;
 import lombok.Data;
-import org.locationtech.jts.math.Vector2D;
 
 @Data
 @Builder
@@ -12,5 +11,4 @@ import org.locationtech.jts.math.Vector2D;
 public class CreateBulletResponse {
 
   private Bullet bullet;
-  private Vector2D direction;
 }

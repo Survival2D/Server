@@ -13,12 +13,12 @@ public class Bullet implements MapObject, Movable {
 
   Vector2D position;
 
-  Vector2D rawPosition;
+  Vector2D originPosition;
   Vector2D direction;
   BulletType type;
 
-  public Bullet(Vector2D rawPosition, Vector2D direction, BulletType type) {
-    this.rawPosition = rawPosition;
+  public Bullet(Vector2D originPosition, Vector2D direction, BulletType type) {
+    this.originPosition = originPosition;
     this.direction = direction;
     this.type = type;
   }
