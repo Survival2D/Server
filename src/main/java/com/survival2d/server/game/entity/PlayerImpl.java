@@ -36,6 +36,11 @@ public class PlayerImpl implements Player {
   }
 
   @Override
+  public Vector2D getAttackDirection() {
+    return new Vector2D(Math.cos(rotation), Math.sin(rotation));
+  }
+
+  @Override
   public void switchWeapon(int index) {
     if (index > 0 && index < weapons.size()) {
       currentWeaponIndex = index;
@@ -49,4 +54,6 @@ public class PlayerImpl implements Player {
     }
     return Optional.of(weapons.get(currentWeaponIndex));
   }
+
+
 }
