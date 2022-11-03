@@ -192,9 +192,6 @@ public class MatchImpl implements Match {
       if (mapObject instanceof Bullet) {
         val bullet = (Bullet) mapObject;
         bullet.move();
-        if (bullet.isDestroyed()) {
-          objects.remove(bullet.getId());
-        }
       }
     }
   }
