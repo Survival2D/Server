@@ -1,5 +1,8 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.config.GunType;
+import com.survival2d.server.game.entity.weapon.Gun;
+import com.survival2d.server.game.entity.weapon.Hand;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +29,10 @@ public class PlayerImpl implements Player {
   public PlayerImpl(String playerId, long team) {
     this.playerId = playerId;
     this.team = team;
+    this.weapons.add(new Hand());
+    Gun gun = new Gun(GunType.NORMAL);
+    gun.reload(100);
+    this.weapons.add(gun);
   }
 
   @Override

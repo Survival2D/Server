@@ -214,8 +214,8 @@ public class MatchImpl implements Match {
       val playerMove = (PlayerMove) action;
       onPlayerMove(playerId, playerMove.getDirection(), playerMove.getRotation());
     } else if (action instanceof PlayerAttack) {
-      val playerAttack = (PlayerAttack) action;
-      onPlayerAttach(playerId, playerAttack.getDirection());
+      val player = players.get(playerId);
+      onPlayerAttach(playerId, player.getDirection());
     } else if (action instanceof PlayerChangeWeapon) {
       val playerChangeWeapon = (PlayerChangeWeapon) action;
       onPlayerSwitchWeapon(playerId, playerChangeWeapon.getWeaponIndex());
