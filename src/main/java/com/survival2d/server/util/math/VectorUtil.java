@@ -1,4 +1,4 @@
-package com.survival2d.server.util.vector;
+package com.survival2d.server.util.math;
 
 
 import org.locationtech.jts.math.Vector2D;
@@ -9,6 +9,10 @@ public class VectorUtil {
 
   public static boolean isZero(Vector2D vector) {
     return vector.equals(ZERO);
+  }
+
+  public static boolean isCollision(Vector2D a, Vector2D b, double radius) {
+    return a.distance(b) <= radius;
   }
 
 }

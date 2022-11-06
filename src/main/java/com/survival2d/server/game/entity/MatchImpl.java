@@ -12,10 +12,11 @@ import com.survival2d.server.game.entity.weapon.RangeWeapon;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.CreateBulletResponse;
 import com.survival2d.server.network.match.response.PlayerAttackResponse;
+import com.survival2d.server.network.match.response.PlayerChangeWeaponResponse;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.util.EzyFoxUtil;
+import com.survival2d.server.util.math.VectorUtil;
 import com.survival2d.server.util.serialize.ExcludeFromGson;
-import com.survival2d.server.util.vector.VectorUtil;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Timer;
@@ -24,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import lombok.var;
 import org.locationtech.jts.math.Vector2D;
 
 @Getter
@@ -100,9 +102,9 @@ public class MatchImpl implements Match {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon instanceof MeleeWeapon) {
-      createDamage(player.getPosition(), 10, 10);
+      createDamage(playerId, player.getPosition(), 10, 10);
     } else if (currentWeapon instanceof RangeWeapon) {
-      createBullet(player.getPosition(), direction, BulletType.NORMAL);
+      createBullet(playerId, player.getPosition(), direction, BulletType.NORMAL);
     }
   }
 
@@ -112,19 +114,26 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void createDamage(Vector2D position, double radius, double damage) {
+  public void createDamage(String playerId, Vector2D position, double radius, double damage) {
+    val player = players.get(playerId);
     EzyFoxUtil.getInstance()
         .getResponseFactory()
         .newObjectResponse()
         .command(MatchCommand.PLAYER_ATTACK)
-        .data(PlayerAttackResponse.builder().build()) // TODO
+        .data(
+            PlayerAttackResponse.builder()
+                .username(playerId)
+                .position(position)
+                .weapon(player.getCurrentWeapon().get())
+                .build())
         .usernames(getAllPlayers())
         .execute();
   }
 
   @Override
-  public void createBullet(Vector2D position, Vector2D direction, BulletType type) {
-    val bullet = new Bullet(position, direction, type);
+  public void createBullet(
+      String playerId, Vector2D position, Vector2D direction, BulletType type) {
+    val bullet = new Bullet(playerId, position, direction, type);
     addMapObject(bullet);
     EzyFoxUtil.getInstance()
         .getResponseFactory()
@@ -142,6 +151,17 @@ public class MatchImpl implements Match {
       return;
     }
     player.switchWeapon(weaponId);
+    EzyFoxUtil.getInstance()
+        .getResponseFactory()
+        .newObjectResponse()
+        .command(MatchCommand.PLAYER_CHANGE_WEAPON)
+        .data(
+            PlayerChangeWeaponResponse.builder()
+                .username(playerId)
+                .weapon(player.getCurrentWeapon().get())
+                .build())
+        .usernames(getAllPlayers())
+        .execute();
   }
 
   public void init() {
@@ -192,6 +212,37 @@ public class MatchImpl implements Match {
       if (mapObject instanceof Bullet) {
         val bullet = (Bullet) mapObject;
         bullet.move();
+        var isDestroy = false;
+        if (bullet.isOutOfBound()) {
+          isDestroy = true;
+        }
+        for (val player : players.values()) {
+          if (VectorUtil.isCollision(
+              player.getPosition(), bullet.getPosition(), player.getSize())) {
+            createDamage(
+                bullet.getPlayerId(),
+                bullet.getPosition(),
+                bullet.getType().getDamageRadius(),
+                bullet.getType().getDamageRadius());
+          }
+        }
+        for (val otherObject : objects.values()) {
+          if (otherObject == mapObject) //Chính nó
+            continue;
+          if (VectorUtil.isCollision(
+              otherObject.getPosition(), bullet.getPosition(), 10 /*FIXME*/)) {
+            createDamage(
+                bullet.getPlayerId(),
+                bullet.getPosition(),
+                bullet.getType().getDamageRadius(),
+                bullet.getType().getDamageRadius());
+          }
+        }
+
+        if (isDestroy) {
+          objects.remove(bullet.getId());
+          log.debug("bullet {} is destroyed", bullet.getId());
+        }
       }
     }
   }

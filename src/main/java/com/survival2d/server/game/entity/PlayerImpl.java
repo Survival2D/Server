@@ -6,8 +6,8 @@ import com.survival2d.server.game.entity.weapon.Hand;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.Data;
+import org.apache.commons.lang3.RandomUtils;
 import org.locationtech.jts.math.Vector2D;
 
 @Data
@@ -15,16 +15,16 @@ public class PlayerImpl implements Player {
 
   String playerId;
   Vector2D position =
-      new Vector2D(
-          ThreadLocalRandom.current().nextDouble() * 100,
-          ThreadLocalRandom.current().nextDouble() * 100);
+      new Vector2D(RandomUtils.nextDouble(1000, 9000), RandomUtils.nextDouble(1000, 9000));
   PlayerState state;
   double rotation;
   double speed = 10;
+  long healthPoint = 100;
   Vector2D direction;
   List<Weapon> weapons = new ArrayList<>();
   int currentWeaponIndex;
   long team;
+  double size = 10;
 
   public PlayerImpl(String playerId, long team) {
     this.playerId = playerId;
@@ -55,5 +55,11 @@ public class PlayerImpl implements Player {
     return Optional.of(weapons.get(currentWeaponIndex));
   }
 
-
+  @Override
+  public void takeDamage(long damage) {
+    healthPoint -= damage;
+    if (healthPoint <= 0) {
+      state = PlayerState.DEAD;
+    }
+  }
 }

@@ -25,4 +25,8 @@ public interface Player extends Movable {
   void switchWeapon(int index);
 
   Optional<Weapon> getCurrentWeapon();
+
+  void takeDamage(long damage);
+
+  double getSize();
 }
