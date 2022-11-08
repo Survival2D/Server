@@ -19,7 +19,7 @@ public class PlayerImpl implements Player {
   PlayerState state;
   double rotation;
   double speed = 10;
-  long healthPoint = 100;
+  double healthPoint = 100;
   Vector2D direction;
   List<Weapon> weapons = new ArrayList<>();
   int currentWeaponIndex;
@@ -56,10 +56,15 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public void takeDamage(long damage) {
+  public void takeDamage(double damage) {
     healthPoint -= damage;
     if (healthPoint <= 0) {
       state = PlayerState.DEAD;
     }
+  }
+
+  @Override
+  public boolean isDead() {
+    return state == PlayerState.DEAD;
   }
 }

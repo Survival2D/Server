@@ -26,7 +26,11 @@ public interface Player extends Movable {
 
   Optional<Weapon> getCurrentWeapon();
 
-  void takeDamage(long damage);
+  void takeDamage(double damage);
 
   double getSize();
+
+  boolean isDead();
+
+  double getHealthPoint();
 }

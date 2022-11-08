@@ -21,5 +21,7 @@ public interface Match {
   void createDamage(String playerId, Vector2D position, double radius, double damage);
 
 
+  void makeDamage(String playerId, Vector2D position, double radius, double damage);
+
   void createBullet(String playerId, Vector2D position, Vector2D direction, BulletType type);
 }

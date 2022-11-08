@@ -14,6 +14,7 @@ import com.survival2d.server.network.match.response.CreateBulletResponse;
 import com.survival2d.server.network.match.response.PlayerAttackResponse;
 import com.survival2d.server.network.match.response.PlayerChangeWeaponResponse;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
+import com.survival2d.server.network.match.response.PlayerTakeDamageResponse;
 import com.survival2d.server.util.EzyFoxUtil;
 import com.survival2d.server.util.math.VectorUtil;
 import com.survival2d.server.util.serialize.ExcludeFromGson;
@@ -43,8 +44,8 @@ public class MatchImpl implements Match {
       new ConcurrentHashMap<>();
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
+  @ExcludeFromGson private final Timer timer = new Timer();
   private long currentMapObjectId;
-  @ExcludeFromGson private Timer timer = new Timer();
   @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
 
@@ -66,6 +67,11 @@ public class MatchImpl implements Match {
 
   @Override
   public void onReceivePlayerAction(String playerId, PlayerAction action) {
+    val player = players.get(playerId);
+    if (player.isDead()) {
+      log.error("Player {} take action while dead", playerId);
+      return;
+    }
     val playerActionMap = playerRequests.get(playerId);
     playerActionMap.put(action.getClass(), action);
   }
@@ -128,6 +134,39 @@ public class MatchImpl implements Match {
                 .build())
         .usernames(getAllPlayers())
         .execute();
+    makeDamage(playerId, position, radius, damage);
+  }
+
+  @Override
+  public void makeDamage(String playerId, Vector2D position, double radius, double damage) {
+    val currentPlayer = players.get(playerId);
+    for (val player : players.values()) {
+      if (player.getTeam() == currentPlayer.getTeam()) continue;
+      if (player.isDead()) continue;
+      if (VectorUtil.isCollision(player.getPosition(), position, player.getSize() + radius)) {
+        player.takeDamage(damage);
+        EzyFoxUtil.getInstance()
+            .getResponseFactory()
+            .newObjectResponse()
+            .command(MatchCommand.PLAYER_TAKE_DAMAGE)
+            .data(
+                PlayerTakeDamageResponse.builder()
+                    .playerId(player.getPlayerId())
+                    .remainingHealth(player.getHealthPoint())
+                    .build())
+            .usernames(getAllPlayers())
+            .execute();
+        if (player.isDead()) {
+          EzyFoxUtil.getInstance()
+              .getResponseFactory()
+              .newObjectResponse()
+              .command(MatchCommand.PLAYER_DEAD)
+              .data(player.getPlayerId())
+              .usernames(getAllPlayers())
+              .execute();
+        }
+      }
+    }
   }
 
   @Override
@@ -212,14 +251,11 @@ public class MatchImpl implements Match {
       if (mapObject instanceof Bullet) {
         val bullet = (Bullet) mapObject;
         bullet.move();
-        var isDestroy = false;
-        if (bullet.isOutOfBound()) {
-          isDestroy = true;
-        }
+        var isDestroy = bullet.isOutOfBound();
         for (val player : players.values()) {
           if (VectorUtil.isCollision(
               player.getPosition(), bullet.getPosition(), player.getSize())) {
-            createDamage(
+            makeDamage(
                 bullet.getPlayerId(),
                 bullet.getPosition(),
                 bullet.getType().getDamageRadius(),
@@ -227,11 +263,10 @@ public class MatchImpl implements Match {
           }
         }
         for (val otherObject : objects.values()) {
-          if (otherObject == mapObject) //Chính nó
-            continue;
+          if (otherObject == mapObject) continue; // Chính nó
           if (VectorUtil.isCollision(
               otherObject.getPosition(), bullet.getPosition(), 10 /*FIXME*/)) {
-            createDamage(
+            makeDamage(
                 bullet.getPlayerId(),
                 bullet.getPosition(),
                 bullet.getType().getDamageRadius(),
