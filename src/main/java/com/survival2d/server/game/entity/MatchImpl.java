@@ -152,7 +152,7 @@ public class MatchImpl implements Match {
             .data(
                 PlayerTakeDamageResponse.builder()
                     .username(player.getPlayerId())
-                    .remainingHealth(player.getHealthPoint())
+                    .hp(player.getHealthPoint())
                     .build())
             .usernames(getAllPlayers())
             .execute();

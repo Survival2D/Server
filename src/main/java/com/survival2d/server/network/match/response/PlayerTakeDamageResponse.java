@@ -10,5 +10,5 @@ import lombok.Data;
 public class PlayerTakeDamageResponse {
 
   private String username;
-  private double remainingHealth;
+  private double hp;
 }
