@@ -10,6 +10,6 @@ public class MatchCommand {
   public static final String PLAYER_ATTACK = "playerAttack";
   public static final String CREATE_BULLET = "createBullet";
   public static final String MATCH_START = "matchStart";
-  public static final String PLAYER_TAKE_DAMAGE = "player_take_damage";
-  public static final String PLAYER_DEAD = "player_dead";
+  public static final String PLAYER_TAKE_DAMAGE = "playerTakeDamage";
+  public static final String PLAYER_DEAD = "playerDead";
 }
