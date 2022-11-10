@@ -4,7 +4,6 @@ import com.survival2d.server.game.entity.Weapon;
 import com.survival2d.server.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyMarshaller;
 import com.tvd12.ezyfox.binding.EzyWriter;
-import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
 import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import lombok.val;
 
 @Data
 @Builder
-@EzyObjectBinding
 public class PlayerChangeWeaponResponse {
 
   private String username;

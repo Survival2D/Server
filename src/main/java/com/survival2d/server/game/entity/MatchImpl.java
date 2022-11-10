@@ -7,12 +7,11 @@ import com.survival2d.server.game.action.PlayerChangeWeapon;
 import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.game.entity.base.MapObject;
 import com.survival2d.server.game.entity.config.BulletType;
-import com.survival2d.server.game.entity.weapon.MeleeWeapon;
-import com.survival2d.server.game.entity.weapon.RangeWeapon;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.CreateBulletResponse;
 import com.survival2d.server.network.match.response.PlayerAttackResponse;
 import com.survival2d.server.network.match.response.PlayerChangeWeaponResponse;
+import com.survival2d.server.network.match.response.PlayerDeadResponse;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.network.match.response.PlayerTakeDamageResponse;
 import com.survival2d.server.util.EzyFoxUtil;
@@ -32,11 +31,16 @@ import org.locationtech.jts.math.Vector2D;
 @Getter
 @Slf4j
 public class MatchImpl implements Match {
-  private final long id;
-  @ExcludeFromGson private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
-  @ExcludeFromGson @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
 
-  @ExcludeFromGson @Deprecated
+  private final long id;
+  @ExcludeFromGson
+  private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
+  @ExcludeFromGson
+  @Deprecated
+  private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
+
+  @ExcludeFromGson
+  @Deprecated
   private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
 
   @ExcludeFromGson
@@ -44,9 +48,11 @@ public class MatchImpl implements Match {
       new ConcurrentHashMap<>();
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  @ExcludeFromGson private final Timer timer = new Timer();
+  @ExcludeFromGson
+  private final Timer timer = new Timer();
   private long currentMapObjectId;
-  @ExcludeFromGson private TimerTask gameLoopTask;
+  @ExcludeFromGson
+  private TimerTask gameLoopTask;
   private long currentTick;
 
   public MatchImpl(long id) {
@@ -107,9 +113,9 @@ public class MatchImpl implements Match {
   public void onPlayerAttach(String playerId, Vector2D direction) {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
-    if (currentWeapon instanceof MeleeWeapon) {
+    if (currentWeapon.getAttachType() == AttachType.MELEE) {
       createDamage(playerId, player.getPosition(), 10, 10);
-    } else if (currentWeapon instanceof RangeWeapon) {
+    } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
       createBullet(playerId, player.getPosition(), direction, BulletType.NORMAL);
     }
   }
@@ -141,8 +147,12 @@ public class MatchImpl implements Match {
   public void makeDamage(String playerId, Vector2D position, double radius, double damage) {
     val currentPlayer = players.get(playerId);
     for (val player : players.values()) {
-      if (player.getTeam() == currentPlayer.getTeam()) continue;
-      if (player.isDead()) continue;
+      if (player.getTeam() == currentPlayer.getTeam()) {
+        continue;
+      }
+      if (player.isDead()) {
+        continue;
+      }
       if (VectorUtil.isCollision(player.getPosition(), position, player.getSize() + radius)) {
         player.takeDamage(damage);
         EzyFoxUtil.getInstance()
@@ -161,7 +171,7 @@ public class MatchImpl implements Match {
               .getResponseFactory()
               .newObjectResponse()
               .command(MatchCommand.PLAYER_DEAD)
-              .data(player.getPlayerId())
+              .data(PlayerDeadResponse.builder().username(player.getPlayerId()).build())
               .usernames(getAllPlayers())
               .execute();
         }
@@ -197,6 +207,7 @@ public class MatchImpl implements Match {
         .data(
             PlayerChangeWeaponResponse.builder()
                 .username(playerId)
+                .slot(player.getCurrentWeaponIndex())
                 .weapon(player.getCurrentWeapon().get())
                 .build())
         .usernames(getAllPlayers())
@@ -263,7 +274,9 @@ public class MatchImpl implements Match {
           }
         }
         for (val otherObject : objects.values()) {
-          if (otherObject == mapObject) continue; // Chính nó
+          if (otherObject == mapObject) {
+            continue; // Chính nó
+          }
           if (VectorUtil.isCollision(
               otherObject.getPosition(), bullet.getPosition(), 10 /*FIXME*/)) {
             makeDamage(

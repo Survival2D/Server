@@ -15,7 +15,7 @@ public class PlayerImpl implements Player {
 
   String playerId;
   Vector2D position =
-      new Vector2D(RandomUtils.nextDouble(1000, 9000), RandomUtils.nextDouble(1000, 9000));
+      new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
   PlayerState state;
   double rotation;
   double speed = 10;
@@ -24,7 +24,7 @@ public class PlayerImpl implements Player {
   List<Weapon> weapons = new ArrayList<>();
   int currentWeaponIndex;
   long team;
-  double size = 10;
+  double size = 30;
 
   public PlayerImpl(String playerId, long team) {
     this.playerId = playerId;
@@ -42,7 +42,7 @@ public class PlayerImpl implements Player {
 
   @Override
   public void switchWeapon(int index) {
-    if (index > 0 && index < weapons.size()) {
+    if (index >= 0 && index < weapons.size()) {
       currentWeaponIndex = index;
     }
   }
