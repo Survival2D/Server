@@ -1,4 +1,4 @@
-package com.survival2d.server.controller.server;
+package com.survival2d.server.network.plugin;
 
 import static com.tvd12.ezyfoxserver.constant.EzyEventNames.USER_REMOVED;
 
@@ -18,9 +18,6 @@ import java.util.List;
 @EzySingleton
 @EzyEventHandler(USER_REMOVED)
 public class UserRemovedController extends EzyAbstractAppEventController<EzyUserRemovedEvent> {
-
-  @EzyAutoBind
-  private RoomService roomService;
 
   @EzyAutoBind
   private EzyResponseFactory responseFactory;
