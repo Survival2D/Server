@@ -9,6 +9,6 @@ import lombok.Data;
 @EzyObjectBinding
 public class PlayerTakeDamageResponse {
 
-  private String playerId;
+  private String username;
   private double remainingHealth;
 }

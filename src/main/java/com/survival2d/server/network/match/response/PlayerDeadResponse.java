@@ -9,5 +9,5 @@ import lombok.Data;
 @EzyObjectBinding
 public class PlayerDeadResponse {
 
-  private String playerId;
+  private String username;
 }
