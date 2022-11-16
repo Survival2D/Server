@@ -1,10 +1,12 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.base.Item;
 import com.survival2d.server.game.entity.config.GunType;
 import com.survival2d.server.game.entity.weapon.Gun;
 import com.survival2d.server.game.entity.weapon.Hand;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.Data;
 import org.apache.commons.lang3.RandomUtils;
@@ -22,6 +24,7 @@ public class PlayerImpl implements Player {
   double healthPoint = 100;
   Vector2D direction;
   List<Weapon> weapons = new ArrayList<>();
+  Map<Item, Integer> items; //Map item to quantity
   int currentWeaponIndex;
   long team;
   double size = 30;

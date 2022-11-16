@@ -1,5 +1,6 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.base.Destroyable;
 import com.survival2d.server.game.entity.base.MapObject;
 import com.survival2d.server.game.entity.base.Movable;
 import com.survival2d.server.game.entity.config.BulletType;
@@ -11,7 +12,7 @@ import org.locationtech.jts.math.Vector2D;
 
 @Data
 @Slf4j
-public class Bullet implements MapObject, Movable {
+public class Bullet implements MapObject, Movable, Destroyable {
   long id;
   String playerId;
 
@@ -20,6 +21,7 @@ public class Bullet implements MapObject, Movable {
   Vector2D rawPosition;
   Vector2D direction;
   BulletType type;
+  boolean isDestroyed;
 
   public Bullet(String playerId, Vector2D rawPosition, Vector2D direction, BulletType type) {
     this.playerId = playerId;

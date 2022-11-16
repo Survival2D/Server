@@ -262,7 +262,6 @@ public class MatchImpl implements Match {
       if (mapObject instanceof Bullet) {
         val bullet = (Bullet) mapObject;
         bullet.move();
-        var isDestroy = bullet.isOutOfBound();
         for (val player : players.values()) {
           if (VectorUtil.isCollision(
               player.getPosition(), bullet.getPosition(), player.getSize())) {
@@ -271,6 +270,7 @@ public class MatchImpl implements Match {
                 bullet.getPosition(),
                 bullet.getType().getDamageRadius(),
                 bullet.getType().getDamageRadius());
+            bullet.setDestroyed(true);
           }
         }
         for (val otherObject : objects.values()) {
@@ -284,9 +284,11 @@ public class MatchImpl implements Match {
                 bullet.getPosition(),
                 bullet.getType().getDamageRadius(),
                 bullet.getType().getDamageRadius());
+            bullet.setDestroyed(true);
           }
         }
 
+        var isDestroy = bullet.isDestroyed() || bullet.isOutOfBound();
         if (isDestroy) {
           objects.remove(bullet.getId());
           log.debug("bullet {} is destroyed", bullet.getId());
