@@ -5,10 +5,23 @@ import com.survival2d.server.game.action.PlayerAction;
 import com.survival2d.server.game.action.PlayerAttack;
 import com.survival2d.server.game.action.PlayerChangeWeapon;
 import com.survival2d.server.game.action.PlayerMove;
+import com.survival2d.server.game.action.PlayerReloadWeapon;
+import com.survival2d.server.game.action.PlayerTakeItem;
+import com.survival2d.server.game.entity.base.Circle;
+import com.survival2d.server.game.entity.base.Item;
 import com.survival2d.server.game.entity.base.MapObject;
+import com.survival2d.server.game.entity.base.Rectangle;
+import com.survival2d.server.game.entity.base.Shape;
 import com.survival2d.server.game.entity.config.BulletType;
+import com.survival2d.server.game.entity.config.GunType;
+import com.survival2d.server.game.entity.item.BulletItem;
+import com.survival2d.server.game.entity.item.GunItem;
+import com.survival2d.server.game.entity.obstacle.Container;
+import com.survival2d.server.game.entity.obstacle.Obstacle;
+import com.survival2d.server.game.entity.obstacle.Tree;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.CreateBulletResponse;
+import com.survival2d.server.network.match.response.ObstacleTakeDamageResponse;
 import com.survival2d.server.network.match.response.PlayerAttackResponse;
 import com.survival2d.server.network.match.response.PlayerChangeWeaponResponse;
 import com.survival2d.server.network.match.response.PlayerDeadResponse;
@@ -17,6 +30,7 @@ import com.survival2d.server.network.match.response.PlayerTakeDamageResponse;
 import com.survival2d.server.util.EzyFoxUtil;
 import com.survival2d.server.util.math.VectorUtil;
 import com.survival2d.server.util.serialize.ExcludeFromGson;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Timer;
@@ -126,7 +140,7 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void createDamage(String playerId, Vector2D position, double radius, double damage) {
+  public void createDamage(String playerId, Vector2D position, Shape shape, double damage) {
     val player = players.get(playerId);
     EzyFoxUtil.getInstance()
         .getResponseFactory()
@@ -140,11 +154,11 @@ public class MatchImpl implements Match {
                 .build())
         .usernames(getAllPlayers())
         .execute();
-    makeDamage(playerId, position, radius, damage);
+    makeDamage(playerId, position, shape, damage);
   }
 
   @Override
-  public void makeDamage(String playerId, Vector2D position, double radius, double damage) {
+  public void makeDamage(String playerId, Vector2D position, Shape shape, double damage) {
     val currentPlayer = players.get(playerId);
     for (val player : players.values()) {
       if (player.getTeam() == currentPlayer.getTeam()) {
@@ -153,7 +167,7 @@ public class MatchImpl implements Match {
       if (player.isDead()) {
         continue;
       }
-      if (VectorUtil.isCollision(player.getPosition(), position, player.getSize() + radius)) {
+      if (VectorUtil.isCollision(player.getPosition(), player.getShape(), position, shape)) {
         player.takeDamage(damage);
         EzyFoxUtil.getInstance()
             .getResponseFactory()
@@ -172,6 +186,35 @@ public class MatchImpl implements Match {
               .newObjectResponse()
               .command(MatchCommand.PLAYER_DEAD)
               .data(PlayerDeadResponse.builder().username(player.getPlayerId()).build())
+              .usernames(getAllPlayers())
+              .execute();
+        }
+      }
+    }
+    for (val object : objects.values()) {
+      if (!(object instanceof Obstacle)) {
+        continue;
+      }
+      val obstacle = (Obstacle) object;
+      if (VectorUtil.isCollision(obstacle.getPosition(),obstacle.getShape(), position, shape)) {
+        obstacle.reduceHp(damage);
+        EzyFoxUtil.getInstance()
+            .getResponseFactory()
+            .newObjectResponse()
+            .command(MatchCommand.OBSTACLE_TAKE_DAMAGE)
+            .data(
+                ObstacleTakeDamageResponse.builder()
+                    .obstacleId(object.getId())
+                    .hp(((Obstacle) object).getHp())
+                    .build())
+            .usernames(getAllPlayers())
+            .execute();
+        if (((Obstacle) object).isDestroyed()) {
+          EzyFoxUtil.getInstance()
+              .getResponseFactory()
+              .newObjectResponse()
+              .command(MatchCommand.PLAYER_DEAD)
+              .data(PlayerDeadResponse.builder().username(object.getPlayerId()).build())
               .usernames(getAllPlayers())
               .execute();
         }
@@ -215,6 +258,7 @@ public class MatchImpl implements Match {
   }
 
   public void init() {
+    initObstacles();
     timer.schedule(
         new TimerTask() {
           @Override
@@ -223,6 +267,24 @@ public class MatchImpl implements Match {
           }
         },
         3000);
+  }
+
+  private void initObstacles() {
+    //TODO: random this
+    val tree = new Tree();
+    tree.setPosition(new Vector2D(100, 100));
+    tree.setShape(new Circle(10));
+    addMapObject(tree);
+
+    val container = new Container();
+    container.setPosition(new Vector2D(200, 200));
+    container.setShape(new Rectangle(10, 10));
+    container.setItems(
+        Arrays.asList(
+            GunItem.builder().gunType(GunType.NORMAL).numBullet(10).build(),
+            BulletItem.builder().bulletType(BulletType.NORMAL).numBullet(10).build()
+        ));
+    addMapObject(container);
   }
 
   public void start() {
@@ -320,6 +382,22 @@ public class MatchImpl implements Match {
     } else if (action instanceof PlayerChangeWeapon) {
       val playerChangeWeapon = (PlayerChangeWeapon) action;
       onPlayerSwitchWeapon(playerId, playerChangeWeapon.getWeaponIndex());
+    } else if (action instanceof PlayerReloadWeapon) {
+      onPlayerReloadWeapon(playerId);
+    } else if (action instanceof PlayerTakeItem) {
+      onPlayerTakeItem(playerId);
     }
+  }
+
+  private void createItemOnMap(Item item) {
+
+  }
+
+  private void onPlayerTakeItem(String playerId) {
+
+  }
+
+  private void onPlayerReloadWeapon(String playerId) {
+
   }
 }

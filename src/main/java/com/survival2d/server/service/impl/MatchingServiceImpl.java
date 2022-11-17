@@ -12,16 +12,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 @EzySingleton
+@Slf4j
 public class MatchingServiceImpl implements MatchingService {
 
-  @EzyAutoBind private final AtomicLong currentMatchId = new AtomicLong();
+  @EzyAutoBind
+  private final AtomicLong currentMatchId = new AtomicLong();
   private final Map<Long, Match> matchIdToMatch = new ConcurrentHashMap<>();
   private final Map<String, Long> playerIdToMatchId = new ConcurrentHashMap<>();
-  @EzyAutoBind LobbyTeamService teamService;
-  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  LobbyTeamService teamService;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
   @Override
   public long createMatch(List<Long> teamIds) {
@@ -56,5 +61,21 @@ public class MatchingServiceImpl implements MatchingService {
       return Optional.of(matchIdToMatch.get(matchId));
     }
     return Optional.empty();
+  }
+
+  @Override
+  public Optional<Match> getMatchOfPlayer(String playerId) {
+    val optMatchId = getMatchIdOfPlayer(playerId);
+    if (!optMatchId.isPresent()) {
+      log.warn("matchId is not present");
+      return Optional.empty();
+    }
+    val matchId = optMatchId.get();
+    val optMatch = getMatchById(matchId);
+    if (!optMatch.isPresent()) {
+      log.warn("match is not present");
+      return Optional.empty();
+    }
+    return optMatch;
   }
 }

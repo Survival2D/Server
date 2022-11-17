@@ -3,6 +3,8 @@ package com.survival2d.server.network.match;
 import com.survival2d.server.game.action.PlayerAttack;
 import com.survival2d.server.game.action.PlayerChangeWeapon;
 import com.survival2d.server.game.action.PlayerMove;
+import com.survival2d.server.game.action.PlayerReloadWeapon;
+import com.survival2d.server.game.action.PlayerTakeItem;
 import com.survival2d.server.network.match.request.PlayerAttackRequest;
 import com.survival2d.server.network.match.request.PlayerChangeWeaponRequest;
 import com.survival2d.server.network.match.request.PlayerMoveRequest;
@@ -19,37 +21,28 @@ import lombok.val;
 @Slf4j
 public class MatchRequestController {
 
-  @EzyAutoBind MatchingService matchingService;
-  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  MatchingService matchingService;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
-  //  @EzyDoHandle(MatchCommand.MATCH_INFO)
-  //  public void handleMatchInfo(EzyUser user){
-  //    String playerId = user.getName();
-  //    val optMatchId = matchingService.getMatchIdOfPlayer(playerId);
-  //    if (!optMatchId.isPresent()) {
-  //      log.warn("matchId is not present");
-  //      return;
-  //    }
-  //    val matchId = optMatchId.get();
-  //    val optMatch = matchingService.getMatchById(matchId);
-  //    if (!optMatch.isPresent()) {
-  //      log.warn("match is not present");
-  //      return;
-  //    }
-  //    val match = optMatch.get();
-  //    responseFactory.newObjectResponse().command(MatchCommand.MATCH_INFO).data(match)..execute();
-  //  }
+  @EzyDoHandle(MatchCommand.MATCH_INFO)
+  public void handleMatchInfo(EzyUser user) {
+    val playerId = user.getName();
+    val optMatch = matchingService.getMatchOfPlayer(playerId);
+    if (!optMatch.isPresent()) {
+      log.warn("match is not present");
+      return;
+    }
+    val match = optMatch.get();
+    responseFactory.newObjectResponse().command(MatchCommand.MATCH_INFO).data(match)
+        .username(playerId).execute();
+  }
 
   @EzyDoHandle(MatchCommand.PLAYER_MOVE)
   public void handlePlayerMove(EzyUser user, PlayerMoveRequest request) {
-    String playerId = user.getName();
-    val optMatchId = matchingService.getMatchIdOfPlayer(playerId);
-    if (!optMatchId.isPresent()) {
-      log.warn("matchId is not present");
-      return;
-    }
-    val matchId = optMatchId.get();
-    val optMatch = matchingService.getMatchById(matchId);
+    val playerId = user.getName();
+    val optMatch = matchingService.getMatchOfPlayer(playerId);
     if (!optMatch.isPresent()) {
       log.warn("match is not present");
       return;
@@ -61,14 +54,8 @@ public class MatchRequestController {
 
   @EzyDoHandle(MatchCommand.PLAYER_CHANGE_WEAPON)
   public void handlePlayerChangeWeapon(EzyUser user, PlayerChangeWeaponRequest request) {
-    String playerId = user.getName();
-    val optMatchId = matchingService.getMatchIdOfPlayer(playerId);
-    if (!optMatchId.isPresent()) {
-      log.warn("matchId is not present");
-      return;
-    }
-    val matchId = optMatchId.get();
-    val optMatch = matchingService.getMatchById(matchId);
+    val playerId = user.getName();
+    val optMatch = matchingService.getMatchOfPlayer(playerId);
     if (!optMatch.isPresent()) {
       log.warn("match is not present");
       return;
@@ -79,19 +66,37 @@ public class MatchRequestController {
 
   @EzyDoHandle(MatchCommand.PLAYER_ATTACK)
   public void handlePlayerAttack(EzyUser user, PlayerAttackRequest request) {
-    String playerId = user.getName();
-    val optMatchId = matchingService.getMatchIdOfPlayer(playerId);
-    if (!optMatchId.isPresent()) {
-      log.warn("matchId is not present");
-      return;
-    }
-    val matchId = optMatchId.get();
-    val optMatch = matchingService.getMatchById(matchId);
+    val playerId = user.getName();
+    val optMatch = matchingService.getMatchOfPlayer(playerId);
     if (!optMatch.isPresent()) {
       log.warn("match is not present");
       return;
     }
     val match = optMatch.get();
     match.onReceivePlayerAction(playerId, new PlayerAttack());
+  }
+
+  @EzyDoHandle(MatchCommand.PLAYER_RELOAD)
+  public void handlePlayerReload(EzyUser user) {
+    val playerId = user.getName();
+    val optMatch = matchingService.getMatchOfPlayer(playerId);
+    if (!optMatch.isPresent()) {
+      log.warn("match is not present");
+      return;
+    }
+    val match = optMatch.get();
+    match.onReceivePlayerAction(playerId, new PlayerReloadWeapon());
+  }
+
+  @EzyDoHandle(MatchCommand.TAKE_ITEM)
+  public void handleTakeItem(EzyUser user) {
+    val playerId = user.getName();
+    val optMatch = matchingService.getMatchOfPlayer(playerId);
+    if (!optMatch.isPresent()) {
+      log.warn("match is not present");
+      return;
+    }
+    val match = optMatch.get();
+    match.onReceivePlayerAction(playerId, new PlayerTakeItem());
   }
 }

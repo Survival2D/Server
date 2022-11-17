@@ -1,9 +1,10 @@
 package com.survival2d.server.game.entity.base;
 
-import org.locationtech.jts.math.Vector2D;
+import lombok.Value;
 
+@Value
 public class Circle implements Shape {
+  //Không chứa Position do đã nằm trong MapObject rồi
 
-  Vector2D position;
   double radius;
 }

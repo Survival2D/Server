@@ -11,4 +11,6 @@ public interface MatchingService {
   Optional<Long> getMatchIdOfPlayer(String playerId);
 
   Optional<Match> getMatchById(long matchId);
+
+  Optional<Match> getMatchOfPlayer(String playerId);
 }

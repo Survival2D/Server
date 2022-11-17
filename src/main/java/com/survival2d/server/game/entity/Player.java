@@ -1,10 +1,11 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.base.HasShape;
 import com.survival2d.server.game.entity.base.Movable;
 import java.util.Optional;
 import org.locationtech.jts.math.Vector2D;
 
-public interface Player extends Movable {
+public interface Player extends Movable, HasShape {
 
   String getPlayerId();
 

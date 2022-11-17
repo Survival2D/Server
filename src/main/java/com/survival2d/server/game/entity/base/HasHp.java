@@ -9,4 +9,12 @@ public interface HasHp {
   default void reduceHp(double hp) {
     setHp(getHp() - hp);
   }
+
+  default boolean isAlive() {
+    return getHp() > 0;
+  }
+
+  default boolean isDestroyed() {
+    return !isAlive();
+  }
 }

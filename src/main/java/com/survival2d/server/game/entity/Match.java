@@ -1,6 +1,7 @@
 package com.survival2d.server.game.entity;
 
 import com.survival2d.server.game.action.PlayerAction;
+import com.survival2d.server.game.entity.base.Shape;
 import com.survival2d.server.game.entity.config.BulletType;
 import java.util.Collection;
 import org.locationtech.jts.math.Vector2D;
@@ -18,10 +19,10 @@ public interface Match {
 
   void onPlayerAttach(String playerId, Vector2D direction);
 
-  void createDamage(String playerId, Vector2D position, double radius, double damage);
+  void createDamage(String playerId, Vector2D position, Shape shape, double damage);
 
 
-  void makeDamage(String playerId, Vector2D position, double radius, double damage);
+  void makeDamage(String playerId, Vector2D position, Shape shape, double damage);
 
   void createBullet(String playerId, Vector2D position, Vector2D direction, BulletType type);
 }

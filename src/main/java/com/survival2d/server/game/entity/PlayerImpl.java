@@ -1,5 +1,6 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.base.Circle;
 import com.survival2d.server.game.entity.base.Item;
 import com.survival2d.server.game.entity.config.GunType;
 import com.survival2d.server.game.entity.weapon.Gun;
@@ -28,6 +29,7 @@ public class PlayerImpl implements Player {
   int currentWeaponIndex;
   long team;
   double size = 30;
+  Circle shape = new Circle(10);
 
   public PlayerImpl(String playerId, long team) {
     this.playerId = playerId;

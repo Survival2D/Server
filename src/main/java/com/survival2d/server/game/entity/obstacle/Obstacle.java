@@ -2,10 +2,17 @@ package com.survival2d.server.game.entity.obstacle;
 
 
 import com.survival2d.server.game.entity.base.Destroyable;
+import com.survival2d.server.game.entity.base.HasHp;
 import com.survival2d.server.game.entity.base.MapObject;
-import com.survival2d.server.game.entity.base.Shape;
 
-public interface Obstacle extends MapObject, Destroyable {
+public interface Obstacle extends Destroyable, HasHp, MapObject {
 
-  Shape getShape();
+  @Override
+  default boolean isDestroyed() {
+    return HasHp.super.isDestroyed();
+  }
+
+  @Override
+  default void setDestroyed(boolean destroyed) {
+  }
 }
