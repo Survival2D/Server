@@ -4,6 +4,7 @@ import com.survival2d.server.constant.GameConstant;
 import com.survival2d.server.game.action.PlayerAction;
 import com.survival2d.server.game.action.PlayerAttack;
 import com.survival2d.server.game.action.PlayerChangeWeapon;
+import com.survival2d.server.game.action.PlayerDropItem;
 import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.game.action.PlayerReloadWeapon;
 import com.survival2d.server.game.action.PlayerTakeItem;
@@ -19,14 +20,18 @@ import com.survival2d.server.game.entity.item.GunItem;
 import com.survival2d.server.game.entity.obstacle.Container;
 import com.survival2d.server.game.entity.obstacle.Obstacle;
 import com.survival2d.server.game.entity.obstacle.Tree;
+import com.survival2d.server.game.entity.weapon.Containable;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.CreateBulletResponse;
+import com.survival2d.server.network.match.response.CreateItemResponse;
+import com.survival2d.server.network.match.response.ObstacleDestroyedResponse;
 import com.survival2d.server.network.match.response.ObstacleTakeDamageResponse;
 import com.survival2d.server.network.match.response.PlayerAttackResponse;
 import com.survival2d.server.network.match.response.PlayerChangeWeaponResponse;
 import com.survival2d.server.network.match.response.PlayerDeadResponse;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.network.match.response.PlayerTakeDamageResponse;
+import com.survival2d.server.network.match.response.PlayerTakeItemResponse;
 import com.survival2d.server.util.EzyFoxUtil;
 import com.survival2d.server.util.math.VectorUtil;
 import com.survival2d.server.util.serialize.ExcludeFromGson;
@@ -40,6 +45,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
+import org.apache.commons.lang3.RandomUtils;
 import org.locationtech.jts.math.Vector2D;
 
 @Getter
@@ -47,14 +53,10 @@ import org.locationtech.jts.math.Vector2D;
 public class MatchImpl implements Match {
 
   private final long id;
-  @ExcludeFromGson
-  private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
-  @ExcludeFromGson
-  @Deprecated
-  private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
+  @ExcludeFromGson private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
+  @ExcludeFromGson @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
 
-  @ExcludeFromGson
-  @Deprecated
+  @ExcludeFromGson @Deprecated
   private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
 
   @ExcludeFromGson
@@ -62,11 +64,9 @@ public class MatchImpl implements Match {
       new ConcurrentHashMap<>();
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  @ExcludeFromGson
-  private final Timer timer = new Timer();
+  @ExcludeFromGson private final Timer timer = new Timer();
   private long currentMapObjectId;
-  @ExcludeFromGson
-  private TimerTask gameLoopTask;
+  @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
 
   public MatchImpl(long id) {
@@ -128,7 +128,7 @@ public class MatchImpl implements Match {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon.getAttachType() == AttachType.MELEE) {
-      createDamage(playerId, player.getPosition(), 10, 10);
+      createDamage(playerId, player.getPosition(), new Circle(10), 1);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
       createBullet(playerId, player.getPosition(), direction, BulletType.NORMAL);
     }
@@ -196,7 +196,10 @@ public class MatchImpl implements Match {
         continue;
       }
       val obstacle = (Obstacle) object;
-      if (VectorUtil.isCollision(obstacle.getPosition(),obstacle.getShape(), position, shape)) {
+      if (obstacle.isDestroyed()) {
+        continue;
+      }
+      if (VectorUtil.isCollision(obstacle.getPosition(), obstacle.getShape(), position, shape)) {
         obstacle.reduceHp(damage);
         EzyFoxUtil.getInstance()
             .getResponseFactory()
@@ -204,19 +207,25 @@ public class MatchImpl implements Match {
             .command(MatchCommand.OBSTACLE_TAKE_DAMAGE)
             .data(
                 ObstacleTakeDamageResponse.builder()
-                    .obstacleId(object.getId())
-                    .hp(((Obstacle) object).getHp())
+                    .obstacleId(obstacle.getId())
+                    .hp(obstacle.getHp())
                     .build())
             .usernames(getAllPlayers())
             .execute();
-        if (((Obstacle) object).isDestroyed()) {
+        if (obstacle.isDestroyed()) {
           EzyFoxUtil.getInstance()
               .getResponseFactory()
               .newObjectResponse()
-              .command(MatchCommand.PLAYER_DEAD)
-              .data(PlayerDeadResponse.builder().username(object.getPlayerId()).build())
+              .command(MatchCommand.OBSTACLE_DESTROYED)
+              .data(ObstacleDestroyedResponse.builder().obstacleId(obstacle.getId()).build())
               .usernames(getAllPlayers())
               .execute();
+          if (obstacle instanceof Containable) {
+            val containable = (Containable) obstacle;
+            for (val item : containable.getItems()) {
+              createItemOnMap(item, obstacle.getPosition());
+            }
+          }
         }
       }
     }
@@ -270,7 +279,7 @@ public class MatchImpl implements Match {
   }
 
   private void initObstacles() {
-    //TODO: random this
+    // TODO: random this
     val tree = new Tree();
     tree.setPosition(new Vector2D(100, 100));
     tree.setShape(new Circle(10));
@@ -282,8 +291,7 @@ public class MatchImpl implements Match {
     container.setItems(
         Arrays.asList(
             GunItem.builder().gunType(GunType.NORMAL).numBullet(10).build(),
-            BulletItem.builder().bulletType(BulletType.NORMAL).numBullet(10).build()
-        ));
+            BulletItem.builder().bulletType(BulletType.NORMAL).numBullet(10).build()));
     addMapObject(container);
   }
 
@@ -330,7 +338,7 @@ public class MatchImpl implements Match {
             makeDamage(
                 bullet.getPlayerId(),
                 bullet.getPosition(),
-                bullet.getType().getDamageRadius(),
+                new Circle(bullet.getType().getDamageRadius()),
                 bullet.getType().getDamageRadius());
             bullet.setDestroyed(true);
           }
@@ -344,7 +352,7 @@ public class MatchImpl implements Match {
             makeDamage(
                 bullet.getPlayerId(),
                 bullet.getPosition(),
-                bullet.getType().getDamageRadius(),
+                new Circle(bullet.getType().getDamageRadius()),
                 bullet.getType().getDamageRadius());
             bullet.setDestroyed(true);
           }
@@ -386,18 +394,54 @@ public class MatchImpl implements Match {
       onPlayerReloadWeapon(playerId);
     } else if (action instanceof PlayerTakeItem) {
       onPlayerTakeItem(playerId);
+    } else if (action instanceof PlayerDropItem) {
+      val playerDropItem = (PlayerDropItem) action;
+      onPlayerDropItem(playerId, playerDropItem.getItemId());
     }
   }
 
-  private void createItemOnMap(Item item) {
-
+  private void createItemOnMap(Item item, Vector2D position) {
+    val randomNeighborPosition =
+        new Vector2D(RandomUtils.nextDouble(-10, 10), RandomUtils.nextDouble(-10, 10));
+    val itemOnMap =
+        ItemOnMap.builder().item(item).position(position.add(randomNeighborPosition)).build();
+    addMapObject(itemOnMap);
+    EzyFoxUtil.getInstance()
+        .getResponseFactory()
+        .newObjectResponse()
+        .command(MatchCommand.CREATE_ITEM)
+        .data(CreateItemResponse.builder().item(itemOnMap).build())
+        .usernames(getAllPlayers())
+        .execute();
   }
 
   private void onPlayerTakeItem(String playerId) {
-
+    val player = players.get(playerId);
+    for (val object : objects.values()) {
+      if (!(object instanceof ItemOnMap)) {
+        continue;
+      }
+      val itemOnMap = (ItemOnMap) object;
+      if (VectorUtil.isCollision(
+          player.getPosition(), player.getShape(), itemOnMap.getPosition(), itemOnMap.getShape())) {
+        //        player.addItem(itemOnMap.getItem()); //TODO: add item to player
+        objects.remove(itemOnMap.getId());
+        EzyFoxUtil.getInstance()
+            .getResponseFactory()
+            .newObjectResponse()
+            .command(MatchCommand.TAKE_ITEM)
+            .data(PlayerTakeItemResponse.builder().username(playerId).item(itemOnMap).build())
+            .usernames(getAllPlayers())
+            .execute();
+      }
+    }
   }
 
   private void onPlayerReloadWeapon(String playerId) {
+    // TODO
+  }
 
+  private void onPlayerDropItem(String playerId, String itemId) {
+    // TODO
   }
 }

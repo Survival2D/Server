@@ -1,6 +1,6 @@
 package com.survival2d.server.network.match.response;
 
-import com.survival2d.server.game.entity.base.Item;
+import com.survival2d.server.game.entity.ItemOnMap;
 import com.survival2d.server.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyMarshaller;
 import com.tvd12.ezyfox.binding.EzyWriter;
@@ -14,7 +14,7 @@ import lombok.val;
 @Builder
 public class CreateItemResponse {
 
-  private Item item;
+  private ItemOnMap item;
 
   @EzyWriterImpl
   public static class CreateItemResponseResponseWriter implements EzyWriter<CreateItemResponse, EzyHashMap> {

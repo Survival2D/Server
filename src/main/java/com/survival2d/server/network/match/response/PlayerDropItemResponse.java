@@ -12,15 +12,17 @@ import lombok.val;
 
 @Data
 @Builder
-public class PlayerTakeItem {
+public class PlayerDropItemResponse {
+
   private String username;
 
   private Item item;
 
   @EzyWriterImpl
-  public static class ResponseWriter implements EzyWriter<PlayerTakeItem, EzyHashMap> {
+  public static class ResponseWriter implements EzyWriter<PlayerDropItemResponse, EzyHashMap> {
+
     @Override
-    public EzyHashMap write(EzyMarshaller ezyMarshaller, PlayerTakeItem response) {
+    public EzyHashMap write(EzyMarshaller ezyMarshaller, PlayerDropItemResponse response) {
       val data = "{map: " + GsonHolder.getNormalGson().toJson(response) + "}";
       val map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
       return map;

@@ -1,6 +1,6 @@
 package com.survival2d.server.network.match.response;
 
-import com.survival2d.server.game.entity.base.Item;
+import com.survival2d.server.game.entity.ItemOnMap;
 import com.survival2d.server.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyMarshaller;
 import com.tvd12.ezyfox.binding.EzyWriter;
@@ -12,15 +12,15 @@ import lombok.val;
 
 @Data
 @Builder
-public class PlayerDropItem {
+public class PlayerTakeItemResponse {
   private String username;
 
-  private Item item;
+  private ItemOnMap item;
 
   @EzyWriterImpl
-  public static class ResponseWriter implements EzyWriter<PlayerDropItem, EzyHashMap> {
+  public static class ResponseWriter implements EzyWriter<PlayerTakeItemResponse, EzyHashMap> {
     @Override
-    public EzyHashMap write(EzyMarshaller ezyMarshaller, PlayerDropItem response) {
+    public EzyHashMap write(EzyMarshaller ezyMarshaller, PlayerTakeItemResponse response) {
       val data = "{map: " + GsonHolder.getNormalGson().toJson(response) + "}";
       val map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
       return map;

@@ -2,11 +2,13 @@ package com.survival2d.server.network.match;
 
 import com.survival2d.server.game.action.PlayerAttack;
 import com.survival2d.server.game.action.PlayerChangeWeapon;
+import com.survival2d.server.game.action.PlayerDropItem;
 import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.game.action.PlayerReloadWeapon;
 import com.survival2d.server.game.action.PlayerTakeItem;
 import com.survival2d.server.network.match.request.PlayerAttackRequest;
 import com.survival2d.server.network.match.request.PlayerChangeWeaponRequest;
+import com.survival2d.server.network.match.request.PlayerDropItemRequest;
 import com.survival2d.server.network.match.request.PlayerMoveRequest;
 import com.survival2d.server.service.MatchingService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
@@ -98,5 +100,17 @@ public class MatchRequestController {
     }
     val match = optMatch.get();
     match.onReceivePlayerAction(playerId, new PlayerTakeItem());
+  }
+
+  @EzyDoHandle(MatchCommand.DROP_ITEM)
+  public void handleDropItem(EzyUser user, PlayerDropItemRequest request) {
+    val playerId = user.getName();
+    val optMatch = matchingService.getMatchOfPlayer(playerId);
+    if (!optMatch.isPresent()) {
+      log.warn("match is not present");
+      return;
+    }
+    val match = optMatch.get();
+    match.onReceivePlayerAction(playerId, new PlayerDropItem(request.getItemId()));
   }
 }

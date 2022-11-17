@@ -14,6 +14,7 @@ public class MatchCommand {
   public static final String PLAYER_DEAD = "playerDead";
   public static final String OBSTACLE_TAKE_DAMAGE = "obstacleTakeDamage";
   public static final String OBSTACLE_DESTROYED = "obstacleDestroyed";
+  public static final String CREATE_ITEM = "createItem";
   public static final String TAKE_ITEM = "takeItem";
   public static final String DROP_ITEM = "dropItem";
   public static final String PLAYER_RELOAD = "playerReload";
