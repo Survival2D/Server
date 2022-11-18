@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @EzyObjectBinding
+@Deprecated
 public class PingResponse {
   long time;
 }

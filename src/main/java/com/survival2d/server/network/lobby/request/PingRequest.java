@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @EzyObjectBinding
+@Deprecated
 public class PingRequest {
   long time;
 }

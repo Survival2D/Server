@@ -5,13 +5,11 @@ import com.survival2d.server.exception.JoinNotWaitingRoomException;
 import com.survival2d.server.network.lobby.entity.JoinTeamResult;
 import com.survival2d.server.network.lobby.entity.ResponseError;
 import com.survival2d.server.network.lobby.request.JoinTeamRequest;
-import com.survival2d.server.network.lobby.request.PingRequest;
 import com.survival2d.server.network.lobby.response.CreateTeamResponse;
 import com.survival2d.server.network.lobby.response.FindMatchResponse;
 import com.survival2d.server.network.lobby.response.GetUserInfoResponse;
 import com.survival2d.server.network.lobby.response.JoinTeamResponse;
 import com.survival2d.server.network.lobby.response.NewUserJoinTeamResponse;
-import com.survival2d.server.network.lobby.response.PingResponse;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.request.JoinMMORoomRequest;
 import com.survival2d.server.response.AnotherJoinMMOResponse;
@@ -214,13 +212,7 @@ public class LobbyRequestController extends EzyLoggable {
   }
 
   @EzyDoHandle(LobbyCommand.PING)
-  public void ping(EzyUser user, PingRequest request) {
-    val response = PingResponse.builder().time(request.getTime()).build();
-    responseFactory
-        .newObjectResponse()
-        .command(LobbyCommand.PING)
-        .data(response)
-        .user(user)
-        .execute();
+  public void ping(EzyUser user) {
+    responseFactory.newObjectResponse().command(LobbyCommand.PING).user(user).execute();
   }
 }
