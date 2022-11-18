@@ -12,7 +12,7 @@ import org.locationtech.jts.math.Vector2D;
 public class Container implements HasHp, Obstacle, Containable {
 
   long id;
-  double hp;
+  double hp = 100;
   boolean isDestroyed;
   Vector2D position;
   Rectangle shape;

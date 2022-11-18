@@ -9,7 +9,7 @@ import org.locationtech.jts.math.Vector2D;
 public class Tree implements HasHp, Obstacle {
 
   long id;
-  double hp;
+  double hp = 100;
   Vector2D position;
   Circle shape;
   ObstacleType type = ObstacleType.TREE;
