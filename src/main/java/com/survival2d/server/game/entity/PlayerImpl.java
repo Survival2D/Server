@@ -10,10 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.locationtech.jts.math.Vector2D;
 
 @Data
+@Slf4j
 public class PlayerImpl implements Player {
 
   String playerId;
@@ -71,5 +74,18 @@ public class PlayerImpl implements Player {
   @Override
   public boolean isDead() {
     return state == PlayerState.DEAD;
+  }
+
+  @Override
+  public void reloadWeapon() {
+    val optWeapon = getCurrentWeapon();
+    if (!optWeapon.isPresent()) {
+      log.warn("current weapon is not present");
+      return;
+    }
+    val weapon = optWeapon.get();
+    if (weapon instanceof Gun) {
+      ((Gun) weapon).reload(100);
+    }
   }
 }

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum GunType {
-  NORMAL(BulletType.NORMAL, 1000); // TODO: fixme
+  NORMAL(BulletType.NORMAL, 100); // TODO: config it
   private final BulletType bulletType;
   private final int bulletCapacity;
 }

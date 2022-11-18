@@ -36,4 +36,6 @@ public interface Player extends Movable, HasShape {
   boolean isDead();
 
   double getHealthPoint();
+
+  void reloadWeapon();
 }

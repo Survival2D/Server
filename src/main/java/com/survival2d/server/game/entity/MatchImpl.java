@@ -21,6 +21,7 @@ import com.survival2d.server.game.entity.obstacle.Container;
 import com.survival2d.server.game.entity.obstacle.Obstacle;
 import com.survival2d.server.game.entity.obstacle.Tree;
 import com.survival2d.server.game.entity.weapon.Containable;
+import com.survival2d.server.game.entity.weapon.Gun;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.CreateBulletResponse;
 import com.survival2d.server.network.match.response.CreateItemResponse;
@@ -30,6 +31,7 @@ import com.survival2d.server.network.match.response.PlayerAttackResponse;
 import com.survival2d.server.network.match.response.PlayerChangeWeaponResponse;
 import com.survival2d.server.network.match.response.PlayerDeadResponse;
 import com.survival2d.server.network.match.response.PlayerMoveResponse;
+import com.survival2d.server.network.match.response.PlayerReloadWeaponResponse;
 import com.survival2d.server.network.match.response.PlayerTakeDamageResponse;
 import com.survival2d.server.network.match.response.PlayerTakeItemResponse;
 import com.survival2d.server.util.EzyFoxUtil;
@@ -438,7 +440,15 @@ public class MatchImpl implements Match {
   }
 
   private void onPlayerReloadWeapon(String playerId) {
-    // TODO
+    val player = players.get(playerId);
+    player.reloadWeapon();
+    EzyFoxUtil.getInstance()
+        .getResponseFactory()
+        .newObjectResponse()
+        .command(MatchCommand.PLAYER_RELOAD)
+        .data(PlayerReloadWeaponResponse.builder().player(player).build())
+        .username(playerId)
+        .execute();
   }
 
   private void onPlayerDropItem(String playerId, String itemId) {
