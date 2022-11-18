@@ -17,13 +17,4 @@ public class Container implements HasHp, Obstacle, Containable {
   Vector2D position;
   Rectangle shape;
   List<Item> items;
-
-  @Override
-  public boolean isDestroyed() {
-    return HasHp.super.isDestroyed();
-  }
-
-  @Override
-  public void setDestroyed(boolean destroyed) {
-  }
 }

@@ -12,13 +12,4 @@ public class Tree implements HasHp, Obstacle {
   double hp;
   Vector2D position;
   Circle shape;
-
-  @Override
-  public boolean isDestroyed() {
-    return HasHp.super.isDestroyed();
-  }
-
-  @Override
-  public void setDestroyed(boolean destroyed) {
-  }
 }
