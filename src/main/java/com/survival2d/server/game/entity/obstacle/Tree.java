@@ -12,4 +12,5 @@ public class Tree implements HasHp, Obstacle {
   double hp;
   Vector2D position;
   Circle shape;
+  ObstacleType type = ObstacleType.TREE;
 }

@@ -17,4 +17,5 @@ public class Container implements HasHp, Obstacle, Containable {
   Vector2D position;
   Rectangle shape;
   List<Item> items;
+  ObstacleType type = ObstacleType.CONTAINER;
 }
