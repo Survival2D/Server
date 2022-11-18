@@ -5,11 +5,13 @@ import com.survival2d.server.exception.JoinNotWaitingRoomException;
 import com.survival2d.server.network.lobby.entity.JoinTeamResult;
 import com.survival2d.server.network.lobby.entity.ResponseError;
 import com.survival2d.server.network.lobby.request.JoinTeamRequest;
+import com.survival2d.server.network.lobby.request.PingRequest;
 import com.survival2d.server.network.lobby.response.CreateTeamResponse;
 import com.survival2d.server.network.lobby.response.FindMatchResponse;
 import com.survival2d.server.network.lobby.response.GetUserInfoResponse;
 import com.survival2d.server.network.lobby.response.JoinTeamResponse;
 import com.survival2d.server.network.lobby.response.NewUserJoinTeamResponse;
+import com.survival2d.server.network.lobby.response.PingResponse;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.request.JoinMMORoomRequest;
 import com.survival2d.server.response.AnotherJoinMMOResponse;
@@ -41,20 +43,14 @@ import lombok.var;
 @Slf4j
 public class LobbyRequestController extends EzyLoggable {
 
-  @EzyAutoBind
-  private LobbyService lobbyService;
+  @EzyAutoBind private LobbyService lobbyService;
 
-  @EzyAutoBind
-  private RoomService roomService;
+  @EzyAutoBind private RoomService roomService;
 
-  @EzyAutoBind
-  private EzyResponseFactory responseFactory;
-  @EzyAutoBind
-  private LobbyTeamService lobbyTeamService;
-  @EzyAutoBind
-  private FindMatchService findMatchService;
-  @EzyAutoBind
-  private MatchingService matchingService;
+  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind private LobbyTeamService lobbyTeamService;
+  @EzyAutoBind private FindMatchService findMatchService;
+  @EzyAutoBind private MatchingService matchingService;
 
   @EzyDoHandle(LobbyCommand.GET_USER_INFO)
   public void getUserInfo(EzyUser user) {
@@ -214,6 +210,17 @@ public class LobbyRequestController extends EzyLoggable {
         .command(Commands.ANOTHER_JOIN_MMO_ROOM)
         .data(AnotherJoinMMOResponse.builder().playerName(user.getName()).build())
         .usernames(EzyLists.filter(playerNames, it -> !it.equals(user.getName())))
+        .execute();
+  }
+
+  @EzyDoHandle(LobbyCommand.PING)
+  public void ping(EzyUser user, PingRequest request) {
+    val response = PingResponse.builder().time(request.getTime()).build();
+    responseFactory
+        .newObjectResponse()
+        .command(LobbyCommand.PING)
+        .data(response)
+        .user(user)
         .execute();
   }
 }
