@@ -21,7 +21,6 @@ import com.survival2d.server.game.entity.obstacle.Container;
 import com.survival2d.server.game.entity.obstacle.Obstacle;
 import com.survival2d.server.game.entity.obstacle.Tree;
 import com.survival2d.server.game.entity.weapon.Containable;
-import com.survival2d.server.game.entity.weapon.Gun;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.CreateBulletResponse;
 import com.survival2d.server.network.match.response.CreateItemResponse;
@@ -55,7 +54,7 @@ import org.locationtech.jts.math.Vector2D;
 public class MatchImpl implements Match {
 
   private final long id;
-  @ExcludeFromGson private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
+  private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
   @ExcludeFromGson @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
 
   @ExcludeFromGson @Deprecated
