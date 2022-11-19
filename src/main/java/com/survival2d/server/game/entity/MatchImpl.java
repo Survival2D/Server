@@ -34,9 +34,11 @@ import com.survival2d.server.network.match.response.PlayerMoveResponse;
 import com.survival2d.server.network.match.response.PlayerReloadWeaponResponse;
 import com.survival2d.server.network.match.response.PlayerTakeDamageResponse;
 import com.survival2d.server.network.match.response.PlayerTakeItemResponse;
+import com.survival2d.server.service.MatchingService;
 import com.survival2d.server.util.EzyFoxUtil;
 import com.survival2d.server.util.math.VectorUtil;
 import com.survival2d.server.util.serialize.ExcludeFromGson;
+import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -71,6 +73,9 @@ public class MatchImpl implements Match {
   private long currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
+  @ExcludeFromGson
+  @EzyAutoBind
+  private MatchingService matchingService;
 
   public MatchImpl(long id) {
     this.id = id;
@@ -252,6 +257,7 @@ public class MatchImpl implements Match {
           .data(EndGameResponse.builder().winnerTeam(winnerTeam).build())
           .usernames(getAllPlayers())
           .execute();
+      stop();
     }
   }
 
@@ -300,6 +306,11 @@ public class MatchImpl implements Match {
           }
         },
         3000);
+  }
+
+  public void stop() {
+    timer.cancel();
+    matchingService.destroyMatch(this.getId());
   }
 
   public boolean randomPositionForObstacle(Obstacle obstacle) {

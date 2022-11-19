@@ -13,4 +13,6 @@ public interface MatchingService {
   Optional<Match> getMatchById(long matchId);
 
   Optional<Match> getMatchOfPlayer(String playerId);
+
+  void destroyMatch(long id);
 }
