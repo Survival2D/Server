@@ -342,7 +342,7 @@ public class MatchImpl implements Match {
     // TODO: random this
     for (int i = 0; i < 6; i++) {
       val tree = new Tree();
-      tree.setShape(new Circle(30));
+      tree.setShape(new Circle(35));
       int tryTime = 0;
       while (!randomPositionForObstacle(tree)) {
         tryTime++;
@@ -357,7 +357,7 @@ public class MatchImpl implements Match {
     for (int i = 0; i < 7; i++) {
 
       val container = new Container();
-      container.setShape(new Rectangle(30, 30));
+      container.setShape(new Rectangle(100, 100));
       container.setItems(
           Arrays.asList(
               GunItem.builder().gunType(GunType.NORMAL).numBullet(10).build(),
