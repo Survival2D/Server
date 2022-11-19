@@ -73,9 +73,7 @@ public class MatchImpl implements Match {
   private long currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
-  @ExcludeFromGson
-  @EzyAutoBind
-  private MatchingService matchingService;
+  @ExcludeFromGson @EzyAutoBind private MatchingService matchingService;
 
   public MatchImpl(long id) {
     this.id = id;
@@ -97,7 +95,7 @@ public class MatchImpl implements Match {
   }
 
   public boolean randomPositionForPlayer(String playerId) {
-    val player =  players.get(playerId);
+    val player = players.get(playerId);
     val newPosition =
         new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
     player.setPosition(newPosition);
@@ -105,10 +103,7 @@ public class MatchImpl implements Match {
       if (object instanceof Obstacle) {
         val obstacle = (Obstacle) object;
         if (VectorUtil.isCollision(
-            player.getPosition(),
-            player.getShape(),
-            obstacle.getPosition(),
-            obstacle.getShape())) {
+            player.getPosition(), player.getShape(), obstacle.getPosition(), obstacle.getShape())) {
           return false;
         }
       }
@@ -164,7 +159,13 @@ public class MatchImpl implements Match {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon.getAttachType() == AttachType.MELEE) {
-      createDamage(playerId, player.getPosition(), new Circle(10), 1);
+      createDamage(
+          playerId,
+          player
+              .getPosition()
+              .add(player.getAttackDirection().multiply(((Circle) player.getShape()).getRadius())),
+          new Circle(10),
+          5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
       createBullet(playerId, player.getPosition(), direction, BulletType.NORMAL);
     }
@@ -252,8 +253,7 @@ public class MatchImpl implements Match {
             .usernames(getAllPlayers())
             .execute();
         if (obstacle.isDestroyed()) {
-          log.info(
-              "Obstacle {} destroyed", obstacle.getId());
+          log.info("Obstacle {} destroyed", obstacle.getId());
           EzyFoxUtil.getInstance()
               .getResponseFactory()
               .newObjectResponse()
