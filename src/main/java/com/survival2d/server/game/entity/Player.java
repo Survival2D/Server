@@ -18,7 +18,7 @@ public interface Player extends Movable, HasShape, HasHp {
 
   void setRotation(double rotation);
 
-  PlayerState getState();
+//  PlayerState getState();
 
   double getSpeed();
 

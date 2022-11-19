@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -119,7 +118,7 @@ public class MatchImpl implements Match {
   @Override
   public void onReceivePlayerAction(String playerId, PlayerAction action) {
     val player = players.get(playerId);
-    if (player.isAlive()) {
+    if (player.isDestroyed()) {
       log.error("Player {} take action while dead", playerId);
       return;
     }
@@ -201,7 +200,7 @@ public class MatchImpl implements Match {
       if (player.getTeam() == currentPlayer.getTeam()) {
         continue;
       }
-      if (player.isAlive()) {
+      if (player.isDestroyed()) {
         continue;
       }
       if (VectorUtil.isCollision(player.getPosition(), player.getShape(), position, shape)) {
@@ -217,7 +216,7 @@ public class MatchImpl implements Match {
                     .build())
             .usernames(getAllPlayers())
             .execute();
-        if (player.isAlive()) {
+        if (player.isDestroyed()) {
           EzyFoxUtil.getInstance()
               .getResponseFactory()
               .newObjectResponse()
@@ -273,11 +272,17 @@ public class MatchImpl implements Match {
   }
 
   private void checkEndGame() {
-    Stream<Long> predicate =
-        players.values().stream().filter(Player::isAlive).map(Player::getTeam).distinct();
-    val isEnd = predicate.count() == 1; // Chỉ còn 1 team sống sót
+    val isEnd =
+        players.values().stream().filter(Player::isAlive).map(Player::getTeam).distinct().count()
+            == 1; // Chỉ còn 1 team sống sót
     if (isEnd) {
-      val winnerTeam = predicate.findFirst().get();
+      val winnerTeam =
+          players.values().stream()
+              .filter(Player::isAlive)
+              .map(Player::getTeam)
+              .distinct()
+              .findFirst()
+              .get();
       EzyFoxUtil.getInstance()
           .getResponseFactory()
           .newObjectResponse()
@@ -338,7 +343,7 @@ public class MatchImpl implements Match {
 
   public void stop() {
     timer.cancel();
-    matchingService.destroyMatch(this.getId());
+    EzyFoxUtil.getInstance().getMatchingService().destroyMatch(this.getId());
   }
 
   public boolean randomPositionForObstacle(Obstacle obstacle) {
@@ -440,20 +445,23 @@ public class MatchImpl implements Match {
         val bullet = (Bullet) mapObject;
         bullet.move();
         log.info("bullet position {}", bullet.getPosition());
-        val owner = players.get(bullet.getPlayerId());
+        String ownerId = bullet.getPlayerId();
+        val owner = players.get(ownerId);
         for (val player : players.values()) {
+          log.info("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());
+          log.info("player's hp {}, player is dead {}", player.getHp(), player.isDestroyed());
           if (player.getTeam() == owner.getTeam() || player.isDestroyed()) {
             continue;
           }
           log.info("player position {}", player.getPosition());
           if (VectorUtil.isCollision(
-              player.getPosition(), bullet.getShape(), bullet.getPosition(), player.getShape())) {
+              player.getPosition(), player.getShape(), bullet.getPosition(), bullet.getShape())) {
             log.info("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
             makeDamage(
-                bullet.getPlayerId(),
+                ownerId,
                 bullet.getPosition(),
                 new Circle(bullet.getType().getDamageRadius()),
-                bullet.getType().getDamageRadius());
+                bullet.getType().getDamage());
             bullet.setDestroyed(true);
           }
         }
@@ -472,7 +480,7 @@ public class MatchImpl implements Match {
               bullet.getShape())) {
             log.info("object {} is hit by bullet {}", otherObject.getId(), bullet.getId());
             makeDamage(
-                bullet.getPlayerId(),
+                ownerId,
                 bullet.getPosition(),
                 new Circle(bullet.getType().getDamageRadius()),
                 bullet.getType().getDamageRadius());
