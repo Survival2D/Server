@@ -35,11 +35,11 @@ public class Bullet implements MapObject, Movable, Destroyable {
 
   public void move() {
     moveBy(direction.multiply(type.getSpeed()));
-    log.info("position: {}", position);
+//    log.info("position: {}", position);
   }
 
 
   public boolean isOutOfBound() {
-    return position.distance(rawPosition) < type.getMaxRange();
+    return position.distance(rawPosition) > type.getMaxRange();
   }
 }

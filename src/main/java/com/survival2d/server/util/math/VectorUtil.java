@@ -1,6 +1,5 @@
 package com.survival2d.server.util.math;
 
-
 import com.survival2d.server.game.entity.base.Circle;
 import com.survival2d.server.game.entity.base.Dot;
 import com.survival2d.server.game.entity.base.Rectangle;
@@ -16,11 +15,6 @@ public class VectorUtil {
 
   public static boolean isZero(Vector2D vector) {
     return vector.equals(ZERO);
-  }
-  @Deprecated
-
-  public static boolean isCollision(Vector2D a, Vector2D b, double radius) {
-    return a.distance(b) <= radius;
   }
 
   public static boolean isCollision(Vector2D v1, Shape s1, Vector2D v2, Shape s2) {
@@ -54,28 +48,29 @@ public class VectorUtil {
     return false;
   }
 
-
   public static boolean isCollisionBetweenDotAndDot(Vector2D v1, Vector2D v2) {
     return isZero(v1.subtract(v2));
   }
 
   public static boolean isCollisionBetweenDotAndCircle(Vector2D v1, Vector2D v2, Circle c2) {
+//    log.info("v1: {}, v2: {}, c2: {}", v1, v2, c2);
     return v1.distance(v2) <= c2.getRadius();
   }
 
   public static boolean isCollisionBetweenDotAndRectangle(Vector2D v1, Vector2D v2, Rectangle r2) {
-    return v1.getX() >= v2.getX() && v1.getX() <= v2.getX() + r2.getWidth()
+    return v1.getX() >= v2.getX()
+        && v1.getX() <= v2.getX() + r2.getWidth()
         && v1.getY() >= v2.getY()
         && v1.getY() <= v2.getY() + r2.getHeight();
   }
 
-  public static boolean isCollisionBetweenCircleAndCircle(Vector2D v1, Circle c1, Vector2D v2,
-      Circle c2) {
+  public static boolean isCollisionBetweenCircleAndCircle(
+      Vector2D v1, Circle c1, Vector2D v2, Circle c2) {
     return v1.distance(v2) <= c1.getRadius() + c2.getRadius();
   }
 
-  public static boolean isCollisionBetweenCircleAndRectangle(Vector2D v1, Circle c1, Vector2D v2,
-      Rectangle r2) {
+  public static boolean isCollisionBetweenCircleAndRectangle(
+      Vector2D v1, Circle c1, Vector2D v2, Rectangle r2) {
     val dx = Math.abs(v1.getX() - (v2.getX() + r2.getWidth() / 2));
     val dy = Math.abs(v1.getY() - (v2.getY() + r2.getHeight() / 2));
     if (dx > c1.getRadius() + r2.getWidth() / 2) {
@@ -91,17 +86,16 @@ public class VectorUtil {
       return true;
     }
     val dCorner_2 =
-        (dx - r2.getWidth() / 2) * (dx - r2.getWidth() / 2) + (dy - r2.getHeight() / 2) * (dy
-            - r2.getHeight() / 2);
+        (dx - r2.getWidth() / 2) * (dx - r2.getWidth() / 2)
+            + (dy - r2.getHeight() / 2) * (dy - r2.getHeight() / 2);
     return dCorner_2 <= c1.getRadius() * c1.getRadius();
   }
 
-  public static boolean isCollisionBetweenRectangleAndRectangle(Vector2D v1, Rectangle r1,
-      Vector2D v2, Rectangle r2) {
+  public static boolean isCollisionBetweenRectangleAndRectangle(
+      Vector2D v1, Rectangle r1, Vector2D v2, Rectangle r2) {
     return v1.getX() <= v2.getX() + r2.getWidth()
         && v1.getX() + r1.getWidth() >= v2.getX()
         && v1.getY() <= v2.getY() + r2.getHeight()
         && v1.getY() + r1.getHeight() >= v2.getY();
   }
-
 }

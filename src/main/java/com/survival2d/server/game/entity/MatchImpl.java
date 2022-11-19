@@ -24,6 +24,7 @@ import com.survival2d.server.game.entity.weapon.Containable;
 import com.survival2d.server.network.match.MatchCommand;
 import com.survival2d.server.network.match.response.CreateBulletResponse;
 import com.survival2d.server.network.match.response.CreateItemResponse;
+import com.survival2d.server.network.match.response.EndGameResponse;
 import com.survival2d.server.network.match.response.ObstacleDestroyedResponse;
 import com.survival2d.server.network.match.response.ObstacleTakeDamageResponse;
 import com.survival2d.server.network.match.response.PlayerAttackResponse;
@@ -42,6 +43,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -89,7 +91,7 @@ public class MatchImpl implements Match {
   @Override
   public void onReceivePlayerAction(String playerId, PlayerAction action) {
     val player = players.get(playerId);
-    if (player.isDead()) {
+    if (player.isAlive()) {
       log.error("Player {} take action while dead", playerId);
       return;
     }
@@ -165,11 +167,11 @@ public class MatchImpl implements Match {
       if (player.getTeam() == currentPlayer.getTeam()) {
         continue;
       }
-      if (player.isDead()) {
+      if (player.isAlive()) {
         continue;
       }
       if (VectorUtil.isCollision(player.getPosition(), player.getShape(), position, shape)) {
-        player.takeDamage(damage);
+        player.reduceHp(damage);
         EzyFoxUtil.getInstance()
             .getResponseFactory()
             .newObjectResponse()
@@ -177,11 +179,11 @@ public class MatchImpl implements Match {
             .data(
                 PlayerTakeDamageResponse.builder()
                     .username(player.getPlayerId())
-                    .hp(player.getHealthPoint())
+                    .hp(player.getHp())
                     .build())
             .usernames(getAllPlayers())
             .execute();
-        if (player.isDead()) {
+        if (player.isAlive()) {
           EzyFoxUtil.getInstance()
               .getResponseFactory()
               .newObjectResponse()
@@ -189,6 +191,7 @@ public class MatchImpl implements Match {
               .data(PlayerDeadResponse.builder().username(player.getPlayerId()).build())
               .usernames(getAllPlayers())
               .execute();
+          checkEndGame();
         }
       }
     }
@@ -202,6 +205,8 @@ public class MatchImpl implements Match {
       }
       if (VectorUtil.isCollision(obstacle.getPosition(), obstacle.getShape(), position, shape)) {
         obstacle.reduceHp(damage);
+        log.info(
+            "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, obstacle.getHp());
         EzyFoxUtil.getInstance()
             .getResponseFactory()
             .newObjectResponse()
@@ -214,6 +219,8 @@ public class MatchImpl implements Match {
             .usernames(getAllPlayers())
             .execute();
         if (obstacle.isDestroyed()) {
+          log.info(
+              "Obstacle {} destroyed", obstacle.getId());
           EzyFoxUtil.getInstance()
               .getResponseFactory()
               .newObjectResponse()
@@ -229,6 +236,22 @@ public class MatchImpl implements Match {
           }
         }
       }
+    }
+  }
+
+  private void checkEndGame() {
+    Stream<Long> predicate =
+        players.values().stream().filter(Player::isAlive).map(Player::getTeam).distinct();
+    val isEnd = predicate.count() == 1; // Chỉ còn 1 team sống sót
+    if (isEnd) {
+      val winnerTeam = predicate.findFirst().get();
+      EzyFoxUtil.getInstance()
+          .getResponseFactory()
+          .newObjectResponse()
+          .command(MatchCommand.END_GAME)
+          .data(EndGameResponse.builder().winnerTeam(winnerTeam).build())
+          .usernames(getAllPlayers())
+          .execute();
     }
   }
 
@@ -279,21 +302,65 @@ public class MatchImpl implements Match {
         3000);
   }
 
+  public boolean randomPositionForObstacle(Obstacle obstacle) {
+    val newPosition =
+        new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
+    obstacle.setPosition(newPosition);
+    for (val player : players.values()) {
+      if (VectorUtil.isCollision(
+          player.getPosition(), player.getShape(), newPosition, obstacle.getShape())) {
+        return false;
+      }
+    }
+    for (val object : objects.values()) {
+      if (object instanceof Obstacle) {
+        val otherObstacle = (Obstacle) object;
+        if (VectorUtil.isCollision(
+            otherObstacle.getPosition(),
+            otherObstacle.getShape(),
+            newPosition,
+            obstacle.getShape())) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   private void initObstacles() {
     // TODO: random this
-    val tree = new Tree();
-    tree.setPosition(new Vector2D(100, 100));
-    tree.setShape(new Circle(10));
-    addMapObject(tree);
+    for (int i = 0; i < 6; i++) {
+      val tree = new Tree();
+      tree.setShape(new Circle(30));
+      int tryTime = 0;
+      while (!randomPositionForObstacle(tree)) {
+        tryTime++;
+        if (tryTime > 100) {
+          log.error("Can't random position for tree {}", tree.getId());
+          break;
+        }
+      }
+      addMapObject(tree);
+    }
 
-    val container = new Container();
-    container.setPosition(new Vector2D(200, 200));
-    container.setShape(new Rectangle(10, 10));
-    container.setItems(
-        Arrays.asList(
-            GunItem.builder().gunType(GunType.NORMAL).numBullet(10).build(),
-            BulletItem.builder().bulletType(BulletType.NORMAL).numBullet(10).build()));
-    addMapObject(container);
+    for (int i = 0; i < 7; i++) {
+
+      val container = new Container();
+      container.setShape(new Rectangle(30, 30));
+      container.setItems(
+          Arrays.asList(
+              GunItem.builder().gunType(GunType.NORMAL).numBullet(10).build(),
+              BulletItem.builder().bulletType(BulletType.NORMAL).numBullet(10).build()));
+      int tryTime = 0;
+      while (!randomPositionForObstacle(container)) {
+        tryTime++;
+        if (tryTime > 100) {
+          log.error("Can't random position for container {}", container.getId());
+          break;
+        }
+      }
+      addMapObject(container);
+    }
   }
 
   public void start() {
@@ -333,9 +400,16 @@ public class MatchImpl implements Match {
       if (mapObject instanceof Bullet) {
         val bullet = (Bullet) mapObject;
         bullet.move();
+        log.info("bullet position {}", bullet.getPosition());
+        val owner = players.get(bullet.getPlayerId());
         for (val player : players.values()) {
+          if (player.getTeam() == owner.getTeam() || player.isDestroyed()) {
+            continue;
+          }
+          log.info("player position {}", player.getPosition());
           if (VectorUtil.isCollision(
-              player.getPosition(), bullet.getPosition(), player.getSize())) {
+              player.getPosition(), bullet.getShape(), bullet.getPosition(), player.getShape())) {
+            log.info("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
             makeDamage(
                 bullet.getPlayerId(),
                 bullet.getPosition(),
@@ -348,8 +422,16 @@ public class MatchImpl implements Match {
           if (otherObject == mapObject) {
             continue; // Chính nó
           }
+          if (otherObject instanceof Obstacle) {
+            val obstacle = (Obstacle) otherObject;
+            if (obstacle.isDestroyed()) continue;
+          }
           if (VectorUtil.isCollision(
-              otherObject.getPosition(), bullet.getPosition(), 10 /*FIXME*/)) {
+              otherObject.getPosition(),
+              otherObject.getShape(),
+              bullet.getPosition(),
+              bullet.getShape())) {
+            log.info("object {} is hit by bullet {}", otherObject.getId(), bullet.getId());
             makeDamage(
                 bullet.getPlayerId(),
                 bullet.getPosition(),
@@ -362,7 +444,7 @@ public class MatchImpl implements Match {
         var isDestroy = bullet.isDestroyed() || bullet.isOutOfBound();
         if (isDestroy) {
           objects.remove(bullet.getId());
-          log.debug("bullet {} is destroyed", bullet.getId());
+          log.info("bullet {} is destroyed", bullet.getId());
         }
       }
     }
@@ -402,8 +484,9 @@ public class MatchImpl implements Match {
   }
 
   private void createItemOnMap(Item item, Vector2D position) {
+    log.info("create {} on map", item.getItemType());
     val randomNeighborPosition =
-        new Vector2D(RandomUtils.nextDouble(-10, 10), RandomUtils.nextDouble(-10, 10));
+        new Vector2D(RandomUtils.nextDouble(0, 20) - 10, RandomUtils.nextDouble(0, 20) - 10);
     val itemOnMap =
         ItemOnMap.builder().item(item).position(position.add(randomNeighborPosition)).build();
     addMapObject(itemOnMap);

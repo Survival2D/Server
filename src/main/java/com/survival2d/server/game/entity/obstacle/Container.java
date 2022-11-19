@@ -13,7 +13,6 @@ public class Container implements HasHp, Obstacle, Containable {
 
   long id;
   double hp = 100;
-  boolean isDestroyed;
   Vector2D position;
   Rectangle shape;
   List<Item> items;

@@ -1,11 +1,12 @@
 package com.survival2d.server.game.entity;
 
+import com.survival2d.server.game.entity.base.HasHp;
 import com.survival2d.server.game.entity.base.HasShape;
 import com.survival2d.server.game.entity.base.Movable;
 import java.util.Optional;
 import org.locationtech.jts.math.Vector2D;
 
-public interface Player extends Movable, HasShape {
+public interface Player extends Movable, HasShape, HasHp {
 
   String getPlayerId();
 
@@ -28,14 +29,6 @@ public interface Player extends Movable, HasShape {
   Optional<Weapon> getCurrentWeapon();
 
   int getCurrentWeaponIndex();
-
-  void takeDamage(double damage);
-
-  double getSize();
-
-  boolean isDead();
-
-  double getHealthPoint();
 
   void reloadWeapon();
 }

@@ -18,4 +18,5 @@ public class MatchCommand {
   public static final String TAKE_ITEM = "takeItem";
   public static final String DROP_ITEM = "dropItem";
   public static final String PLAYER_RELOAD = "playerReload";
+  public static final String END_GAME = "endGame";
 }

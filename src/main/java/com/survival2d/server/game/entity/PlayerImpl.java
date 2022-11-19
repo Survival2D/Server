@@ -25,14 +25,13 @@ public class PlayerImpl implements Player {
   PlayerState state;
   double rotation;
   double speed = 10;
-  double healthPoint = 100;
+  double hp = 100;
   Vector2D direction;
   List<Weapon> weapons = new ArrayList<>();
   Map<Item, Integer> items; //Map item to quantity
   int currentWeaponIndex;
   long team;
-  double size = 30;
-  Circle shape = new Circle(10);
+  Circle shape = new Circle(30);
 
   public PlayerImpl(String playerId, long team) {
     this.playerId = playerId;
@@ -64,15 +63,15 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public void takeDamage(double damage) {
-    healthPoint -= damage;
-    if (healthPoint <= 0) {
+  public void reduceHp(double damage) {
+    hp -= damage;
+    if (hp <= 0) {
       state = PlayerState.DEAD;
     }
   }
 
   @Override
-  public boolean isDead() {
+  public boolean isAlive() {
     return state == PlayerState.DEAD;
   }
 
