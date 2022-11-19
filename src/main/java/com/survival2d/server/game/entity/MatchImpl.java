@@ -85,7 +85,35 @@ public class MatchImpl implements Match {
   @Override
   public void addPlayer(long teamId, String playerId) {
     players.putIfAbsent(playerId, new PlayerImpl(playerId, teamId));
+    int tryCount = 0;
+    while (!randomPositionForPlayer(playerId)) {
+      tryCount++;
+      if (tryCount > 100) {
+        log.error("Can't find position for player {}", playerId);
+        break;
+      }
+    }
     playerRequests.put(playerId, new ConcurrentHashMap<>());
+  }
+
+  public boolean randomPositionForPlayer(String playerId) {
+    val player =  players.get(playerId);
+    val newPosition =
+        new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
+    player.setPosition(newPosition);
+    for (val object : objects.values()) {
+      if (object instanceof Obstacle) {
+        val obstacle = (Obstacle) object;
+        if (VectorUtil.isCollision(
+            player.getPosition(),
+            player.getShape(),
+            obstacle.getPosition(),
+            obstacle.getShape())) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   @Override
