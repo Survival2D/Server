@@ -9,5 +9,5 @@ import lombok.Data;
 @EzyObjectBinding
 public class EndGameResponse {
 
-  long winnerTeam;
+  long winTeam;
 }

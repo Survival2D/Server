@@ -8,6 +8,7 @@ import com.survival2d.server.game.action.PlayerDropItem;
 import com.survival2d.server.game.action.PlayerMove;
 import com.survival2d.server.game.action.PlayerReloadWeapon;
 import com.survival2d.server.game.action.PlayerTakeItem;
+import com.survival2d.server.game.constant.GameConstants;
 import com.survival2d.server.game.entity.base.Circle;
 import com.survival2d.server.game.entity.base.Item;
 import com.survival2d.server.game.entity.base.MapObject;
@@ -58,9 +59,12 @@ public class MatchImpl implements Match {
 
   private final long id;
   private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
-  @ExcludeFromGson @Deprecated private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
+  @ExcludeFromGson
+  @Deprecated
+  private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
 
-  @ExcludeFromGson @Deprecated
+  @ExcludeFromGson
+  @Deprecated
   private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
 
   @ExcludeFromGson
@@ -68,11 +72,15 @@ public class MatchImpl implements Match {
       new ConcurrentHashMap<>();
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  @ExcludeFromGson private final Timer timer = new Timer();
+  @ExcludeFromGson
+  private final Timer timer = new Timer();
   private long currentMapObjectId;
-  @ExcludeFromGson private TimerTask gameLoopTask;
+  @ExcludeFromGson
+  private TimerTask gameLoopTask;
   private long currentTick;
-  @ExcludeFromGson @EzyAutoBind private MatchingService matchingService;
+  @ExcludeFromGson
+  @EzyAutoBind
+  private MatchingService matchingService;
 
   public MatchImpl(long id) {
     this.id = id;
@@ -154,7 +162,7 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void onPlayerAttach(String playerId, Vector2D direction) {
+  public void onPlayerAttack(String playerId, Vector2D direction) {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon.getAttachType() == AttachType.MELEE) {
@@ -166,7 +174,9 @@ public class MatchImpl implements Match {
           new Circle(10),
           5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
-      createBullet(playerId, player.getPosition(), direction, BulletType.NORMAL);
+      createBullet(playerId, player.getPosition().add(player.getAttackDirection().multiply(
+              ((Circle) player.getShape()).getRadius() + GameConstants.INITIAL_BULLET_DISTANCE)),
+          direction, BulletType.NORMAL);
     }
   }
 
@@ -276,7 +286,7 @@ public class MatchImpl implements Match {
         players.values().stream().filter(Player::isAlive).map(Player::getTeam).distinct().count()
             == 1; // Chỉ còn 1 team sống sót
     if (isEnd) {
-      val winnerTeam =
+      val winTeam =
           players.values().stream()
               .filter(Player::isAlive)
               .map(Player::getTeam)
@@ -287,7 +297,7 @@ public class MatchImpl implements Match {
           .getResponseFactory()
           .newObjectResponse()
           .command(MatchCommand.END_GAME)
-          .data(EndGameResponse.builder().winnerTeam(winnerTeam).build())
+          .data(EndGameResponse.builder().winTeam(winTeam).build())
           .usernames(getAllPlayers())
           .execute();
       stop();
@@ -445,7 +455,7 @@ public class MatchImpl implements Match {
         val bullet = (Bullet) mapObject;
         bullet.move();
         log.info("bullet position {}", bullet.getPosition());
-        String ownerId = bullet.getPlayerId();
+        String ownerId = bullet.getOwnerId();
         val owner = players.get(ownerId);
         for (val player : players.values()) {
           log.info("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());
@@ -471,7 +481,9 @@ public class MatchImpl implements Match {
           }
           if (otherObject instanceof Obstacle) {
             val obstacle = (Obstacle) otherObject;
-            if (obstacle.isDestroyed()) continue;
+            if (obstacle.isDestroyed()) {
+              continue;
+            }
           }
           if (VectorUtil.isCollision(
               otherObject.getPosition(),
@@ -505,8 +517,12 @@ public class MatchImpl implements Match {
       }
       for (val action : playerActionMap.values()) {
         handlePlayerAction(player.getPlayerId(), action);
+        //TODO: nếu mà client chưa sửa kịp, thì comment 3 dòng sau
+        if (!(action instanceof PlayerMove)) {
+          playerActionMap.remove(action.getClass());
+        }
       }
-      playerActionMap.clear();
+//      playerActionMap.clear();
     }
   }
 
@@ -516,7 +532,7 @@ public class MatchImpl implements Match {
       onPlayerMove(playerId, playerMove.getDirection(), playerMove.getRotation());
     } else if (action instanceof PlayerAttack) {
       val player = players.get(playerId);
-      onPlayerAttach(playerId, player.getAttackDirection());
+      onPlayerAttack(playerId, player.getAttackDirection());
     } else if (action instanceof PlayerChangeWeapon) {
       val playerChangeWeapon = (PlayerChangeWeapon) action;
       onPlayerSwitchWeapon(playerId, playerChangeWeapon.getWeaponIndex());

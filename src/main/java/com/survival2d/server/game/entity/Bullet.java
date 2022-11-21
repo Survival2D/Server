@@ -15,7 +15,7 @@ import org.locationtech.jts.math.Vector2D;
 public class Bullet implements MapObject, Movable, Destroyable {
 
   long id;
-  String playerId;
+  String ownerId;
 
   Vector2D position;
 
@@ -25,8 +25,8 @@ public class Bullet implements MapObject, Movable, Destroyable {
   boolean isDestroyed;
   Dot shape = new Dot();
 
-  public Bullet(String playerId, Vector2D rawPosition, Vector2D direction, BulletType type) {
-    this.playerId = playerId;
+  public Bullet(String ownerId, Vector2D rawPosition, Vector2D direction, BulletType type) {
+    this.ownerId = ownerId;
     this.rawPosition = rawPosition;
     this.position = rawPosition;
     this.direction = direction; //*speed

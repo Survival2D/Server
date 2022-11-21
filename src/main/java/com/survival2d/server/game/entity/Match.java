@@ -17,7 +17,7 @@ public interface Match {
 
   void onPlayerMove(String playerId, Vector2D direction, double rotation);
 
-  void onPlayerAttach(String playerId, Vector2D direction);
+  void onPlayerAttack(String playerId, Vector2D direction);
 
   void createDamage(String playerId, Vector2D position, Shape shape, double damage);
 
