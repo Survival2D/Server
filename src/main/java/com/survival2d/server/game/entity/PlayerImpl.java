@@ -2,6 +2,7 @@ package com.survival2d.server.game.entity;
 
 import com.survival2d.server.game.entity.base.Circle;
 import com.survival2d.server.game.entity.base.Item;
+import com.survival2d.server.game.entity.config.BulletType;
 import com.survival2d.server.game.entity.config.GunType;
 import com.survival2d.server.game.entity.weapon.Gun;
 import com.survival2d.server.game.entity.weapon.Hand;
@@ -28,6 +29,7 @@ public class PlayerImpl implements Player {
   Vector2D direction;
   List<Weapon> weapons = new ArrayList<>();
   Map<Item, Integer> items; // Map item to quantity
+  Map<BulletType, Integer> bullets; // Map bullet to quantity
   int currentWeaponIndex;
   long team;
   Circle shape = new Circle(30);
