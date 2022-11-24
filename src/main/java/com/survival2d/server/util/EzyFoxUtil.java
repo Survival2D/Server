@@ -1,6 +1,5 @@
 package com.survival2d.server.util;
 
-import com.survival2d.server.service.MatchingService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.bean.annotation.EzyConfigurationAfter;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
@@ -14,7 +13,7 @@ import lombok.Getter;
 public class EzyFoxUtil {
 
   @Getter @EzyAutoBind private static EzyFoxUtil instance;
-  @Getter @EzyAutoBind private MatchingService matchingService;
+  //  @Getter @EzyAutoBind private MatchingService matchingService;
 
-  @Getter private final EzyPluginResponseFactory responseFactory;
+  @Getter @EzyAutoBind private final EzyPluginResponseFactory responseFactory;
 }

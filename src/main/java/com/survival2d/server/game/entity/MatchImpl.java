@@ -353,7 +353,7 @@ public class MatchImpl implements Match {
 
   public void stop() {
     timer.cancel();
-    EzyFoxUtil.getInstance().getMatchingService().destroyMatch(this.getId());
+//    EzyFoxUtil.getInstance().getMatchingService().destroyMatch(this.getId());
   }
 
   public boolean randomPositionForObstacle(Obstacle obstacle) {
