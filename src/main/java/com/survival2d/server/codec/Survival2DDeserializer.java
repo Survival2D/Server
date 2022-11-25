@@ -12,11 +12,11 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class JacksonSimpleDeserializer implements EzyMessageDeserializer {
+public class Survival2DDeserializer implements EzyMessageDeserializer {
 
     protected final ObjectMapper objectMapper;
 
-    public JacksonSimpleDeserializer(ObjectMapper objectMapper) {
+    public Survival2DDeserializer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

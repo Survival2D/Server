@@ -1,0 +1,9 @@
+include "survival2d.fbs";
+
+namespace com.survival2d.server.flatbuffers;
+
+table Obstacle {
+  pos:Vec3;
+}
+
+root_type Obstacle;

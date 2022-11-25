@@ -11,12 +11,12 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class JacksonSimpleSerializer
+public class Survival2DSerializer
     extends EzyAbstractByTypeSerializer {
 
     protected final ObjectMapper objectMapper;
 
-    public JacksonSimpleSerializer(ObjectMapper objectMapper) {
+    public Survival2DSerializer(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
