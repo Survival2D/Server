@@ -2,10 +2,13 @@
 
 package survival2d.flatbuffers;
 
-import java.nio.*;
-import java.lang.*;
-import java.util.*;
-import com.google.flatbuffers.*;
+import com.google.flatbuffers.BaseVector;
+import com.google.flatbuffers.ByteVector;
+import com.google.flatbuffers.Constants;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class Monster extends Table {
@@ -65,8 +68,6 @@ public final class Monster extends Table {
     int o = builder.endTable();
     return o;
   }
-  public static void finishMonsterBuffer(FlatBufferBuilder builder, int offset) { builder.finish(offset); }
-  public static void finishSizePrefixedMonsterBuffer(FlatBufferBuilder builder, int offset) { builder.finishSizePrefixed(offset); }
 
   public static final class Vector extends BaseVector {
     public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
@@ -75,4 +76,3 @@ public final class Monster extends Table {
     public Monster get(Monster obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
-

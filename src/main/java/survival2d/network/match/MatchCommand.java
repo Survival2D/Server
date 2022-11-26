@@ -19,4 +19,5 @@ public class MatchCommand {
   public static final String DROP_ITEM = "dropItem";
   public static final String PLAYER_RELOAD = "playerReload";
   public static final String END_GAME = "endGame";
+  public static final String PING_BY_PLAYER_MOVE = "pingByPlayerMove";
 }
