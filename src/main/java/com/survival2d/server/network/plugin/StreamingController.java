@@ -1,27 +1,26 @@
 package com.survival2d.server.network.plugin;
 
-import static com.tvd12.ezyfoxserver.constant.EzyEventNames.STREAMING;
-
 import com.survival2d.server.flatbuffers.Color;
 import com.survival2d.server.flatbuffers.Equipment;
 import com.survival2d.server.flatbuffers.Monster;
 import com.survival2d.server.flatbuffers.Weapon;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
-import com.tvd12.ezyfox.core.annotation.EzyEventHandler;
 import com.tvd12.ezyfoxserver.context.EzyZoneContext;
 import com.tvd12.ezyfoxserver.controller.EzyAbstractZoneEventController;
 import com.tvd12.ezyfoxserver.event.EzyStreamingEvent;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 @EzySingleton
-@EzyEventHandler(STREAMING)
+//@EzyEventHandler(STREAMING)
 @Slf4j
 public class StreamingController extends EzyAbstractZoneEventController<EzyStreamingEvent> {
 
   @Override
   public void handle(EzyZoneContext ezyZoneContext, EzyStreamingEvent ezyStreamingEvent) {
+    val raw = Arrays.copyOf(ezyStreamingEvent.getBytes(), ezyStreamingEvent.getBytes().length);
     val buf = ByteBuffer.wrap(ezyStreamingEvent.getBytes());
     Monster monster = Monster.getRootAsMonster(buf);
 
@@ -58,8 +57,8 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
     Weapon equipped = (Weapon) monster.equipped(new Weapon());
     assert equipped.name().equals("Axe");
     assert equipped.damage() == 5;
-
-    log.info("OK");
     System.out.println("The FlatBuffer was successfully created and verified!");
+    log.info("raw {}", raw);
+    ezyZoneContext.stream(raw, ezyStreamingEvent.getSession());
   }
 }

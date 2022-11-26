@@ -1,9 +1,7 @@
 package com.survival2d.server;
 
-import com.survival2d.server.codec.Survival2DCodecCreator;
 import com.survival2d.server.network.plugin.StreamingController;
 import com.tvd12.ezyfox.bean.EzyBeanContextBuilder;
-import com.tvd12.ezyfox.codec.MsgPackCodecCreator;
 import com.tvd12.ezyfoxserver.constant.EzyEventType;
 import com.tvd12.ezyfoxserver.context.EzyAppContext;
 import com.tvd12.ezyfoxserver.context.EzyPluginContext;
@@ -23,12 +21,10 @@ import com.tvd12.ezyfoxserver.setting.EzySimplePluginSetting;
 import com.tvd12.ezyfoxserver.setting.EzySimpleSessionManagementSetting;
 import com.tvd12.ezyfoxserver.setting.EzySimpleSessionManagementSetting.EzySimpleMaxRequestPerSecond;
 import com.tvd12.ezyfoxserver.setting.EzySimpleSettings;
-import com.tvd12.ezyfoxserver.setting.EzySimpleSocketSetting;
 import com.tvd12.ezyfoxserver.setting.EzySimpleStreamingSetting;
 import com.tvd12.ezyfoxserver.setting.EzySimpleUserManagementSetting;
 import com.tvd12.ezyfoxserver.setting.EzySimpleWebSocketSetting;
 import com.tvd12.ezyfoxserver.setting.EzySimpleZoneSetting;
-import com.tvd12.ezyfoxserver.setting.EzySocketSettingBuilder;
 import com.tvd12.ezyfoxserver.setting.EzyUserManagementSettingBuilder;
 import com.tvd12.ezyfoxserver.setting.EzyWebSocketSettingBuilder;
 import com.tvd12.ezyfoxserver.setting.EzyZoneSettingBuilder;
@@ -49,18 +45,18 @@ public class ServerStartup {
 
   public static void main(String[] args) throws Exception {
     log.trace("Start config server");
-    EzySimpleSocketSetting socketSetting = new EzySocketSettingBuilder()
-        .active(true) // active or not,  default true
-        .address("0.0.0.0") // loopback address, default 0.0.0.0
-        .codecCreator(MsgPackCodecCreator.class) // encoder/decoder creator, default MsgPackCodecCreator
-        .maxRequestSize(1024) // max request size, default 32768
-        .port(3005) // port, default 3005
-        .tcpNoDelay(true) // tcp no delay, default false
-        .writerThreadPoolSize(8) // thread pool size for socket writer, default 8
-        .build();
+//    EzySimpleSocketSetting socketSetting = new EzySocketSettingBuilder()
+//        .active(true) // active or not,  default true
+//        .address("0.0.0.0") // loopback address, default 0.0.0.0
+//        .codecCreator(MsgPackCodecCreator.class) // encoder/decoder creator, default MsgPackCodecCreator
+//        .maxRequestSize(1024) // max request size, default 32768
+//        .port(3005) // port, default 3005
+//        .tcpNoDelay(true) // tcp no delay, default false
+//        .writerThreadPoolSize(8) // thread pool size for socket writer, default 8
+//        .build();
     EzySimpleWebSocketSetting webSocketSetting =
         new EzyWebSocketSettingBuilder()
-            .codecCreator(Survival2DCodecCreator.class)
+//            .codecCreator(Survival2DCodecCreator.class)
             .build();
     EzySimplePluginSetting pluginSetting =
         new EzyPluginSettingBuilder()
@@ -117,7 +113,7 @@ public class ServerStartup {
             .sessionManagement(sessionManagementSetting)
             .streaming(streamingSetting)
 //            .socket(socketSetting)
-            .addEventController(EzyEventType.STREAMING, StreamingController.class)
+//            .addEventController(EzyEventType.STREAMING, StreamingController.class)
             .build();
 
     EzyEmbeddedServer server = EzyEmbeddedServer.builder().settings(settings).build();
