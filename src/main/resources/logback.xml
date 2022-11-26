@@ -35,7 +35,7 @@
     </rollingPolicy>
   </appender>
 
-  <logger name="com.survival2d.server">
+  <logger name="survival2d">
     <appender-ref ref="console"/>
   </logger>
 

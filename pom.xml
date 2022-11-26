@@ -2,7 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>server</artifactId>
+  <artifactId>survival2d</artifactId>
   <dependencies>
     <dependency>
       <artifactId>ezyfox-server-embedded</artifactId>
@@ -72,7 +72,7 @@
       <version>1.12.0</version>
     </dependency>
   </dependencies>
-  <groupId>com.survival2d</groupId>
+  <groupId>survival2d</groupId>
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
@@ -87,7 +87,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.survival2d.server.ServerStartup</mainClass>
+              <mainClass>survival2d.ServerStartup</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

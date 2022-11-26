@@ -3,7 +3,7 @@
 <suite name="AllTests">
   <test name="All">
     <packages>
-      <package name="com.survival2d.server.test"/>
+      <package name="survival2d.test"/>
     </packages>
   </test>
 </suite>
