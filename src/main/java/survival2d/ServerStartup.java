@@ -80,11 +80,11 @@ public class ServerStartup {
     EzySimpleZoneSetting zoneSetting =
         new EzyZoneSettingBuilder()
             .name(ZONE_NAME)
+            .addEventController(EzyEventType.STREAMING, StreamingController.class)
             .plugin(pluginSetting)
             .application(appSetting)
             .userManagement(userManagementSetting)
             .streaming(streamingSetting)
-            .addEventController(EzyEventType.STREAMING, StreamingController.class)
             .build();
     EzySimpleMaxRequestPerSecond maxRequestPerSecond =
         new EzyMaxRequestPerSecondBuilder()

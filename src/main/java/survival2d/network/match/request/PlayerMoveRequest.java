@@ -1,12 +1,11 @@
 package survival2d.network.match.request;
 
-import survival2d.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyReader;
 import com.tvd12.ezyfox.binding.EzyUnmarshaller;
 import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
 import lombok.Data;
 import org.locationtech.jts.math.Vector2D;
-
+import survival2d.util.serialize.GsonHolder;
 
 @Data
 public class PlayerMoveRequest {

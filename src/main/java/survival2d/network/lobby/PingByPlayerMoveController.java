@@ -22,9 +22,11 @@ public class PingByPlayerMoveController {
         .command(MatchCommand.PING_BY_PLAYER_MOVE)
         .data(
             PingByPlayerMoveResponse.builder()
+                .username(user.getName())
                 .position(
                     new Vector2D(request.getDirection().getX(), request.getDirection().getY()))
-                .rotation(request.getRotation()).build())
+                .rotation(request.getRotation())
+                .build())
         .execute();
   }
 }
