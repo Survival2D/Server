@@ -37,8 +37,45 @@ struct Vec2 {
 enum EntityType : byte {
 }
 
-table MatchInfoResponse {
+table Player {
 
+}
+
+enum GunType {
+  NORMAL
+}
+
+enum BulletType {
+  NORMAL
+}
+
+table BulletOnMap {
+  owner: string;
+  direction: Vec2;
+  type: BulletType;
+}
+
+table ItemOnMap {
+  item: Item;
+}
+
+union MapObjectData {
+  BulletOnMap,
+  ItemOnMap
+}
+
+table MapObject {
+  id: long;
+  position: Vec2;
+  data: MapObjectData;
+}
+
+table MatchInfoReqeust {
+}
+
+table MatchInfoResponse {
+  players: [Player];
+  mapObjects: [MapObject];
 }
 
 table PlayerMoveRequest {
@@ -52,13 +89,27 @@ table PlayerMoveResponse {
   rotation: double;
 }
 
+table PlayerChangeWeaponRequest {
+  weaponOffset: byte;
+}
+
+table PlayerChangeWeaponResponse {
+}
+
 table PlayerAttackRequest {
 }
 
 table PlayerAttackResponse {
 }
 
+table PlayerDropItemRequest {
+}
+
+table PlayerDropItemResponse {
+}
+
 union PacketData {
+  MatchInfoRequest,
   MatchInfoResponse,
   PlayerMoveRequest,
   PlayerMoveResponse,

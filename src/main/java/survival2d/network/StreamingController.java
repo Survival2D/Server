@@ -23,10 +23,10 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
   public void handle(EzyZoneContext ezyZoneContext, EzyStreamingEvent ezyStreamingEvent) {
     val raw = ezyStreamingEvent.getBytes();
     val data = new byte[raw.length - 1];
-    System.arraycopy(raw, 1, data, 0, data.length - 1);
+    System.arraycopy(raw, 1, data, 0, data.length);
     //    Arrays.copyOfRange(raw, 1, raw.length);
     val buf = ByteBuffer.wrap(data);
-
+    log.info("data received: {}", data);
     val packet = Packet.getRootAsPacket(buf);
     switch (packet.dataType()) {
       case PacketData.PlayerMoveRequest:

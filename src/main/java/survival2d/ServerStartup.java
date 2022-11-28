@@ -58,6 +58,7 @@ public class ServerStartup {
     //        .build();
     EzySimpleWebSocketSetting webSocketSetting =
         new EzyWebSocketSettingBuilder()
+            .maxFrameSize(8192)
             //            .codecCreator(Survival2DCodecCreator.class)
             .build();
     EzySimplePluginSetting pluginSetting =
