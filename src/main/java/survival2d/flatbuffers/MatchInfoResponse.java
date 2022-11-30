@@ -15,8 +15,33 @@ public final class MatchInfoResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public MatchInfoResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public survival2d.flatbuffers.Player players(int j) { return players(new survival2d.flatbuffers.Player(), j); }
+  public survival2d.flatbuffers.Player players(survival2d.flatbuffers.Player obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int playersLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
+  public survival2d.flatbuffers.Player.Vector playersVector() { return playersVector(new survival2d.flatbuffers.Player.Vector()); }
+  public survival2d.flatbuffers.Player.Vector playersVector(survival2d.flatbuffers.Player.Vector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.MapObject mapObjects(int j) { return mapObjects(new survival2d.flatbuffers.MapObject(), j); }
+  public survival2d.flatbuffers.MapObject mapObjects(survival2d.flatbuffers.MapObject obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int mapObjectsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
+  public survival2d.flatbuffers.MapObject.Vector mapObjectsVector() { return mapObjectsVector(new survival2d.flatbuffers.MapObject.Vector()); }
+  public survival2d.flatbuffers.MapObject.Vector mapObjectsVector(survival2d.flatbuffers.MapObject.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
-  public static void startMatchInfoResponse(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static int createMatchInfoResponse(FlatBufferBuilder builder,
+      int playersOffset,
+      int mapObjectsOffset) {
+    builder.startTable(2);
+    MatchInfoResponse.addMapObjects(builder, mapObjectsOffset);
+    MatchInfoResponse.addPlayers(builder, playersOffset);
+    return MatchInfoResponse.endMatchInfoResponse(builder);
+  }
+
+  public static void startMatchInfoResponse(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void addPlayers(FlatBufferBuilder builder, int playersOffset) { builder.addOffset(0, playersOffset, 0); }
+  public static int createPlayersVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startPlayersVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addMapObjects(FlatBufferBuilder builder, int mapObjectsOffset) { builder.addOffset(1, mapObjectsOffset, 0); }
+  public static int createMapObjectsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startMapObjectsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endMatchInfoResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

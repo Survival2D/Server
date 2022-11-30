@@ -15,23 +15,21 @@ public final class Weapon extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public Weapon __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public ByteBuffer nameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
-  public short damage() { int o = __offset(6); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public byte dataType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public Table data(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
 
   public static int createWeapon(FlatBufferBuilder builder,
-      int nameOffset,
-      short damage) {
+      byte data_type,
+      int dataOffset) {
     builder.startTable(2);
-    Weapon.addName(builder, nameOffset);
-    Weapon.addDamage(builder, damage);
+    Weapon.addData(builder, dataOffset);
+    Weapon.addDataType(builder, data_type);
     return Weapon.endWeapon(builder);
   }
 
   public static void startWeapon(FlatBufferBuilder builder) { builder.startTable(2); }
-  public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
-  public static void addDamage(FlatBufferBuilder builder, short damage) { builder.addShort(1, damage, 0); }
+  public static void addDataType(FlatBufferBuilder builder, byte dataType) { builder.addByte(0, dataType, 0); }
+  public static void addData(FlatBufferBuilder builder, int dataOffset) { builder.addOffset(1, dataOffset, 0); }
   public static int endWeapon(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

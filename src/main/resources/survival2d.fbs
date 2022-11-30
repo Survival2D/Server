@@ -43,7 +43,7 @@ table Player {
   id: string;
   position: Vec2;
   rotation: double;
-  team: id;
+  team: int;
 }
 
 table Tree {
@@ -57,32 +57,52 @@ union Obstacle {
   Container
 }
 
-enum GunType {
+enum GunType: byte {
   NORMAL
 }
 
-table GunOnMap {
+table GunItem {
   type: GunType;
 }
 
-enum BulletType {
+enum BulletType: byte {
   NORMAL
 }
 
-table BulletOnMap {
+table BulletItem {
   owner: string;
   direction: Vec2;
   type: BulletType;
 }
 
-table ItemOnMap {
-  item: Item;
+table VestItem {
+}
+
+table HelmetItem {
+}
+
+table BandageItem {
+}
+
+table MedKitItem {
+}
+
+union Item {
+  BulletItem,
+  GunItem,
 }
 
 union MapObjectData {
-  BulletOnMap,
-  ItemOnMap,
-  Obstacle
+  //Item
+  BulletItem,
+  GunItem,
+  VestItem,
+  HelmetItem,
+  BandageItem,
+  MedKitItem,
+  //Obstacle
+  Tree,
+  Container
 }
 
 table MapObject {
@@ -91,7 +111,13 @@ table MapObject {
   data: MapObjectData;
 }
 
-table MatchInfoReqeust {
+table Bullet {
+  id: int;
+  position: Vec2;
+  type: BulletType;
+}
+
+table MatchInfoRequest {
 }
 
 table MatchInfoResponse {
@@ -131,11 +157,11 @@ table PlayerDropItemResponse {
 }
 
 table CreateBulletOnMapResponse {
-  bullet: BulletOnMap;
+  bullet: Bullet;
 }
 
 table CreateItemOnMapResponse {
-  item: ItemOnMap;
+  item: Item;
 }
 
 table EndGameResponse {
@@ -200,7 +226,7 @@ table PlayerTakeItemRequest {
 
 table PlayerTakeItemResponse {
   username: string;
-  itemOnMap: Item;
+  item: Item;
 }
 
 union PacketData {

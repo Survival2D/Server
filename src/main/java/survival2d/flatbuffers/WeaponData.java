@@ -2,12 +2,13 @@
 
 package survival2d.flatbuffers;
 
-public final class Equipment {
-  private Equipment() { }
+public final class WeaponData {
+  private WeaponData() { }
   public static final byte NONE = 0;
-  public static final byte Weapon = 1;
+  public static final byte Hand = 1;
+  public static final byte Gun = 2;
 
-  public static final String[] names = { "NONE", "Weapon", };
+  public static final String[] names = { "NONE", "Hand", "Gun", };
 
   public static String name(int e) { return names[e]; }
 }

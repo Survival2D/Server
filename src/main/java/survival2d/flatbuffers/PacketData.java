@@ -5,13 +5,23 @@ package survival2d.flatbuffers;
 public final class PacketData {
   private PacketData() { }
   public static final byte NONE = 0;
-  public static final byte MatchInfoResponse = 1;
-  public static final byte PlayerMoveRequest = 2;
-  public static final byte PlayerMoveResponse = 3;
-  public static final byte PlayerAttackRequest = 4;
-  public static final byte PlayerAttackResponse = 5;
+  public static final byte MatchInfoRequest = 1;
+  public static final byte MatchInfoResponse = 2;
+  public static final byte PlayerMoveRequest = 3;
+  public static final byte PlayerMoveResponse = 4;
+  public static final byte PlayerAttackRequest = 5;
+  public static final byte PlayerAttackResponse = 6;
+  public static final byte PlayerInfoResponse = 7;
+  public static final byte CreateBulletOnMapResponse = 8;
+  public static final byte CreateItemOnMapResponse = 9;
+  public static final byte ObstacleTakeDamageResponse = 10;
+  public static final byte ObstacleDestroyResponse = 11;
+  public static final byte PlayerTakeDamageResponse = 12;
+  public static final byte PlayerDeadResponse = 13;
+  public static final byte PlayerReloadWeaponRequest = 14;
+  public static final byte PlayerReloadWeaponResponse = 15;
 
-  public static final String[] names = { "NONE", "MatchInfoResponse", "PlayerMoveRequest", "PlayerMoveResponse", "PlayerAttackRequest", "PlayerAttackResponse", };
+  public static final String[] names = { "NONE", "MatchInfoRequest", "MatchInfoResponse", "PlayerMoveRequest", "PlayerMoveResponse", "PlayerAttackRequest", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponRequest", "PlayerReloadWeaponResponse", };
 
   public static String name(int e) { return names[e]; }
 }
