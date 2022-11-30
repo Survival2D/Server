@@ -1,48 +1,68 @@
-namespace survival2d.flatbuffers;
+// // Example IDL file for our monster's schema.
+//
+// namespace MyGame.Sample;
+//
+// enum Color:byte { Red = 0, Green, Blue = 2 }
+//
+// union Equipment { Weapon } // Optionally add more tables.
+//
+// struct Vec3 {
+//   x:float;
+//   y:float;
+//   z:float;
+// }
+//
+// table Monster {
+//   pos:Vec3; // Struct.
+//   mana:short = 150;
+//   hp:short = 100;
+//   name:string;
+//   friendly:bool = false (deprecated);
+//   inventory:[ubyte];  // Vector of scalars.
+//   color:Color = Blue; // Enum.
+//   weapons:[Weapon];   // Vector of tables.
+//   equipped:Equipment; // Union.
+//   path:[Vec3];        // Vector of structs.
+// }
+//
+// table Weapon {
+//   name:string;
+//   damage:short;
+// }
+//
+// root_type Monster;
 
-//enum Color:byte { Red = 0, Green, Blue = 2 }
-//
-//union Equipment { Weapon } // Optionally add more tables.
-//
-//struct Vec3 {
-//  x:float;
-//  y:float;
-//  z:float;
-//}
-//
-//table Monster {
-//  pos:Vec3; // Struct.
-//  mana:short = 150;
-//  hp:short = 100;
-//  name:string;
-//  friendly:bool = false (deprecated);
-//  inventory:[ubyte];  // Vector of scalars.
-//  color:Color = Blue; // Enum.
-//  weapons:[Weapon];   // Vector of tables.
-//  equipped:Equipment; // Union.
-//  path:[Vec3];        // Vector of structs.
-//  time:int64;          // Ping
-//}
-//
-//table Weapon {
-//  name:string;
-//  damage:short;
-//}
+namespace survival2d.flatbuffers;
 
 struct Vec2 {
   x: double;
   y: double;
 }
 
-enum EntityType : byte {
+table Player {
+  id: string;
+  position: Vec2;
+  rotation: double;
+  team: id;
 }
 
-table Player {
+table Tree {
+}
 
+table Container {
+}
+
+union Obstacle {
+  Tree,
+  Container
 }
 
 enum GunType {
   NORMAL
+}
+
+table GunOnMap {
+  type: GunType;
 }
 
 enum BulletType {
@@ -61,11 +81,12 @@ table ItemOnMap {
 
 union MapObjectData {
   BulletOnMap,
-  ItemOnMap
+  ItemOnMap,
+  Obstacle
 }
 
 table MapObject {
-  id: long;
+  id: int;
   position: Vec2;
   data: MapObjectData;
 }
@@ -103,9 +124,83 @@ table PlayerAttackResponse {
 }
 
 table PlayerDropItemRequest {
+  id: int;
 }
 
 table PlayerDropItemResponse {
+}
+
+table CreateBulletOnMapResponse {
+  bullet: BulletOnMap;
+}
+
+table CreateItemOnMapResponse {
+  item: ItemOnMap;
+}
+
+table EndGameResponse {
+  winTeam: int;
+}
+
+table BulletWithQuantity {
+  type: BulletType;
+  num: int;
+}
+
+table Hand {
+}
+
+table Gun {
+  type: GunType;
+  remainBullets: int;
+}
+
+union WeaponData {
+  Hand,
+  Gun
+}
+
+table Weapon {
+  data: WeaponData;
+}
+
+table PlayerInfoResponse {
+  hp: double;
+  weapon: [Weapon];
+  bullets: [BulletWithQuantity];
+}
+
+table ObstacleDestroyResponse {
+  id: int;
+}
+
+table ObstacleTakeDamageResponse {
+  id: int;
+  remainHp: double;
+}
+
+table PlayerTakeDamageResponse {
+  username: string;
+  remainHp: double;
+}
+
+table PlayerDeadResponse {
+  username: string;
+}
+
+table PlayerReloadWeaponRequest {
+}
+
+table PlayerReloadWeaponResponse {
+  weapon: Weapon;
+}
+
+table PlayerTakeItemRequest {
+}
+
+table PlayerTakeItemResponse {
+  username: string;
+  itemOnMap: Item;
 }
 
 union PacketData {
@@ -115,6 +210,15 @@ union PacketData {
   PlayerMoveResponse,
   PlayerAttackRequest,
   PlayerAttackResponse,
+  PlayerInfoResponse,
+  CreateBulletOnMapResponse,
+  CreateItemOnMapResponse,
+  ObstacleTakeDamageResponse,
+  ObstacleDestroyResponse,
+  PlayerTakeDamageResponse,
+  PlayerDeadResponse,
+  PlayerReloadWeaponRequest,
+  PlayerReloadWeaponResponse,
 }
 
 table Packet {
