@@ -16,7 +16,7 @@ import org.locationtech.jts.math.Vector2D;
 public class ItemOnMap implements Containable, MapObject {
 
   final Circle shape = new Circle(GameConstants.ITEM_ON_MAP_RADIUS);
-  long id;
+  int id;
   Item item;
   Vector2D position;
 

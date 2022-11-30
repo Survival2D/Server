@@ -14,7 +14,7 @@ import org.locationtech.jts.math.Vector2D;
 @Slf4j
 public class Bullet implements MapObject, Movable, Destroyable {
 
-  long id;
+  int id;
   String ownerId;
 
   Vector2D position;

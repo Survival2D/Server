@@ -19,11 +19,18 @@ public final class Bullet extends Table {
   public survival2d.flatbuffers.Vec2 position() { return position(new survival2d.flatbuffers.Vec2()); }
   public survival2d.flatbuffers.Vec2 position(survival2d.flatbuffers.Vec2 obj) { int o = __offset(6); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
   public byte type() { int o = __offset(8); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public String owner() { int o = __offset(10); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer ownerAsByteBuffer() { return __vector_as_bytebuffer(10, 1); }
+  public ByteBuffer ownerInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 10, 1); }
+  public survival2d.flatbuffers.Vec2 direction() { return direction(new survival2d.flatbuffers.Vec2()); }
+  public survival2d.flatbuffers.Vec2 direction(survival2d.flatbuffers.Vec2 obj) { int o = __offset(12); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
 
-  public static void startBullet(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startBullet(FlatBufferBuilder builder) { builder.startTable(5); }
   public static void addId(FlatBufferBuilder builder, int id) { builder.addInt(0, id, 0); }
   public static void addPosition(FlatBufferBuilder builder, int positionOffset) { builder.addStruct(1, positionOffset, 0); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(2, type, 0); }
+  public static void addOwner(FlatBufferBuilder builder, int ownerOffset) { builder.addOffset(3, ownerOffset, 0); }
+  public static void addDirection(FlatBufferBuilder builder, int directionOffset) { builder.addStruct(4, directionOffset, 0); }
   public static int endBullet(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

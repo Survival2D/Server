@@ -11,7 +11,7 @@ import org.locationtech.jts.math.Vector2D;
 @Data
 public class Container implements HasHp, Obstacle, Containable {
 
-  long id;
+  int id;
   double hp = 100;
   Vector2D position;
   Rectangle shape;

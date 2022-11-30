@@ -1,6 +1,33 @@
 package survival2d.game.entity;
 
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
+import com.tvd12.ezyfoxserver.EzyZone;
+import com.tvd12.ezyfoxserver.context.EzyZoneContext;
+import com.tvd12.ezyfoxserver.entity.EzySession;
+import com.tvd12.ezyfoxserver.entity.EzyUser;
+import com.tvd12.ezyfoxserver.wrapper.EzyZoneUserManager;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import lombok.var;
+import org.apache.commons.lang3.RandomUtils;
+import org.locationtech.jts.math.Vector2D;
+import survival2d.ServerStartup;
 import survival2d.constant.GameConstant;
+import survival2d.flatbuffers.MapObjectData;
+import survival2d.flatbuffers.MatchInfoResponse;
+import survival2d.flatbuffers.Packet;
+import survival2d.flatbuffers.PacketData;
+import survival2d.flatbuffers.Vec2;
 import survival2d.game.action.PlayerAction;
 import survival2d.game.action.PlayerAttack;
 import survival2d.game.action.PlayerChangeWeapon;
@@ -22,6 +49,7 @@ import survival2d.game.entity.obstacle.Container;
 import survival2d.game.entity.obstacle.Obstacle;
 import survival2d.game.entity.obstacle.Tree;
 import survival2d.game.entity.weapon.Containable;
+import survival2d.network.ByteBufferUtil;
 import survival2d.network.match.MatchCommand;
 import survival2d.network.match.response.CreateBulletResponse;
 import survival2d.network.match.response.CreateItemResponse;
@@ -39,48 +67,26 @@ import survival2d.service.MatchingService;
 import survival2d.util.EzyFoxUtil;
 import survival2d.util.math.VectorUtil;
 import survival2d.util.serialize.ExcludeFromGson;
-import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import lombok.var;
-import org.apache.commons.lang3.RandomUtils;
-import org.locationtech.jts.math.Vector2D;
 
 @Getter
 @Slf4j
 public class MatchImpl implements Match {
 
   private final long id;
-  private final Map<Long, MapObject> objects = new ConcurrentHashMap<>();
-  @ExcludeFromGson
-  @Deprecated
-  private final Map<Long, MatchTeam> teams = new ConcurrentHashMap<>();
-
-  @ExcludeFromGson
-  @Deprecated
-  private final Map<String, Long> playerIdToTeam = new ConcurrentHashMap<>();
+  private final Map<Integer, MapObject> objects = new ConcurrentHashMap<>();
 
   @ExcludeFromGson
   private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
       new ConcurrentHashMap<>();
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  @ExcludeFromGson
-  private final Timer timer = new Timer();
-  private long currentMapObjectId;
-  @ExcludeFromGson
-  private TimerTask gameLoopTask;
+  @ExcludeFromGson private final Timer timer = new Timer();
+  private int currentMapObjectId;
+  @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
-  @ExcludeFromGson
-  @EzyAutoBind
-  private MatchingService matchingService;
+  @ExcludeFromGson @EzyAutoBind private MatchingService matchingService;
+
+  @ExcludeFromGson private EzyZoneContext zoneContext;
 
   public MatchImpl(long id) {
     this.id = id;
@@ -174,9 +180,18 @@ public class MatchImpl implements Match {
           new Circle(10),
           5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
-      createBullet(playerId, player.getPosition().add(player.getAttackDirection().multiply(
-              ((Circle) player.getShape()).getRadius() + GameConstants.INITIAL_BULLET_DISTANCE)),
-          direction, BulletType.NORMAL);
+      createBullet(
+          playerId,
+          player
+              .getPosition()
+              .add(
+                  player
+                      .getAttackDirection()
+                      .multiply(
+                          ((Circle) player.getShape()).getRadius()
+                              + GameConstants.INITIAL_BULLET_DISTANCE)),
+          direction,
+          BulletType.NORMAL);
     }
   }
 
@@ -318,6 +333,84 @@ public class MatchImpl implements Match {
         .execute();
   }
 
+  @Override
+  public void responseMatchInfo(String username) {
+    val builder = new FlatBufferBuilder(0);
+
+    int[] playerOffsets = new int[players.size()];
+    val players = this.players.values().toArray(new Player[0]);
+    for (int i = 0; i < players.length; i++) {
+      val player = players[i];
+      val usernameOffset = builder.createString(player.getPlayerId());
+      val positionOffset =
+          Vec2.createVec2(builder, player.getPosition().getX(), player.getPosition().getY());
+      survival2d.flatbuffers.Player.startPlayer(builder);
+      survival2d.flatbuffers.Player.addUsername(builder, usernameOffset);
+      survival2d.flatbuffers.Player.addPosition(builder, positionOffset);
+      survival2d.flatbuffers.Player.addRotation(builder, player.getRotation());
+      playerOffsets[i] = survival2d.flatbuffers.Player.endPlayer(builder);
+    }
+
+    int[] mapObjectOffsets = new int[objects.size()];
+    val mapObjects = this.objects.values().toArray(new MapObject[0]);
+    for (int i = 0; i < mapObjects.length; i++) {
+      val object = mapObjects[i];
+      val positionOffset =
+          Vec2.createVec2(builder, object.getPosition().getX(), object.getPosition().getY());
+      survival2d.flatbuffers.MapObject.startMapObject(builder);
+      survival2d.flatbuffers.MapObject.addId(builder, object.getId());
+      survival2d.flatbuffers.MapObject.addPosition(builder, positionOffset);
+      if (object instanceof BulletItem) {
+        val bulletItem = (BulletItem) object;
+        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.BulletItem);
+        survival2d.flatbuffers.BulletItem.startBulletItem(builder);
+        survival2d.flatbuffers.BulletItem.addType(
+            builder, (byte) bulletItem.getBulletType().ordinal());
+        val bulletItemOffset = survival2d.flatbuffers.BulletItem.endBulletItem(builder);
+        survival2d.flatbuffers.MapObject.addData(builder, bulletItemOffset);
+      } else if (object instanceof GunItem) {
+        val gunItem = (GunItem) object;
+        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.GunItem);
+        survival2d.flatbuffers.GunItem.startGunItem(builder);
+        survival2d.flatbuffers.GunItem.addType(builder, (byte) gunItem.getGunType().ordinal());
+        val gunItemOffset = survival2d.flatbuffers.GunItem.endGunItem(builder);
+        survival2d.flatbuffers.MapObject.addData(builder, gunItemOffset);
+      } else if (object instanceof Tree) {
+        val tree = (Tree) object;
+        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.Tree);
+        survival2d.flatbuffers.Tree.startTree(builder);
+        val treeOffset = survival2d.flatbuffers.Tree.endTree(builder);
+        survival2d.flatbuffers.MapObject.addData(builder, treeOffset);
+      } else if (object instanceof Container) {
+        val container = (Container) object;
+        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.Container);
+        survival2d.flatbuffers.Container.startContainer(builder);
+        val containerOffset = survival2d.flatbuffers.Container.endContainer(builder);
+        survival2d.flatbuffers.MapObject.addData(builder, containerOffset);
+      }
+      // TODO: add more map object
+      mapObjectOffsets[i] = survival2d.flatbuffers.MapObject.endMapObject(builder);
+    }
+
+    val playersOffset = MatchInfoResponse.createPlayersVector(builder, playerOffsets);
+    val mapObjectsOffset = MatchInfoResponse.createMapObjectsVector(builder, mapObjectOffsets);
+
+
+    MatchInfoResponse.startMatchInfoResponse(builder);
+    MatchInfoResponse.addPlayers(builder, playersOffset);
+    MatchInfoResponse.addMapObjects(builder, mapObjectsOffset);
+    val responseOffset = MatchInfoResponse.endMatchInfoResponse(builder);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.MatchInfoResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSession(username));
+  }
+
   public void onPlayerSwitchWeapon(String playerId, int weaponId) {
     val player = players.get(playerId);
     if (player == null) {
@@ -340,6 +433,8 @@ public class MatchImpl implements Match {
   }
 
   public void init() {
+    zoneContext = ServerStartup.getServerContext().getZoneContext(ServerStartup.ZONE_NAME);
+
     initObstacles();
     timer.schedule(
         new TimerTask() {
@@ -351,9 +446,29 @@ public class MatchImpl implements Match {
         3000);
   }
 
+  private EzyZone getZone() {
+    return zoneContext.getZone();
+  }
+
+  private EzyZoneUserManager getZoneUserManager() {
+    return getZone().getUserManager();
+  }
+
+  private EzyUser getUser(String username) {
+    return getZoneUserManager().getUser(username);
+  }
+
+  private EzySession getSession(String username) {
+    return getUser(username).getSession();
+  }
+
+  private List<EzySession> getSessions(List<String> usernames) {
+    return usernames.stream().map(this::getSession).collect(Collectors.toList());
+  }
+
   public void stop() {
     timer.cancel();
-//    EzyFoxUtil.getInstance().getMatchingService().destroyMatch(this.getId());
+    //    EzyFoxUtil.getInstance().getMatchingService().destroyMatch(this.getId());
   }
 
   public boolean randomPositionForObstacle(Obstacle obstacle) {
@@ -517,12 +632,12 @@ public class MatchImpl implements Match {
       }
       for (val action : playerActionMap.values()) {
         handlePlayerAction(player.getPlayerId(), action);
-        //TODO: nếu mà client chưa sửa kịp, thì comment 3 dòng sau
+        // TODO: nếu mà client chưa sửa kịp, thì comment 3 dòng sau
         if (!(action instanceof PlayerMove)) {
           playerActionMap.remove(action.getClass());
         }
       }
-//      playerActionMap.clear();
+      //      playerActionMap.clear();
     }
   }
 

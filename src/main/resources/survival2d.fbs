@@ -40,7 +40,7 @@ struct Vec2 {
 }
 
 table Player {
-  id: string;
+  username: string;
   position: Vec2;
   rotation: double;
   team: int;
@@ -70,8 +70,6 @@ enum BulletType: byte {
 }
 
 table BulletItem {
-  owner: string;
-  direction: Vec2;
   type: BulletType;
 }
 
@@ -115,6 +113,8 @@ table Bullet {
   id: int;
   position: Vec2;
   type: BulletType;
+  owner: string;
+  direction: Vec2;
 }
 
 table MatchInfoRequest {
@@ -131,7 +131,7 @@ table PlayerMoveRequest {
 }
 
 table PlayerMoveResponse {
-  id: string;
+  username: string;
   position: Vec2;
   rotation: double;
 }
@@ -162,6 +162,7 @@ table CreateBulletOnMapResponse {
 
 table CreateItemOnMapResponse {
   item: Item;
+  position: Vec2;
 }
 
 table EndGameResponse {
@@ -245,6 +246,8 @@ union PacketData {
   PlayerDeadResponse,
   PlayerReloadWeaponRequest,
   PlayerReloadWeaponResponse,
+  PlayerChangeWeaponRequest,
+  PlayerChangeWeaponResponse,
 }
 
 table Packet {

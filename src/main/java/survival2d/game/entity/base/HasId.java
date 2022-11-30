@@ -2,8 +2,8 @@ package survival2d.game.entity.base;
 
 public interface HasId {
 
-  long getId();
+  int getId();
 
-  void setId(long id);
+  void setId(int id);
 
 }
