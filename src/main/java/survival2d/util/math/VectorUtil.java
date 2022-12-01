@@ -1,17 +1,26 @@
 package survival2d.util.math;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.RandomUtils;
+import org.locationtech.jts.math.Vector2D;
 import survival2d.game.entity.base.Circle;
 import survival2d.game.entity.base.Dot;
 import survival2d.game.entity.base.Rectangle;
 import survival2d.game.entity.base.Shape;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.locationtech.jts.math.Vector2D;
 
 @Slf4j
 public class VectorUtil {
 
   public static final Vector2D ZERO = new Vector2D(0, 0);
+
+  public static Vector2D random(double fromX, double toX, double fromY, double toY) {
+    return new Vector2D(RandomUtils.nextDouble(fromX, toX), RandomUtils.nextDouble(fromY, toY));
+  }
+
+  public static Vector2D random(double width, double height) {
+    return new Vector2D(Math.random() * width, Math.random() * height);
+  }
 
   public static boolean isZero(Vector2D vector) {
     return vector.equals(ZERO);
@@ -53,7 +62,7 @@ public class VectorUtil {
   }
 
   public static boolean isCollisionBetweenDotAndCircle(Vector2D v1, Vector2D v2, Circle c2) {
-//    log.info("v1: {}, v2: {}, c2: {}", v1, v2, c2);
+    //    log.info("v1: {}, v2: {}, c2: {}", v1, v2, c2);
     return v1.distance(v2) <= c2.getRadius();
   }
 

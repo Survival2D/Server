@@ -15,17 +15,17 @@ public final class PlayerChangeWeaponRequest extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PlayerChangeWeaponRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public byte weaponOffset() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public byte slot() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
 
   public static int createPlayerChangeWeaponRequest(FlatBufferBuilder builder,
-      byte weaponOffset) {
+      byte slot) {
     builder.startTable(1);
-    PlayerChangeWeaponRequest.addWeaponOffset(builder, weaponOffset);
+    PlayerChangeWeaponRequest.addSlot(builder, slot);
     return PlayerChangeWeaponRequest.endPlayerChangeWeaponRequest(builder);
   }
 
   public static void startPlayerChangeWeaponRequest(FlatBufferBuilder builder) { builder.startTable(1); }
-  public static void addWeaponOffset(FlatBufferBuilder builder, byte weaponOffset) { builder.addByte(0, weaponOffset, 0); }
+  public static void addSlot(FlatBufferBuilder builder, byte slot) { builder.addByte(0, slot, 0); }
   public static int endPlayerChangeWeaponRequest(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

@@ -15,8 +15,23 @@ public final class PlayerChangeWeaponResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PlayerChangeWeaponResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public String username() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer usernameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
+  public ByteBuffer usernameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
+  public byte slot() { int o = __offset(6); return o != 0 ? bb.get(o + bb_pos) : 0; }
 
-  public static void startPlayerChangeWeaponResponse(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static int createPlayerChangeWeaponResponse(FlatBufferBuilder builder,
+      int usernameOffset,
+      byte slot) {
+    builder.startTable(2);
+    PlayerChangeWeaponResponse.addUsername(builder, usernameOffset);
+    PlayerChangeWeaponResponse.addSlot(builder, slot);
+    return PlayerChangeWeaponResponse.endPlayerChangeWeaponResponse(builder);
+  }
+
+  public static void startPlayerChangeWeaponResponse(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void addUsername(FlatBufferBuilder builder, int usernameOffset) { builder.addOffset(0, usernameOffset, 0); }
+  public static void addSlot(FlatBufferBuilder builder, byte slot) { builder.addByte(1, slot, 0); }
   public static int endPlayerChangeWeaponResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

@@ -22,7 +22,7 @@ public interface Player extends Movable, HasShape, HasHp {
 
   double getSpeed();
 
-  long getTeam();
+  int getTeam();
 
   void switchWeapon(int index);
 

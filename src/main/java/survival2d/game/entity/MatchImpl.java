@@ -1,7 +1,6 @@
 package survival2d.game.entity;
 
 import com.google.flatbuffers.FlatBufferBuilder;
-import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfoxserver.EzyZone;
 import com.tvd12.ezyfoxserver.context.EzyZoneContext;
 import com.tvd12.ezyfoxserver.entity.EzySession;
@@ -50,21 +49,6 @@ import survival2d.game.entity.obstacle.Obstacle;
 import survival2d.game.entity.obstacle.Tree;
 import survival2d.game.entity.weapon.Containable;
 import survival2d.network.ByteBufferUtil;
-import survival2d.network.match.MatchCommand;
-import survival2d.network.match.response.CreateBulletResponse;
-import survival2d.network.match.response.CreateItemResponse;
-import survival2d.network.match.response.EndGameResponse;
-import survival2d.network.match.response.ObstacleDestroyedResponse;
-import survival2d.network.match.response.ObstacleTakeDamageResponse;
-import survival2d.network.match.response.PlayerAttackResponse;
-import survival2d.network.match.response.PlayerChangeWeaponResponse;
-import survival2d.network.match.response.PlayerDeadResponse;
-import survival2d.network.match.response.PlayerMoveResponse;
-import survival2d.network.match.response.PlayerReloadWeaponResponse;
-import survival2d.network.match.response.PlayerTakeDamageResponse;
-import survival2d.network.match.response.PlayerTakeItemResponse;
-import survival2d.service.MatchingService;
-import survival2d.util.EzyFoxUtil;
 import survival2d.util.math.VectorUtil;
 import survival2d.util.serialize.ExcludeFromGson;
 
@@ -84,7 +68,6 @@ public class MatchImpl implements Match {
   private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
-  @ExcludeFromGson @EzyAutoBind private MatchingService matchingService;
 
   @ExcludeFromGson private EzyZoneContext zoneContext;
 
@@ -154,10 +137,10 @@ public class MatchImpl implements Match {
     }
     player.setRotation(rotation);
     val builder = new FlatBufferBuilder(0);
-    val idOffset = builder.createString(playerId);
+    val usernameOffset = builder.createString(playerId);
 
     survival2d.flatbuffers.PlayerMoveResponse.startPlayerMoveResponse(builder);
-    survival2d.flatbuffers.PlayerMoveResponse.addUsername(builder, idOffset);
+    survival2d.flatbuffers.PlayerMoveResponse.addUsername(builder, usernameOffset);
     survival2d.flatbuffers.PlayerMoveResponse.addRotation(builder, rotation);
     val positionOffset = Vec2.createVec2(builder, direction.getX(), direction.getY());
     survival2d.flatbuffers.PlayerMoveResponse.addPosition(builder, positionOffset);
@@ -209,18 +192,25 @@ public class MatchImpl implements Match {
   @Override
   public void createDamage(String playerId, Vector2D position, Shape shape, double damage) {
     val player = players.get(playerId);
-    EzyFoxUtil.getInstance()
-        .getResponseFactory()
-        .newObjectResponse()
-        .command(MatchCommand.PLAYER_ATTACK)
-        .data(
-            PlayerAttackResponse.builder()
-                .username(playerId)
-                .position(position)
-                .weapon(player.getCurrentWeapon().get())
-                .build())
-        .usernames(getAllPlayers())
-        .execute();
+    log.warn("match is not present");
+    val builder = new FlatBufferBuilder(0);
+    val usernameOffset = builder.createString(playerId);
+
+    survival2d.flatbuffers.PlayerAttackResponse.startPlayerAttackResponse(builder);
+    survival2d.flatbuffers.PlayerAttackResponse.addUsername(builder, usernameOffset);
+    val positionOffset = Vec2.createVec2(builder, position.getX(), position.getY());
+    survival2d.flatbuffers.PlayerMoveResponse.addPosition(builder, positionOffset);
+    val responseOffset =
+        survival2d.flatbuffers.PlayerAttackResponse.endPlayerAttackResponse(builder);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.PlayerAttackResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
     makeDamage(playerId, position, shape, damage);
   }
 
@@ -236,25 +226,42 @@ public class MatchImpl implements Match {
       }
       if (VectorUtil.isCollision(player.getPosition(), player.getShape(), position, shape)) {
         player.reduceHp(damage);
-        EzyFoxUtil.getInstance()
-            .getResponseFactory()
-            .newObjectResponse()
-            .command(MatchCommand.PLAYER_TAKE_DAMAGE)
-            .data(
-                PlayerTakeDamageResponse.builder()
-                    .username(player.getPlayerId())
-                    .hp(player.getHp())
-                    .build())
-            .usernames(getAllPlayers())
-            .execute();
+        {
+          val builder = new FlatBufferBuilder(0);
+          val usernameOffset = builder.createString(playerId);
+
+          survival2d.flatbuffers.PlayerTakeDamageResponse.startPlayerTakeDamageResponse(builder);
+          survival2d.flatbuffers.PlayerTakeDamageResponse.addUsername(builder, usernameOffset);
+          survival2d.flatbuffers.PlayerTakeDamageResponse.addRemainHp(builder, player.getHp());
+          val responseOffset =
+              survival2d.flatbuffers.PlayerTakeDamageResponse.endPlayerTakeDamageResponse(builder);
+
+          Packet.startPacket(builder);
+          Packet.addDataType(builder, PacketData.PlayerTakeDamageResponse);
+          Packet.addData(builder, responseOffset);
+          val packetOffset = Packet.endPacket(builder);
+          builder.finish(packetOffset);
+
+          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+        }
         if (player.isDestroyed()) {
-          EzyFoxUtil.getInstance()
-              .getResponseFactory()
-              .newObjectResponse()
-              .command(MatchCommand.PLAYER_DEAD)
-              .data(PlayerDeadResponse.builder().username(player.getPlayerId()).build())
-              .usernames(getAllPlayers())
-              .execute();
+          val builder = new FlatBufferBuilder(0);
+          val usernameOffset = builder.createString(playerId);
+
+          survival2d.flatbuffers.PlayerDeadResponse.startPlayerDeadResponse(builder);
+          survival2d.flatbuffers.PlayerDeadResponse.addUsername(builder, usernameOffset);
+          val responseOffset =
+              survival2d.flatbuffers.PlayerDeadResponse.endPlayerDeadResponse(builder);
+
+          Packet.startPacket(builder);
+          Packet.addDataType(builder, PacketData.PlayerDeadResponse);
+          Packet.addData(builder, responseOffset);
+          val packetOffset = Packet.endPacket(builder);
+          builder.finish(packetOffset);
+
+          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+          zoneContext.stream(bytes, getSessions(getAllPlayers()));
           checkEndGame();
         }
       }
@@ -271,30 +278,45 @@ public class MatchImpl implements Match {
         obstacle.reduceHp(damage);
         log.info(
             "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, obstacle.getHp());
-        EzyFoxUtil.getInstance()
-            .getResponseFactory()
-            .newObjectResponse()
-            .command(MatchCommand.OBSTACLE_TAKE_DAMAGE)
-            .data(
-                ObstacleTakeDamageResponse.builder()
-                    .obstacleId(obstacle.getId())
-                    .hp(obstacle.getHp())
-                    .build())
-            .usernames(getAllPlayers())
-            .execute();
+        {
+          val builder = new FlatBufferBuilder(0);
+
+          val responseOffset =
+              survival2d.flatbuffers.ObstacleTakeDamageResponse.createObstacleTakeDamageResponse(
+                  builder, obstacle.getId(), obstacle.getHp());
+
+          Packet.startPacket(builder);
+          Packet.addDataType(builder, PacketData.ObstacleTakeDamageResponse);
+          Packet.addData(builder, responseOffset);
+          val packetOffset = Packet.endPacket(builder);
+          builder.finish(packetOffset);
+
+          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+        }
         if (obstacle.isDestroyed()) {
           log.info("Obstacle {} destroyed", obstacle.getId());
-          EzyFoxUtil.getInstance()
-              .getResponseFactory()
-              .newObjectResponse()
-              .command(MatchCommand.OBSTACLE_DESTROYED)
-              .data(ObstacleDestroyedResponse.builder().obstacleId(obstacle.getId()).build())
-              .usernames(getAllPlayers())
-              .execute();
+          val builder = new FlatBufferBuilder(0);
+
+          val responseOffset =
+              survival2d.flatbuffers.ObstacleDestroyResponse.createObstacleDestroyResponse(
+                  builder, obstacle.getId());
+
+          Packet.startPacket(builder);
+          Packet.addDataType(builder, PacketData.ObstacleDestroyResponse);
+          Packet.addData(builder, responseOffset);
+          val packetOffset = Packet.endPacket(builder);
+          builder.finish(packetOffset);
+
+          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+          zoneContext.stream(bytes, getSessions(getAllPlayers()));
           if (obstacle instanceof Containable) {
             val containable = (Containable) obstacle;
             for (val item : containable.getItems()) {
-              createItemOnMap(item, obstacle.getPosition());
+              createItemOnMap(
+                  item,
+                  obstacle.getPosition().add(VectorUtil.random(-10, 10, -10, 10)),
+                  obstacle.getPosition());
             }
           }
         }
@@ -314,13 +336,19 @@ public class MatchImpl implements Match {
               .distinct()
               .findFirst()
               .get();
-      EzyFoxUtil.getInstance()
-          .getResponseFactory()
-          .newObjectResponse()
-          .command(MatchCommand.END_GAME)
-          .data(EndGameResponse.builder().winTeam(winTeam).build())
-          .usernames(getAllPlayers())
-          .execute();
+      val builder = new FlatBufferBuilder(0);
+
+      val responseOffset =
+          survival2d.flatbuffers.EndGameResponse.createEndGameResponse(builder, winTeam);
+
+      Packet.startPacket(builder);
+      Packet.addDataType(builder, PacketData.EndGameResponse);
+      Packet.addData(builder, responseOffset);
+      val packetOffset = Packet.endPacket(builder);
+      builder.finish(packetOffset);
+
+      val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+      zoneContext.stream(bytes, getSessions(getAllPlayers()));
       stop();
     }
   }
@@ -330,13 +358,32 @@ public class MatchImpl implements Match {
       String playerId, Vector2D position, Vector2D direction, BulletType type) {
     val bullet = new Bullet(playerId, position, direction, type);
     addMapObject(bullet);
-    EzyFoxUtil.getInstance()
-        .getResponseFactory()
-        .newObjectResponse()
-        .command(MatchCommand.CREATE_BULLET)
-        .data(CreateBulletResponse.builder().bullet(bullet).build())
-        .usernames(getAllPlayers())
-        .execute();
+    val builder = new FlatBufferBuilder(0);
+    val usernameOffset = builder.createString(playerId);
+    val positionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, position.getX(), position.getY());
+    val directionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, direction.getX(), direction.getY());
+
+    survival2d.flatbuffers.Bullet.startBullet(builder);
+    survival2d.flatbuffers.Bullet.addType(builder, (byte) type.ordinal());
+    survival2d.flatbuffers.Bullet.addId(builder, bullet.getId());
+    survival2d.flatbuffers.Bullet.addPosition(builder, positionOffset);
+    survival2d.flatbuffers.Bullet.addDirection(builder, directionOffset);
+    survival2d.flatbuffers.Bullet.addOwner(builder, usernameOffset);
+    val bulletOffset = survival2d.flatbuffers.Bullet.endBullet(builder);
+    val responseOffset =
+        survival2d.flatbuffers.CreateBulletOnMapResponse.createCreateBulletOnMapResponse(
+            builder, bulletOffset);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.CreateBulletOnMapResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   @Override
@@ -401,7 +448,6 @@ public class MatchImpl implements Match {
     val playersOffset = MatchInfoResponse.createPlayersVector(builder, playerOffsets);
     val mapObjectsOffset = MatchInfoResponse.createMapObjectsVector(builder, mapObjectOffsets);
 
-
     MatchInfoResponse.startMatchInfoResponse(builder);
     MatchInfoResponse.addPlayers(builder, playersOffset);
     MatchInfoResponse.addMapObjects(builder, mapObjectsOffset);
@@ -424,18 +470,21 @@ public class MatchImpl implements Match {
       return;
     }
     player.switchWeapon(weaponId);
-    EzyFoxUtil.getInstance()
-        .getResponseFactory()
-        .newObjectResponse()
-        .command(MatchCommand.PLAYER_CHANGE_WEAPON)
-        .data(
-            PlayerChangeWeaponResponse.builder()
-                .username(playerId)
-                .slot(player.getCurrentWeaponIndex())
-                .weapon(player.getCurrentWeapon().get())
-                .build())
-        .usernames(getAllPlayers())
-        .execute();
+    val builder = new FlatBufferBuilder(0);
+    val usernameOffset = builder.createString(playerId);
+
+    val responseOffset =
+        survival2d.flatbuffers.PlayerChangeWeaponResponse.createPlayerChangeWeaponResponse(
+            builder, usernameOffset, (byte) weaponId);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.PlayerChangeWeaponResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   public void init() {
@@ -551,12 +600,14 @@ public class MatchImpl implements Match {
   }
 
   private void sendMatchStart() {
-    EzyFoxUtil.getInstance()
-        .getResponseFactory()
-        .newObjectResponse()
-        .command(MatchCommand.MATCH_START)
-        .usernames(getAllPlayers())
-        .execute();
+    val builder = new FlatBufferBuilder(0);
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.StartGameResponse);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   public void end() {
@@ -667,20 +718,50 @@ public class MatchImpl implements Match {
     }
   }
 
-  private void createItemOnMap(Item item, Vector2D position) {
+  private void createItemOnMap(Item item, Vector2D position, Vector2D rawPosition) {
     log.info("create {} on map", item.getItemType());
     val randomNeighborPosition =
         new Vector2D(RandomUtils.nextDouble(0, 20) - 10, RandomUtils.nextDouble(0, 20) - 10);
     val itemOnMap =
         ItemOnMap.builder().item(item).position(position.add(randomNeighborPosition)).build();
     addMapObject(itemOnMap);
-    EzyFoxUtil.getInstance()
-        .getResponseFactory()
-        .newObjectResponse()
-        .command(MatchCommand.CREATE_ITEM)
-        .data(CreateItemResponse.builder().item(itemOnMap).build())
-        .usernames(getAllPlayers())
-        .execute();
+    val builder = new FlatBufferBuilder(0);
+    var itemOffset = 0;
+    byte itemType = 0;
+    if (item instanceof BulletItem) {
+      itemType = survival2d.flatbuffers.Item.BulletItem;
+      val bulletItem = (BulletItem) item;
+      itemOffset =
+          survival2d.flatbuffers.BulletItem.createBulletItem(
+              builder, (byte) bulletItem.getBulletType().ordinal());
+    } else if (item instanceof GunItem) {
+      itemType = survival2d.flatbuffers.Item.GunItem;
+      val gunItem = (GunItem) item;
+      itemOffset =
+          survival2d.flatbuffers.GunItem.createGunItem(
+              builder, (byte) gunItem.getGunType().ordinal());
+    }
+    val positionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
+    val rawPositionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
+
+    survival2d.flatbuffers.CreateItemOnMapResponse.startCreateItemOnMapResponse(builder);
+    survival2d.flatbuffers.CreateItemOnMapResponse.addItem(builder, itemOffset);
+    survival2d.flatbuffers.CreateItemOnMapResponse.addItemType(builder, itemType);
+    survival2d.flatbuffers.CreateItemOnMapResponse.addPosition(builder, positionOffset);
+    survival2d.flatbuffers.CreateItemOnMapResponse.addRawPosition(builder, rawPositionOffset);
+    val responseOffset =
+        survival2d.flatbuffers.CreateItemOnMapResponse.endCreateItemOnMapResponse(builder);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.CreateItemOnMapResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   private void onPlayerTakeItem(String playerId) {
@@ -694,13 +775,22 @@ public class MatchImpl implements Match {
           player.getPosition(), player.getShape(), itemOnMap.getPosition(), itemOnMap.getShape())) {
         //        player.addItem(itemOnMap.getItem()); //TODO: add item to player
         objects.remove(itemOnMap.getId());
-        EzyFoxUtil.getInstance()
-            .getResponseFactory()
-            .newObjectResponse()
-            .command(MatchCommand.TAKE_ITEM)
-            .data(PlayerTakeItemResponse.builder().username(playerId).item(itemOnMap).build())
-            .usernames(getAllPlayers())
-            .execute();
+
+        val builder = new FlatBufferBuilder(0);
+        val usernameOffset = builder.createString(playerId);
+
+        val responseOffset =
+            survival2d.flatbuffers.PlayerTakeItemResponse.createPlayerTakeItemResponse(
+                builder, usernameOffset, object.getId());
+
+        Packet.startPacket(builder);
+        Packet.addDataType(builder, PacketData.PlayerTakeItemResponse);
+        Packet.addData(builder, responseOffset);
+        val packetOffset = Packet.endPacket(builder);
+        builder.finish(packetOffset);
+
+        val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+        zoneContext.stream(bytes, getSessions(getAllPlayers()));
       }
     }
   }
@@ -708,13 +798,20 @@ public class MatchImpl implements Match {
   private void onPlayerReloadWeapon(String playerId) {
     val player = players.get(playerId);
     player.reloadWeapon();
-    EzyFoxUtil.getInstance()
-        .getResponseFactory()
-        .newObjectResponse()
-        .command(MatchCommand.PLAYER_RELOAD)
-        .data(PlayerReloadWeaponResponse.builder().player(player).build())
-        .username(playerId)
-        .execute();
+    val builder = new FlatBufferBuilder(0);
+
+    val responseOffset =
+        survival2d.flatbuffers.PlayerReloadWeaponResponse.createPlayerReloadWeaponResponse(
+            builder, 1000, 100); // FIXME
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.PlayerDeadResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   private void onPlayerDropItem(String playerId, String itemId) {

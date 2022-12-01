@@ -137,16 +137,21 @@ table PlayerMoveResponse {
 }
 
 table PlayerChangeWeaponRequest {
-  weaponOffset: byte;
+  slot: byte;
 }
 
 table PlayerChangeWeaponResponse {
+  username: string;
+  slot: byte;
 }
 
 table PlayerAttackRequest {
 }
 
 table PlayerAttackResponse {
+  username:string;
+  position:Vec2;
+  slot:byte;
 }
 
 table PlayerDropItemRequest {
@@ -163,6 +168,7 @@ table CreateBulletOnMapResponse {
 table CreateItemOnMapResponse {
   item: Item;
   position: Vec2;
+  rawPosition: Vec2;
 }
 
 table EndGameResponse {
@@ -219,7 +225,8 @@ table PlayerReloadWeaponRequest {
 }
 
 table PlayerReloadWeaponResponse {
-  weapon: Weapon;
+  remainBulletsInGun: int;
+  remainBullets: int;
 }
 
 table PlayerTakeItemRequest {
@@ -227,7 +234,7 @@ table PlayerTakeItemRequest {
 
 table PlayerTakeItemResponse {
   username: string;
-  item: Item;
+  id: int; // id của map object
 }
 
 union PacketData {
@@ -248,6 +255,9 @@ union PacketData {
   PlayerReloadWeaponResponse,
   PlayerChangeWeaponRequest,
   PlayerChangeWeaponResponse,
+  PlayerTakeItemRequest,
+  PlayerTakeItemResponse,
+  EndGameResponse,
 }
 
 table Packet {

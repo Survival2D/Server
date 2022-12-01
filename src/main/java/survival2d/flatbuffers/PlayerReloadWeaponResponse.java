@@ -15,18 +15,21 @@ public final class PlayerReloadWeaponResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PlayerReloadWeaponResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public survival2d.flatbuffers.Weapon weapon() { return weapon(new survival2d.flatbuffers.Weapon()); }
-  public survival2d.flatbuffers.Weapon weapon(survival2d.flatbuffers.Weapon obj) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public int remainBulletsInGun() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int remainBullets() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createPlayerReloadWeaponResponse(FlatBufferBuilder builder,
-      int weaponOffset) {
-    builder.startTable(1);
-    PlayerReloadWeaponResponse.addWeapon(builder, weaponOffset);
+      int remainBulletsInGun,
+      int remainBullets) {
+    builder.startTable(2);
+    PlayerReloadWeaponResponse.addRemainBullets(builder, remainBullets);
+    PlayerReloadWeaponResponse.addRemainBulletsInGun(builder, remainBulletsInGun);
     return PlayerReloadWeaponResponse.endPlayerReloadWeaponResponse(builder);
   }
 
-  public static void startPlayerReloadWeaponResponse(FlatBufferBuilder builder) { builder.startTable(1); }
-  public static void addWeapon(FlatBufferBuilder builder, int weaponOffset) { builder.addOffset(0, weaponOffset, 0); }
+  public static void startPlayerReloadWeaponResponse(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void addRemainBulletsInGun(FlatBufferBuilder builder, int remainBulletsInGun) { builder.addInt(0, remainBulletsInGun, 0); }
+  public static void addRemainBullets(FlatBufferBuilder builder, int remainBullets) { builder.addInt(1, remainBullets, 0); }
   public static int endPlayerReloadWeaponResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
