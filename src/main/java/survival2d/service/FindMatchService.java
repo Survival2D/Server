@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public interface FindMatchService {
 
-  Optional<Long> findMatch(long teamId);
+  Optional<Integer> findMatch(int teamId);
 
-  boolean cancelFindMatch(long teamId);
+  boolean cancelFindMatch(int teamId);
 }

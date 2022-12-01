@@ -25,7 +25,7 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
   }
 
   @Override
-  public Optional<LobbyTeam> getTeam(long teamId) {
+  public Optional<LobbyTeam> getTeam(int teamId) {
     if (teamIdToTeam.containsKey(teamId)) {
       return Optional.of(teamIdToTeam.get(teamId));
     }
@@ -45,7 +45,7 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
   }
 
   @Override
-  public boolean quitTeam(String username, long teamId) {
+  public boolean quitTeam(String username, int teamId) {
     val optTeam = getTeam(teamId);
     if (!optTeam.isPresent()) {
       return false;

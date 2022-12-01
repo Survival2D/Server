@@ -1,28 +1,5 @@
 package survival2d.network.lobby;
 
-import survival2d.constant.Commands;
-import survival2d.exception.JoinNotWaitingRoomException;
-import survival2d.network.lobby.entity.JoinTeamResult;
-import survival2d.network.lobby.entity.ResponseError;
-import survival2d.network.lobby.request.JoinTeamRequest;
-import survival2d.network.lobby.response.CreateTeamResponse;
-import survival2d.network.lobby.response.FindMatchResponse;
-import survival2d.network.lobby.response.GetUserInfoResponse;
-import survival2d.network.lobby.response.JoinTeamResponse;
-import survival2d.network.lobby.response.NewUserJoinTeamResponse;
-import survival2d.network.match.MatchCommand;
-import survival2d.request.JoinMMORoomRequest;
-import survival2d.response.AnotherJoinMMOResponse;
-import survival2d.response.CreateMMORoomResponse;
-import survival2d.response.GetMMORoomIdListResponse;
-import survival2d.response.JoinLobbyResponse;
-import survival2d.response.JoinMMORoomResponse;
-import survival2d.service.FindMatchService;
-import survival2d.service.LobbyService;
-import survival2d.service.LobbyTeamService;
-import survival2d.service.MatchingService;
-import survival2d.service.RoomService;
-import survival2d.service.domain.LobbyTeam;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.core.annotation.EzyDoHandle;
 import com.tvd12.ezyfox.core.annotation.EzyRequestController;
@@ -36,6 +13,28 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
+import survival2d.constant.Commands;
+import survival2d.exception.JoinNotWaitingRoomException;
+import survival2d.network.lobby.entity.JoinTeamResult;
+import survival2d.network.lobby.entity.ResponseError;
+import survival2d.network.lobby.request.JoinTeamRequest;
+import survival2d.network.lobby.response.CreateTeamResponse;
+import survival2d.network.lobby.response.FindMatchResponse;
+import survival2d.network.lobby.response.GetUserInfoResponse;
+import survival2d.network.lobby.response.JoinTeamResponse;
+import survival2d.network.lobby.response.NewUserJoinTeamResponse;
+import survival2d.request.JoinMMORoomRequest;
+import survival2d.response.AnotherJoinMMOResponse;
+import survival2d.response.CreateMMORoomResponse;
+import survival2d.response.GetMMORoomIdListResponse;
+import survival2d.response.JoinLobbyResponse;
+import survival2d.response.JoinMMORoomResponse;
+import survival2d.service.FindMatchService;
+import survival2d.service.LobbyService;
+import survival2d.service.LobbyTeamService;
+import survival2d.service.MatchingService;
+import survival2d.service.RoomService;
+import survival2d.service.domain.LobbyTeam;
 
 @EzyRequestController
 @Slf4j
@@ -136,12 +135,13 @@ public class LobbyRequestController extends EzyLoggable {
         .data(FindMatchResponse.builder().result(ResponseError.SUCCESS).matchId(matchId).build())
         .usernames(allPlayers)
         .execute();
-    responseFactory
-        .newObjectResponse()
-        .command(MatchCommand.MATCH_INFO)
-        .data(match)
-        .usernames(allPlayers)
-        .execute();
+    match.responseMatchInfo();
+//    responseFactory
+//        .newObjectResponse()
+//        .command(MatchCommand.MATCH_INFO)
+//        .data(match)
+//        .usernames(allPlayers)
+//        .execute();
   }
 
   @EzyDoHandle(Commands.JOIN_LOBBY)

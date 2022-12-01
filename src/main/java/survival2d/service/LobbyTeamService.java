@@ -7,11 +7,11 @@ public interface LobbyTeamService {
 
   int createTeam();
 
-  Optional<LobbyTeam> getTeam(long teamId);
+  Optional<LobbyTeam> getTeam(int teamId);
 
   boolean joinTeam(String username, int teamId);
 
-  boolean quitTeam(String username, long teamId);
+  boolean quitTeam(String username, int teamId);
 
   Optional<LobbyTeam> getTeamOfPlayer(String username);
 }

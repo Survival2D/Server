@@ -39,6 +39,10 @@
     <appender-ref ref="console"/>
   </logger>
 
+  <logger name="com.tvd12">
+    <appender-ref ref="console"/>
+  </logger>
+
   <root>
     <appender-ref ref="info"/>
     <appender-ref ref="debug"/>

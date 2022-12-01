@@ -388,6 +388,11 @@ public class MatchImpl implements Match {
 
   @Override
   public void responseMatchInfo(String username) {
+    final byte[] bytes = getMatchInfoPacket();
+    zoneContext.stream(bytes, getSession(username));
+  }
+
+  private byte[] getMatchInfoPacket() {
     val builder = new FlatBufferBuilder(0);
 
     int[] playerOffsets = new int[players.size()];
@@ -395,10 +400,10 @@ public class MatchImpl implements Match {
     for (int i = 0; i < players.length; i++) {
       val player = players[i];
       val usernameOffset = builder.createString(player.getPlayerId());
-      val positionOffset =
-          Vec2.createVec2(builder, player.getPosition().getX(), player.getPosition().getY());
       survival2d.flatbuffers.Player.startPlayer(builder);
       survival2d.flatbuffers.Player.addUsername(builder, usernameOffset);
+      val positionOffset =
+          Vec2.createVec2(builder, player.getPosition().getX(), player.getPosition().getY());
       survival2d.flatbuffers.Player.addPosition(builder, positionOffset);
       survival2d.flatbuffers.Player.addRotation(builder, player.getRotation());
       playerOffsets[i] = survival2d.flatbuffers.Player.endPlayer(builder);
@@ -408,40 +413,44 @@ public class MatchImpl implements Match {
     val mapObjects = this.objects.values().toArray(new MapObject[0]);
     for (int i = 0; i < mapObjects.length; i++) {
       val object = mapObjects[i];
-      val positionOffset =
-          Vec2.createVec2(builder, object.getPosition().getX(), object.getPosition().getY());
-      survival2d.flatbuffers.MapObject.startMapObject(builder);
-      survival2d.flatbuffers.MapObject.addId(builder, object.getId());
-      survival2d.flatbuffers.MapObject.addPosition(builder, positionOffset);
+      var objectDataOffset = 0;
+      byte objectDataType = 0;
       if (object instanceof BulletItem) {
+        objectDataType = MapObjectData.BulletItem;
         val bulletItem = (BulletItem) object;
-        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.BulletItem);
         survival2d.flatbuffers.BulletItem.startBulletItem(builder);
         survival2d.flatbuffers.BulletItem.addType(
             builder, (byte) bulletItem.getBulletType().ordinal());
         val bulletItemOffset = survival2d.flatbuffers.BulletItem.endBulletItem(builder);
         survival2d.flatbuffers.MapObject.addData(builder, bulletItemOffset);
       } else if (object instanceof GunItem) {
+        objectDataType = MapObjectData.GunItem;
         val gunItem = (GunItem) object;
-        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.GunItem);
         survival2d.flatbuffers.GunItem.startGunItem(builder);
         survival2d.flatbuffers.GunItem.addType(builder, (byte) gunItem.getGunType().ordinal());
         val gunItemOffset = survival2d.flatbuffers.GunItem.endGunItem(builder);
         survival2d.flatbuffers.MapObject.addData(builder, gunItemOffset);
       } else if (object instanceof Tree) {
+        objectDataType = MapObjectData.Tree;
         val tree = (Tree) object;
-        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.Tree);
         survival2d.flatbuffers.Tree.startTree(builder);
         val treeOffset = survival2d.flatbuffers.Tree.endTree(builder);
         survival2d.flatbuffers.MapObject.addData(builder, treeOffset);
       } else if (object instanceof Container) {
+        objectDataType = MapObjectData.Container;
         val container = (Container) object;
-        survival2d.flatbuffers.MapObject.addDataType(builder, MapObjectData.Container);
         survival2d.flatbuffers.Container.startContainer(builder);
         val containerOffset = survival2d.flatbuffers.Container.endContainer(builder);
         survival2d.flatbuffers.MapObject.addData(builder, containerOffset);
       }
       // TODO: add more map object
+      survival2d.flatbuffers.MapObject.startMapObject(builder);
+      survival2d.flatbuffers.MapObject.addId(builder, object.getId());
+      val positionOffset =
+          Vec2.createVec2(builder, object.getPosition().getX(), object.getPosition().getY());
+      survival2d.flatbuffers.MapObject.addPosition(builder, positionOffset);
+      survival2d.flatbuffers.MapObject.addDataType(builder, objectDataType);
+      survival2d.flatbuffers.MapObject.addData(builder, objectDataOffset);
       mapObjectOffsets[i] = survival2d.flatbuffers.MapObject.endMapObject(builder);
     }
 
@@ -460,7 +469,13 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSession(username));
+    return bytes;
+  }
+
+  @Override
+  public void responseMatchInfo() {
+    val bytes = getMatchInfoPacket();
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   public void onPlayerSwitchWeapon(String playerId, int weaponId) {

@@ -18,13 +18,12 @@ import survival2d.game.action.PlayerChangeWeapon;
 import survival2d.game.action.PlayerMove;
 import survival2d.game.action.PlayerReloadWeapon;
 import survival2d.game.action.PlayerTakeItem;
-import survival2d.service.MatchingService;
+import survival2d.util.EzyFoxUtil;
 
 @EzySingleton
 // @EzyEventHandler(STREAMING)
 @Slf4j
 public class StreamingController extends EzyAbstractZoneEventController<EzyStreamingEvent> {
-  @EzyAutoBind MatchingService matchingService;
 
   @EzyAutoBind
   @Override
@@ -35,7 +34,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
     switch (packet.dataType()) {
       case PacketData.MatchInfoRequest:
         {
-          val optMatch = matchingService.getMatchOfPlayer(username);
+          val optMatch = EzyFoxUtil.getInstance().getMatchingService().getMatchOfPlayer(username);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;
@@ -46,7 +45,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         }
       case PacketData.PlayerMoveRequest:
         {
-          val optMatch = matchingService.getMatchOfPlayer(username);
+          val optMatch = EzyFoxUtil.getInstance().getMatchingService().getMatchOfPlayer(username);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;
@@ -64,7 +63,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         }
       case PacketData.PlayerChangeWeaponRequest:
         {
-          val optMatch = matchingService.getMatchOfPlayer(username);
+          val optMatch = EzyFoxUtil.getInstance().getMatchingService().getMatchOfPlayer(username);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;
@@ -78,7 +77,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         }
       case PacketData.PlayerAttackRequest:
         {
-          val optMatch = matchingService.getMatchOfPlayer(username);
+          val optMatch = EzyFoxUtil.getInstance().getMatchingService().getMatchOfPlayer(username);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;
@@ -91,7 +90,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         }
       case PacketData.PlayerReloadWeaponRequest:
         {
-          val optMatch = matchingService.getMatchOfPlayer(username);
+          val optMatch = EzyFoxUtil.getInstance().getMatchingService().getMatchOfPlayer(username);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;
@@ -102,7 +101,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         }
       case PacketData.PlayerTakeItemRequest:
         {
-          val optMatch = matchingService.getMatchOfPlayer(username);
+          val optMatch = EzyFoxUtil.getInstance().getMatchingService().getMatchOfPlayer(username);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;

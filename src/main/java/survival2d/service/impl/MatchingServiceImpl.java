@@ -1,33 +1,34 @@
 package survival2d.service.impl;
 
-import survival2d.game.entity.Match;
-import survival2d.game.entity.MatchImpl;
-import survival2d.service.LobbyTeamService;
-import survival2d.service.MatchingService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
-import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import survival2d.game.entity.Match;
+import survival2d.game.entity.MatchImpl;
+import survival2d.service.LobbyTeamService;
+import survival2d.service.MatchingService;
 
 @EzySingleton
 @Slf4j
 public class MatchingServiceImpl implements MatchingService {
+  @Getter(lazy = true)
+  private static final MatchingService instance = new MatchingServiceImpl();
 
-  @EzyAutoBind private final AtomicLong currentMatchId = new AtomicLong();
-  private final Map<Long, Match> matchIdToMatch = new ConcurrentHashMap<>();
-  private final Map<String, Long> playerIdToMatchId = new ConcurrentHashMap<>();
+  private final AtomicInteger currentMatchId = new AtomicInteger();
+  private final Map<Integer, Match> matchIdToMatch = new ConcurrentHashMap<>();
+  private final Map<String, Integer> playerIdToMatchId = new ConcurrentHashMap<>();
   @EzyAutoBind
   LobbyTeamService teamService;
-  @EzyAutoBind private EzyResponseFactory responseFactory;
 
   @Override
-  public long createMatch(List<Long> teamIds) {
+  public int createMatch(List<Integer> teamIds) {
     val matchId = currentMatchId.getAndIncrement();
     val match = new MatchImpl(matchId);
     matchIdToMatch.put(matchId, match);
@@ -46,7 +47,7 @@ public class MatchingServiceImpl implements MatchingService {
   }
 
   @Override
-  public Optional<Long> getMatchIdOfPlayer(String playerId) {
+  public Optional<Integer> getMatchIdOfPlayer(String playerId) {
     if (playerIdToMatchId.containsKey(playerId)) {
       return Optional.of(playerIdToMatchId.get(playerId));
     }
@@ -54,7 +55,7 @@ public class MatchingServiceImpl implements MatchingService {
   }
 
   @Override
-  public Optional<Match> getMatchById(long matchId) {
+  public Optional<Match> getMatchById(int matchId) {
     if (matchIdToMatch.containsKey(matchId)) {
       return Optional.of(matchIdToMatch.get(matchId));
     }
@@ -78,7 +79,7 @@ public class MatchingServiceImpl implements MatchingService {
   }
 
   @Override
-  public void destroyMatch(long id) {
+  public void destroyMatch(int id) {
     matchIdToMatch.remove(id);
     playerIdToMatchId.entrySet().removeIf(entry -> entry.getValue() == id);
   }

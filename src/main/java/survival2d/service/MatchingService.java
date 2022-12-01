@@ -6,13 +6,13 @@ import java.util.Optional;
 
 public interface MatchingService {
 
-  long createMatch(List<Long> teamIds);
+  int createMatch(List<Integer> teamIds);
 
-  Optional<Long> getMatchIdOfPlayer(String playerId);
+  Optional<Integer> getMatchIdOfPlayer(String playerId);
 
-  Optional<Match> getMatchById(long matchId);
+  Optional<Match> getMatchById(int matchId);
 
   Optional<Match> getMatchOfPlayer(String playerId);
 
-  void destroyMatch(long id);
+  void destroyMatch(int id);
 }

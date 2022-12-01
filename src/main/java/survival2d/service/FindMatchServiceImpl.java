@@ -14,13 +14,13 @@ import lombok.val;
 @EzySingleton
 public class FindMatchServiceImpl implements FindMatchService {
 
-  private final Set<Long> matchingTeams = new HashSet<>();
+  private final Set<Integer> matchingTeams = new HashSet<>();
   @EzyAutoBind
   MatchingService matchingService;
 
   @Override
   @Synchronized
-  public Optional<Long> findMatch(long teamId) {
+  public Optional<Integer> findMatch(int teamId) {
     if (matchingTeams.contains(teamId)) {
       log.warn("Team {} is already in matchingTeams", teamId);
     }
@@ -41,7 +41,7 @@ public class FindMatchServiceImpl implements FindMatchService {
 
   @Override
   @Synchronized
-  public boolean cancelFindMatch(long teamId) {
+  public boolean cancelFindMatch(int teamId) {
     return matchingTeams.remove(teamId);
   }
 }
