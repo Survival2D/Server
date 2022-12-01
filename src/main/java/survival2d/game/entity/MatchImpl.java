@@ -153,18 +153,24 @@ public class MatchImpl implements Match {
       player.moveBy(moveBy);
     }
     player.setRotation(rotation);
-    EzyFoxUtil.getInstance()
-        .getResponseFactory()
-        .newObjectResponse()
-        .command(MatchCommand.PLAYER_MOVE)
-        .data(
-            PlayerMoveResponse.builder()
-                .username(player.getPlayerId())
-                .position(player.getPosition())
-                .rotation(player.getRotation())
-                .build())
-        .usernames(getAllPlayers())
-        .execute();
+    val builder = new FlatBufferBuilder(0);
+    val idOffset = builder.createString(playerId);
+
+    survival2d.flatbuffers.PlayerMoveResponse.startPlayerMoveResponse(builder);
+    survival2d.flatbuffers.PlayerMoveResponse.addUsername(builder, idOffset);
+    survival2d.flatbuffers.PlayerMoveResponse.addRotation(builder, rotation);
+    val positionOffset = Vec2.createVec2(builder, direction.getX(), direction.getY());
+    survival2d.flatbuffers.PlayerMoveResponse.addPosition(builder, positionOffset);
+    val responseOffset = survival2d.flatbuffers.PlayerMoveResponse.endPlayerMoveResponse(builder);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.PlayerMoveResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   @Override
@@ -462,7 +468,7 @@ public class MatchImpl implements Match {
     return getUser(username).getSession();
   }
 
-  private List<EzySession> getSessions(List<String> usernames) {
+  private List<EzySession> getSessions(Collection<String> usernames) {
     return usernames.stream().map(this::getSession).collect(Collectors.toList());
   }
 

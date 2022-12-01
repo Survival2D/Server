@@ -9,11 +9,13 @@ import com.tvd12.ezyfoxserver.event.EzyStreamingEvent;
 import java.nio.ByteBuffer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.locationtech.jts.math.Vector2D;
 import survival2d.flatbuffers.Packet;
 import survival2d.flatbuffers.PacketData;
 import survival2d.flatbuffers.PlayerMoveRequest;
 import survival2d.flatbuffers.PlayerMoveResponse;
 import survival2d.flatbuffers.Vec2;
+import survival2d.game.action.PlayerMove;
 import survival2d.service.MatchingService;
 
 @EzySingleton
@@ -25,14 +27,9 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
   @EzyAutoBind
   @Override
   public void handle(EzyZoneContext ezyZoneContext, EzyStreamingEvent ezyStreamingEvent) {
-    val raw = ezyStreamingEvent.getBytes();
-    val data = new byte[raw.length - 1];
-    System.arraycopy(raw, 1, data, 0, data.length);
-    //    Arrays.copyOfRange(raw, 1, raw.length);
-    val buf = ByteBuffer.wrap(data);
-    log.info("data received: {}", data);
-    val packet = Packet.getRootAsPacket(buf);
     val username = ezyStreamingEvent.getSession().getOwnerName();
+    val buf = ByteBufferUtil.ezyFoxBytesToByteBuffer(ezyStreamingEvent.getBytes());
+    val packet = Packet.getRootAsPacket(buf);
     switch (packet.dataType()) {
       case PacketData.MatchInfoRequest:
         {
@@ -47,42 +44,28 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         }
       case PacketData.PlayerMoveRequest:
         {
-          log.info("PlayerMoveRequest's bytes length: {}", data.length);
-          PlayerMoveRequest request = new PlayerMoveRequest();
+          val optMatch = matchingService.getMatchOfPlayer(username);
+          if (!optMatch.isPresent()) {
+            log.warn("match is not present");
+            return;
+          }
+          val request = new PlayerMoveRequest();
           packet.data(request);
-          val direction = request.direction();
-          val rotation = request.rotation();
-          //        log.info("direction: x {} y {}, rotation: {}", direction.x(), direction.y(),
-          // rotation);
-          val builder = new FlatBufferBuilder(0);
-          val idOffset = builder.createString(username);
 
-          PlayerMoveResponse.startPlayerMoveResponse(builder);
-          PlayerMoveResponse.addUsername(builder, idOffset);
-          PlayerMoveResponse.addRotation(builder, rotation);
-          val positionOffset = Vec2.createVec2(builder, direction.x(), direction.y());
-          PlayerMoveResponse.addPosition(builder, positionOffset);
-          val responseOffset = PlayerMoveResponse.endPlayerMoveResponse(builder);
 
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.PlayerMoveResponse);
-          Packet.addData(builder, responseOffset);
-          val packetOffset = Packet.endPacket(builder);
-          builder.finish(packetOffset);
-
-          val dataBuffer = builder.dataBuffer();
-          val bytes = new byte[dataBuffer.remaining() + 1];
-          bytes[0] = 0b00010000;
-          dataBuffer.get(bytes, 1, dataBuffer.remaining());
-          log.info("PlayerMoveResponse's bytes length {}", bytes.length);
-          //        log.info("data after add header: {}", bytes);
-          ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
+          val match = optMatch.get();
+          match.onReceivePlayerAction(
+              username, new PlayerMove(new Vector2D(request.direction().x(), request.direction().y()), request.rotation()));
           break;
         }
 
       case PacketData.PlayerAttackRequest:
         {
-          log.info("PlayerAttackRequest's bytes length: {}", data.length);
+          break;
+        }
+      default:
+        {
+          log.warn("not handle packet data type {} from user {}", packet.dataType(), username);
           break;
         }
     }
