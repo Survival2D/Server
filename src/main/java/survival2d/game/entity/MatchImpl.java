@@ -77,7 +77,7 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void addPlayer(long teamId, String playerId) {
+  public void addPlayer(int teamId, String playerId) {
     players.putIfAbsent(playerId, new PlayerImpl(playerId, teamId));
     int tryCount = 0;
     while (!randomPositionForPlayer(playerId)) {

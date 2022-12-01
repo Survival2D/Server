@@ -171,6 +171,9 @@ table CreateItemOnMapResponse {
   rawPosition: Vec2;
 }
 
+table StartGameResponse {
+}
+
 table EndGameResponse {
   winTeam: int;
 }
@@ -257,6 +260,7 @@ union PacketData {
   PlayerChangeWeaponResponse,
   PlayerTakeItemRequest,
   PlayerTakeItemResponse,
+  StartGameResponse,
   EndGameResponse,
 }
 

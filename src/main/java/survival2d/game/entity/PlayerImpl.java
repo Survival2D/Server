@@ -31,10 +31,10 @@ public class PlayerImpl implements Player {
   Map<Item, Integer> items; // Map item to quantity
   Map<BulletType, Integer> bullets; // Map bullet to quantity
   int currentWeaponIndex;
-  long team;
+  int team;
   Circle shape = new Circle(30);
 
-  public PlayerImpl(String playerId, long team) {
+  public PlayerImpl(String playerId, int team) {
     this.playerId = playerId;
     this.team = team;
     this.weapons.add(new Hand());

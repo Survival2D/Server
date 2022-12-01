@@ -5,11 +5,11 @@ import java.util.Optional;
 
 public interface LobbyTeamService {
 
-  long createTeam();
+  int createTeam();
 
   Optional<LobbyTeam> getTeam(long teamId);
 
-  boolean joinTeam(String username, long teamId);
+  boolean joinTeam(String username, int teamId);
 
   boolean quitTeam(String username, long teamId);
 

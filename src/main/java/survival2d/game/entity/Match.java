@@ -9,7 +9,7 @@ import org.locationtech.jts.math.Vector2D;
 
 public interface Match {
 
-  void addPlayer(long teamId, String playerId);
+  void addPlayer(int teamId, String playerId);
 
   Collection<String> getAllPlayers();
 

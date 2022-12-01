@@ -1,23 +1,23 @@
 package survival2d.service.impl;
 
-import survival2d.service.LobbyTeamService;
-import survival2d.service.domain.LobbyTeam;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.val;
+import survival2d.service.LobbyTeamService;
+import survival2d.service.domain.LobbyTeam;
 
 @EzySingleton
 public class LobbyTeamServiceImpl implements LobbyTeamService {
 
-  private static final AtomicLong currentTeamId = new AtomicLong();
-  private final Map<Long, LobbyTeam> teamIdToTeam = new HashMap<>();
-  private final Map<String, Long> usernameToTeam = new HashMap<>();
+  private static final AtomicInteger currentTeamId = new AtomicInteger();
+  private final Map<Integer, LobbyTeam> teamIdToTeam = new HashMap<>();
+  private final Map<String, Integer> usernameToTeam = new HashMap<>();
 
   @Override
-  public long createTeam() {
+  public int createTeam() {
     val teamId = currentTeamId.getAndIncrement();
     val team = new LobbyTeam(teamId);
     teamIdToTeam.put(teamId, team);
@@ -33,7 +33,7 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
   }
 
   @Override
-  public boolean joinTeam(String username, long teamId) {
+  public boolean joinTeam(String username, int teamId) {
     val optTeam = getTeam(teamId);
     if (!optTeam.isPresent()) {
       return false;
