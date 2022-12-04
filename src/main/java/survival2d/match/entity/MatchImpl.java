@@ -12,7 +12,7 @@ import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.RandomUtils;
 import org.locationtech.jts.math.Vector2D;
-import survival2d.ServerStartup;
+import survival2d.Survival2DStartup;
 import survival2d.flatbuffers.*;
 import survival2d.match.action.*;
 import survival2d.match.constant.GameConstant;
@@ -487,7 +487,7 @@ public class MatchImpl implements Match {
   }
 
   public void init() {
-    zoneContext = ServerStartup.getServerContext().getZoneContext(ServerStartup.ZONE_NAME);
+    zoneContext = Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
 
     initObstacles();
     timer.schedule(

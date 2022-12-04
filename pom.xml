@@ -87,7 +87,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>survival2d.ServerStartup</mainClass>
+              <mainClass>survival2d.Survival2DStartup</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
