@@ -31,7 +31,7 @@ import com.tvd12.ezyfoxserver.support.entry.EzySimpleAppEntry;
 import com.tvd12.ezyfoxserver.support.entry.EzySimplePluginEntry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import survival2d.network.StreamingController;
+import survival2d.controller.server.StreamingController;
 
 @Slf4j
 public class ServerStartup {

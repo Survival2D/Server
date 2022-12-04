@@ -10,6 +10,7 @@ import survival2d.service.MatchingService;
 @EzySingleton
 @AllArgsConstructor
 //@EzyConfigurationAfter
+@Deprecated
 public class EzyFoxUtil {
 
   @Getter @EzyAutoBind private static EzyFoxUtil instance;

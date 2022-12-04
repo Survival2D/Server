@@ -1,6 +1,6 @@
 package survival2d.service;
 
-import survival2d.game.entity.Match;
+import survival2d.match.entity.Match;
 import java.util.List;
 import java.util.Optional;
 

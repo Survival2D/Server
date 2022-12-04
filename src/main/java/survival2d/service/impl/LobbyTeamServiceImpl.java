@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.val;
 import survival2d.service.LobbyTeamService;
-import survival2d.service.domain.LobbyTeam;
+import survival2d.service.entity.LobbyTeam;
 
 @EzySingleton
 public class LobbyTeamServiceImpl implements LobbyTeamService {

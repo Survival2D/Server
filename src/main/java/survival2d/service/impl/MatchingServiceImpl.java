@@ -7,20 +7,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import survival2d.game.entity.Match;
-import survival2d.game.entity.MatchImpl;
+import survival2d.match.entity.Match;
+import survival2d.match.entity.MatchImpl;
 import survival2d.service.LobbyTeamService;
 import survival2d.service.MatchingService;
 
-@EzySingleton
+@EzySingleton("matchingService")
 @Slf4j
 public class MatchingServiceImpl implements MatchingService {
-  @Getter(lazy = true)
-  private static final MatchingService instance = new MatchingServiceImpl();
-
   private final AtomicInteger currentMatchId = new AtomicInteger();
   private final Map<Integer, Match> matchIdToMatch = new ConcurrentHashMap<>();
   private final Map<String, Integer> playerIdToMatchId = new ConcurrentHashMap<>();
