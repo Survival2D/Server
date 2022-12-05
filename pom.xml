@@ -9,11 +9,6 @@
       <groupId>com.tvd12</groupId>
       <version>1.2.5</version>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <artifactId>ezyhttp-server-boot</artifactId>-->
-    <!--      <groupId>com.tvd12</groupId>-->
-    <!--      <version>1.0.5</version>-->
-    <!--    </dependency>-->
     <dependency>
       <artifactId>ezydata-mongodb</artifactId>
       <groupId>com.tvd12</groupId>
@@ -44,17 +39,6 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.12.0</version>
     </dependency>
-    <!--TODO: remove game-box-->
-    <dependency>
-      <groupId>com.tvd12</groupId>
-      <artifactId>game-box</artifactId>
-      <version>1.1.6</version>
-    </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>org.apache.commons</groupId>-->
-    <!--      <artifactId>commons-math3</artifactId>-->
-    <!--      <version>3.6.1</version>-->
-    <!--    </dependency>-->
     <dependency>
       <groupId>org.locationtech.jts</groupId>
       <artifactId>jts-core</artifactId>

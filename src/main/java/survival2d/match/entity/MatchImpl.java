@@ -53,6 +53,7 @@ public class MatchImpl implements Match {
   private long currentTick;
 
   @ExcludeFromGson private EzyZoneContext zoneContext;
+  private final List<Circle> playZones = new ArrayList<>();
 
   public MatchImpl(long id) {
     this.id = id;
@@ -718,7 +719,6 @@ public class MatchImpl implements Match {
   }
 
   private void createItemOnMap(Item item, Vector2D position, Vector2D rawPosition) {
-    log.info("create {} on map", item.getItemType());
     val randomNeighborPosition =
         new Vector2D(RandomUtils.nextDouble(0, 20) - 10, RandomUtils.nextDouble(0, 20) - 10);
     val itemOnMap =
