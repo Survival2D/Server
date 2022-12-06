@@ -6,34 +6,57 @@ import com.tvd12.ezyfoxserver.context.EzyZoneContext;
 import com.tvd12.ezyfoxserver.entity.EzySession;
 import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.wrapper.EzyZoneUserManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.locationtech.jts.math.Vector2D;
 import survival2d.Survival2DStartup;
-import survival2d.flatbuffers.*;
-import survival2d.match.action.*;
+import survival2d.flatbuffers.MapObjectData;
+import survival2d.flatbuffers.MatchInfoResponse;
+import survival2d.flatbuffers.Packet;
+import survival2d.flatbuffers.PacketData;
+import survival2d.flatbuffers.Vec2;
+import survival2d.match.action.PlayerAction;
+import survival2d.match.action.PlayerAttack;
+import survival2d.match.action.PlayerChangeWeapon;
+import survival2d.match.action.PlayerMove;
+import survival2d.match.action.PlayerReloadWeapon;
+import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
+import survival2d.match.entity.base.Circle;
+import survival2d.match.entity.base.Destroyable;
+import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.MapObject;
-import survival2d.match.entity.base.*;
+import survival2d.match.entity.base.Rectangle;
+import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.GunItem;
 import survival2d.match.entity.obstacle.Container;
 import survival2d.match.entity.obstacle.Obstacle;
+import survival2d.match.entity.obstacle.Stone;
 import survival2d.match.entity.obstacle.Tree;
+import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.weapon.Containable;
-import survival2d.util.stream.ByteBufferUtil;
 import survival2d.util.math.MathUtil;
 import survival2d.util.serialize.ExcludeFromGson;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import survival2d.util.stream.ByteBufferUtil;
 
 @Getter
 @Slf4j
@@ -48,12 +71,12 @@ public class MatchImpl implements Match {
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
   @ExcludeFromGson private final Timer timer = new Timer();
+  private final List<Pair<Circle, Vector2D>> safeZones = new ArrayList<>();
+  int nextSafeZone;
   private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   private long currentTick;
-
   @ExcludeFromGson private EzyZoneContext zoneContext;
-  private final List<Circle> playZones = new ArrayList<>();
 
   public MatchImpl(long id) {
     this.id = id;
@@ -209,7 +232,10 @@ public class MatchImpl implements Match {
         continue;
       }
       if (MathUtil.isCollision(player.getPosition(), player.getShape(), position, shape)) {
-        val damageMultiple = MathUtil.isCollision(player.getPosition(), player.getHead(), position, shape) ? GameConstant.HEADSHOT_DAMAGE : GameConstant.BODY_DAMAGE;
+        val damageMultiple =
+            MathUtil.isCollision(player.getPosition(), player.getHead(), position, shape)
+                ? GameConstant.HEADSHOT_DAMAGE
+                : GameConstant.BODY_DAMAGE;
         player.reduceHp(damage * damageMultiple);
         {
           val builder = new FlatBufferBuilder(0);
@@ -256,19 +282,24 @@ public class MatchImpl implements Match {
         continue;
       }
       val obstacle = (Obstacle) object;
-      if (obstacle.isDestroyed()) {
+      if (!(obstacle instanceof Destroyable)) {
         continue;
       }
+      val destroyable = (Destroyable) obstacle;
+      if (destroyable.isDestroyed()) {
+        continue;
+      }
+      val hasHp = (HasHp) obstacle;
       if (MathUtil.isCollision(obstacle.getPosition(), obstacle.getShape(), position, shape)) {
-        obstacle.reduceHp(damage);
+        hasHp.reduceHp(damage);
         log.info(
-            "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, obstacle.getHp());
+            "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, hasHp.getHp());
         {
           val builder = new FlatBufferBuilder(0);
 
           val responseOffset =
               survival2d.flatbuffers.ObstacleTakeDamageResponse.createObstacleTakeDamageResponse(
-                  builder, obstacle.getId(), obstacle.getHp());
+                  builder, obstacle.getId(), hasHp.getHp());
 
           Packet.startPacket(builder);
           Packet.addDataType(builder, PacketData.ObstacleTakeDamageResponse);
@@ -279,7 +310,7 @@ public class MatchImpl implements Match {
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
           zoneContext.stream(bytes, getSessions(getAllPlayers()));
         }
-        if (obstacle.isDestroyed()) {
+        if (destroyable.isDestroyed()) {
           log.info("Obstacle {} destroyed", obstacle.getId());
           val builder = new FlatBufferBuilder(0);
 
@@ -300,7 +331,7 @@ public class MatchImpl implements Match {
             for (val item : containable.getItems()) {
               createItemOnMap(
                   item,
-                  obstacle.getPosition().add(MathUtil.random(-10, 10, -10, 10)),
+                  obstacle.getPosition().add(MathUtil.randomPosition(-10, 10, -10, 10)),
                   obstacle.getPosition());
             }
           }
@@ -427,6 +458,18 @@ public class MatchImpl implements Match {
         survival2d.flatbuffers.Container.startContainer(builder);
         val containerOffset = survival2d.flatbuffers.Container.endContainer(builder);
         survival2d.flatbuffers.MapObject.addData(builder, containerOffset);
+      } else if (object instanceof Stone) {
+        objectDataType = MapObjectData.Stone;
+        val stone = (Stone) object;
+        survival2d.flatbuffers.Stone.startStone(builder);
+        val stoneOffset = survival2d.flatbuffers.Stone.endStone(builder);
+        survival2d.flatbuffers.MapObject.addData(builder, stoneOffset);
+      } else if (object instanceof Wall) {
+        objectDataType = MapObjectData.Wall;
+        val wall = (Wall) object;
+        survival2d.flatbuffers.Wall.startWall(builder);
+        val wallOffset = survival2d.flatbuffers.Wall.endWall(builder);
+        survival2d.flatbuffers.MapObject.addData(builder, wallOffset);
       }
       // TODO: add more map object
       survival2d.flatbuffers.MapObject.startMapObject(builder);
@@ -489,7 +532,7 @@ public class MatchImpl implements Match {
 
   public void init() {
     zoneContext = Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
-
+    initPlayZones();
     initObstacles();
     timer.schedule(
         new TimerTask() {
@@ -499,6 +542,28 @@ public class MatchImpl implements Match {
           }
         },
         3000);
+  }
+
+  private void initPlayZones() {
+    safeZones.add(
+        new ImmutablePair<>(
+            new Circle(GameConfig.getInstance().getDefaultSafeZoneRadius()),
+            new Vector2D(
+                GameConfig.getInstance().getDefaultSafeZoneCenterX(),
+                GameConfig.getInstance().getDefaultSafeZoneCenterY())));
+    for (val radius : GameConfig.getInstance().getSafeZonesRadius()) {
+      val previousPlayZone = safeZones.get(safeZones.size() - 1);
+      val deltaRadius = previousPlayZone.getLeft().getRadius() - radius;
+      safeZones.add(
+          new ImmutablePair<>(
+              new Circle(radius),
+              MathUtil.randomPosition(
+                  previousPlayZone.getRight().getX() - deltaRadius,
+                  previousPlayZone.getRight().getX() + deltaRadius,
+                  previousPlayZone.getRight().getY() - deltaRadius,
+                  previousPlayZone.getRight().getY() + deltaRadius)));
+    }
+    nextSafeZone = 1;
   }
 
   private EzyZone getZone() {
@@ -617,8 +682,50 @@ public class MatchImpl implements Match {
 
   public void update() {
     currentTick++;
+    updatePlayZone();
     updatePlayers();
     updateMapObjects();
+  }
+
+  private void updatePlayZone() {
+    if (currentTick % GameConfig.getInstance().getTicksPerPlayZone() != 0) return;
+    nextSafeZone++;
+    {
+      val builder = new FlatBufferBuilder(0);
+
+      survival2d.flatbuffers.SafeZoneMove.startSafeZoneMove(builder);
+      val responseOffset = survival2d.flatbuffers.SafeZoneMove.endSafeZoneMove(builder);
+
+      Packet.startPacket(builder);
+      Packet.addDataType(builder, PacketData.SafeZoneMove);
+      Packet.addData(builder, responseOffset);
+      val packetOffset = Packet.endPacket(builder);
+      builder.finish(packetOffset);
+
+      val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+      zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    }
+    if (nextSafeZone >= safeZones.size()) {
+      return;
+    }
+    val playZone = safeZones.get(nextSafeZone);
+    val builder = new FlatBufferBuilder(0);
+
+    survival2d.flatbuffers.NewSafeZoneResponse.startNewSafeZoneResponse(builder);
+    val playZoneOffset =
+        survival2d.flatbuffers.Vec2.createVec2(
+            builder, playZone.getRight().getX(), playZone.getRight().getY());
+    survival2d.flatbuffers.NewSafeZoneResponse.addSafeZone(builder, playZoneOffset);
+    val responseOffset = survival2d.flatbuffers.NewSafeZoneResponse.endNewSafeZoneResponse(builder);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.NewSafeZoneResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
   private void updateMapObjects() {
@@ -651,9 +758,9 @@ public class MatchImpl implements Match {
           if (otherObject == mapObject) {
             continue; // Chính nó
           }
-          if (otherObject instanceof Obstacle) {
-            val obstacle = (Obstacle) otherObject;
-            if (obstacle.isDestroyed()) {
+          if (otherObject instanceof Destroyable) {
+            val destroyable = (Destroyable) otherObject;
+            if (destroyable.isDestroyed()) {
               continue;
             }
           }
@@ -712,9 +819,6 @@ public class MatchImpl implements Match {
       onPlayerReloadWeapon(playerId);
     } else if (action instanceof PlayerTakeItem) {
       onPlayerTakeItem(playerId);
-    } else if (action instanceof PlayerDropItem) {
-      val playerDropItem = (PlayerDropItem) action;
-      onPlayerDropItem(playerId, playerDropItem.getItemId());
     }
   }
 
@@ -811,9 +915,5 @@ public class MatchImpl implements Match {
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
     zoneContext.stream(bytes, getSessions(getAllPlayers()));
-  }
-
-  private void onPlayerDropItem(String playerId, String itemId) {
-    // TODO
   }
 }

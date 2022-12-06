@@ -26,8 +26,10 @@ public final class PacketData {
   public static final byte PlayerTakeItemResponse = 19;
   public static final byte StartGameResponse = 20;
   public static final byte EndGameResponse = 21;
+  public static final byte NewSafeZoneResponse = 22;
+  public static final byte SafeZoneMove = 23;
 
-  public static final String[] names = { "NONE", "MatchInfoRequest", "MatchInfoResponse", "PlayerMoveRequest", "PlayerMoveResponse", "PlayerAttackRequest", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponRequest", "PlayerReloadWeaponResponse", "PlayerChangeWeaponRequest", "PlayerChangeWeaponResponse", "PlayerTakeItemRequest", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", };
+  public static final String[] names = { "NONE", "MatchInfoRequest", "MatchInfoResponse", "PlayerMoveRequest", "PlayerMoveResponse", "PlayerAttackRequest", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponRequest", "PlayerReloadWeaponResponse", "PlayerChangeWeaponRequest", "PlayerChangeWeaponResponse", "PlayerTakeItemRequest", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMove", };
 
   public static String name(int e) { return names[e]; }
 }

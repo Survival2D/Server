@@ -1,0 +1,11 @@
+{
+  "mapWidth": 1000,
+  "mapHeight": 1000,
+  "safeZonesRadius": [
+    250,
+    150,
+    50,
+    0
+  ],
+  "minutePerSafeZone": 3
+}

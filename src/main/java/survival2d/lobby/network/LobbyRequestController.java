@@ -18,7 +18,7 @@ import survival2d.lobby.network.response.GetConfigResponse;
 import survival2d.lobby.network.response.GetUserInfoResponse;
 import survival2d.lobby.network.response.JoinTeamResponse;
 import survival2d.lobby.network.response.NewUserJoinTeamResponse;
-import survival2d.match.config.MapConfig;
+import survival2d.match.config.GameConfig;
 import survival2d.service.FindMatchService;
 import survival2d.service.LobbyTeamService;
 import survival2d.service.MatchingService;
@@ -129,7 +129,7 @@ public class LobbyRequestController extends EzyLoggable {
 
   @EzyDoHandle(LobbyCommand.GET_CONFIG)
   public void handleGetConfig(EzyUser user) {
-    val response = GetConfigResponse.builder().map(MapConfig.getInstance()).build();
+    val response = GetConfigResponse.builder().map(GameConfig.getInstance()).build();
     responseFactory
         .newObjectResponse()
         .command(LobbyCommand.GET_CONFIG)

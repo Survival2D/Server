@@ -9,6 +9,7 @@ public class GsonHolder {
   @Getter(lazy = true)
   private static final Gson normalGson = new Gson();
 
+  @Deprecated
   @Getter(lazy = true)
   private static final Gson responseGson =
       new GsonBuilder()
@@ -23,5 +24,11 @@ public class GsonHolder {
   private static final Gson withExcludeAnnotation =
       new GsonBuilder()
           .setExclusionStrategies(ExcludeAnnotationFromGsonStrategy.getInstance())
+          .create();
+
+  @Getter(lazy = true)
+  private static final Gson enablePostProcess =
+      new GsonBuilder()
+          .registerTypeAdapterFactory(PostProcessingEnabler.getInstance())
           .create();
 }

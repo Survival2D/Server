@@ -25,23 +25,17 @@ public final class MatchInfoResponse extends Table {
   public int mapObjectsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
   public survival2d.flatbuffers.MapObject.Vector mapObjectsVector() { return mapObjectsVector(new survival2d.flatbuffers.MapObject.Vector()); }
   public survival2d.flatbuffers.MapObject.Vector mapObjectsVector(survival2d.flatbuffers.MapObject.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.Vec2 playZone() { return playZone(new survival2d.flatbuffers.Vec2()); }
+  public survival2d.flatbuffers.Vec2 playZone(survival2d.flatbuffers.Vec2 obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
 
-  public static int createMatchInfoResponse(FlatBufferBuilder builder,
-      int playersOffset,
-      int mapObjectsOffset) {
-    builder.startTable(2);
-    MatchInfoResponse.addMapObjects(builder, mapObjectsOffset);
-    MatchInfoResponse.addPlayers(builder, playersOffset);
-    return MatchInfoResponse.endMatchInfoResponse(builder);
-  }
-
-  public static void startMatchInfoResponse(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void startMatchInfoResponse(FlatBufferBuilder builder) { builder.startTable(3); }
   public static void addPlayers(FlatBufferBuilder builder, int playersOffset) { builder.addOffset(0, playersOffset, 0); }
   public static int createPlayersVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startPlayersVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addMapObjects(FlatBufferBuilder builder, int mapObjectsOffset) { builder.addOffset(1, mapObjectsOffset, 0); }
   public static int createMapObjectsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startMapObjectsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addPlayZone(FlatBufferBuilder builder, int playZoneOffset) { builder.addStruct(2, playZoneOffset, 0); }
   public static int endMatchInfoResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

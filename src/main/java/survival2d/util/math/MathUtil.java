@@ -14,7 +14,7 @@ public class MathUtil {
 
   public static final Vector2D ZERO = new Vector2D(0, 0);
 
-  public static Vector2D random(double fromX, double toX, double fromY, double toY) {
+  public static Vector2D randomPosition(double fromX, double toX, double fromY, double toY) {
     return new Vector2D(RandomUtils.nextDouble(fromX, toX), RandomUtils.nextDouble(fromY, toY));
   }
 

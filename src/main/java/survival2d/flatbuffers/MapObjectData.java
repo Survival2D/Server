@@ -13,8 +13,10 @@ public final class MapObjectData {
   public static final byte MedKitItem = 6;
   public static final byte Tree = 7;
   public static final byte Container = 8;
+  public static final byte Stone = 9;
+  public static final byte Wall = 10;
 
-  public static final String[] names = { "NONE", "BulletItem", "GunItem", "VestItem", "HelmetItem", "BandageItem", "MedKitItem", "Tree", "Container", };
+  public static final String[] names = { "NONE", "BulletItem", "GunItem", "VestItem", "HelmetItem", "BandageItem", "MedKitItem", "Tree", "Container", "Stone", "Wall", };
 
   public static String name(int e) { return names[e]; }
 }
