@@ -124,6 +124,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
 
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
           ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
+          log.info("pingByte's size {}", bytes.length);
           break;
         }
       case PacketData.PingByPlayerMoveRequest:
@@ -146,6 +147,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
 
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
           ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
+          log.info("pingByPlayerMoveByte's size {}", bytes.length);
           break;
         }
       case PacketData.PingByMatchInfoRequest:
@@ -162,6 +164,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
 
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
           ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
+          log.info("pingByMatchInfoByte's size {}", bytes.length);
           break;
         }
       default:

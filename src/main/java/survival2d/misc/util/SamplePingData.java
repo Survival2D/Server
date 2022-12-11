@@ -7,10 +7,16 @@ public class SamplePingData {
   public static String username = "player_9999";
   public static Vector2D position = new Vector2D(Math.sqrt(2), Math.sqrt(2));
   public static double rotation = 1 / Math.sqrt(2);
-  public static MatchImpl match = new MatchImpl(9999);
+  public static MatchImpl match;
+
   static {
-    for (int i = 0; i < 100; i++) {
-      match.addPlayer(0, "player_" + i);
-    };
+    try {
+      match = new MatchImpl(9999);
+      for (int i = 0; i < 100; i++) {
+        match.addPlayer(0, "player_" + i);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

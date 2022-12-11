@@ -23,7 +23,6 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.locationtech.jts.math.Vector2D;
-import survival2d.Survival2DStartup;
 import survival2d.flatbuffers.MapObjectData;
 import survival2d.flatbuffers.MatchInfoResponse;
 import survival2d.flatbuffers.Packet;
@@ -62,7 +61,7 @@ import survival2d.util.stream.ByteBufferUtil;
 @Slf4j
 public class MatchImpl implements Match {
 
-  private final long id;
+  @ExcludeFromGson private final long id;
   private final Map<Integer, MapObject> objects = new ConcurrentHashMap<>();
 
   @ExcludeFromGson
@@ -72,10 +71,10 @@ public class MatchImpl implements Match {
   private final Map<String, Player> players = new ConcurrentHashMap<>();
   @ExcludeFromGson private final Timer timer = new Timer();
   private final List<Pair<Circle, Vector2D>> safeZones = new ArrayList<>();
-  int nextSafeZone;
-  private int currentMapObjectId;
+  @ExcludeFromGson int nextSafeZone;
+  @ExcludeFromGson private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
-  private long currentTick;
+  @ExcludeFromGson private long currentTick;
   @ExcludeFromGson private EzyZoneContext zoneContext;
 
   public MatchImpl(long id) {
@@ -100,7 +99,7 @@ public class MatchImpl implements Match {
   public boolean randomPositionForPlayer(String playerId) {
     val player = players.get(playerId);
     val newPosition =
-        new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
+        new Vector2D(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
     player.setPosition(newPosition);
     for (val object : objects.values()) {
       if (object instanceof Obstacle) {
@@ -539,7 +538,7 @@ public class MatchImpl implements Match {
   }
 
   public void init() {
-    zoneContext = Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
+//    zoneContext = Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
     initSafeZones();
     initObstacles();
 //    timer.schedule(
@@ -565,11 +564,13 @@ public class MatchImpl implements Match {
       safeZones.add(
           new ImmutablePair<>(
               new Circle(radius),
-              MathUtil.randomPosition(
-                  previousSafeZone.getRight().getX() - deltaRadius,
-                  previousSafeZone.getRight().getX() + deltaRadius,
-                  previousSafeZone.getRight().getY() - deltaRadius,
-                  previousSafeZone.getRight().getY() + deltaRadius)));
+new Vector2D(0, 0)
+//              MathUtil.randomPosition(
+//                  previousSafeZone.getRight().getX() - deltaRadius,
+//                  previousSafeZone.getRight().getX() + deltaRadius,
+//                  previousSafeZone.getRight().getY() - deltaRadius,
+//                  previousSafeZone.getRight().getY() + deltaRadius)
+          ));
     }
     nextSafeZone = 1;
   }
@@ -601,7 +602,7 @@ public class MatchImpl implements Match {
 
   public boolean randomPositionForObstacle(Obstacle obstacle) {
     val newPosition =
-        new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
+        new Vector2D(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
     obstacle.setPosition(newPosition);
     for (val player : players.values()) {
       if (MathUtil.isCollision(
@@ -626,7 +627,7 @@ public class MatchImpl implements Match {
 
   private void initObstacles() {
     // TODO: random this
-    for (int i = 0; i < 600; i++) {
+    for (int i = 0; i < 500; i++) {
       val tree = new Tree();
       tree.setShape(new Circle(35));
       int tryTime = 0;
@@ -640,7 +641,7 @@ public class MatchImpl implements Match {
       addMapObject(tree);
     }
 
-    for (int i = 0; i < 700; i++) {
+    for (int i = 0; i < 500; i++) {
 
       val container = new Container();
       container.setShape(new Rectangle(100, 100));

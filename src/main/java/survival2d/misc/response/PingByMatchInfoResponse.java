@@ -22,7 +22,7 @@ public class PingByMatchInfoResponse {
 
     @Override
     public EzyHashMap write(EzyMarshaller ezyMarshaller, PingByMatchInfoResponse response) {
-      val data = "{map: " + GsonHolder.getNormalGson().toJson(response) + "}";
+      val data = "{map: " + GsonHolder.getWithExcludeAnnotation().toJson(response) + "}";
       log.info("PingByMatchInfoResponse's length: {}", data.length());
       val map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
       return map;

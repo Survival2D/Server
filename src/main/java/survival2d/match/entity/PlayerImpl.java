@@ -1,5 +1,9 @@
 package survival2d.match.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,11 +15,7 @@ import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import survival2d.util.serialize.ExcludeFromGson;
 
 @Data
 @Slf4j
@@ -25,16 +25,16 @@ public class PlayerImpl implements Player {
   Vector2D position =
       new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
   double rotation;
-  double speed = 10;
-  double hp = 100;
-  Vector2D direction;
-  List<Weapon> weapons = new ArrayList<>();
-  Map<Item, Integer> items; // Map item to quantity
-  Map<BulletType, Integer> bullets; // Map bullet to quantity
-  int currentWeaponIndex;
+  @ExcludeFromGson double speed = 10;
+  @ExcludeFromGson double hp = 100;
+  @ExcludeFromGson Vector2D direction;
+  @ExcludeFromGson List<Weapon> weapons = new ArrayList<>();
+  @ExcludeFromGson Map<Item, Integer> items; // Map item to quantity
+  @ExcludeFromGson Map<BulletType, Integer> bullets; // Map bullet to quantity
+  @ExcludeFromGson int currentWeaponIndex;
   int team;
-  Circle shape = new Circle(30);
-  Circle head = new Circle(10);
+  @ExcludeFromGson Circle shape = new Circle(30);
+  @ExcludeFromGson Circle head = new Circle(10);
 
   public PlayerImpl(String playerId, int team) {
     this.playerId = playerId;

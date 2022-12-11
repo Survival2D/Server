@@ -20,7 +20,6 @@ public class ByteBufferUtil {
     val bytes = new byte[remaining + 1];
     bytes[0] = EZY_FOX_HEADER;
     byteBuffer.get(bytes, EZY_FOX_HEADER_SIZE, remaining);
-    log.info("bytes: {}", bytes);
     return bytes;
   }
 }
