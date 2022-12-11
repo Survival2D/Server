@@ -411,6 +411,19 @@ public class MatchImpl implements Match {
   private byte[] getMatchInfoPacket() {
     val builder = new FlatBufferBuilder(0);
 
+    final int responseOffset = putResponseData(builder);
+
+    Packet.startPacket(builder);
+    Packet.addDataType(builder, PacketData.MatchInfoResponse);
+    Packet.addData(builder, responseOffset);
+    val packetOffset = Packet.endPacket(builder);
+    builder.finish(packetOffset);
+
+    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+    return bytes;
+  }
+
+  public int putResponseData(FlatBufferBuilder builder) {
     int[] playerOffsets = new int[players.size()];
     val players = this.players.values().toArray(new Player[0]);
     for (int i = 0; i < players.length; i++) {
@@ -488,16 +501,11 @@ public class MatchImpl implements Match {
     MatchInfoResponse.startMatchInfoResponse(builder);
     MatchInfoResponse.addPlayers(builder, playersOffset);
     MatchInfoResponse.addMapObjects(builder, mapObjectsOffset);
+    val safeZoneOffset = Vec2.createVec2(
+        builder, safeZones.get(0).getRight().getX(), safeZones.get(0).getRight().getY());
+    MatchInfoResponse.addSafeZone(builder, safeZoneOffset);
     val responseOffset = MatchInfoResponse.endMatchInfoResponse(builder);
-
-    Packet.startPacket(builder);
-    Packet.addDataType(builder, PacketData.MatchInfoResponse);
-    Packet.addData(builder, responseOffset);
-    val packetOffset = Packet.endPacket(builder);
-    builder.finish(packetOffset);
-
-    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    return bytes;
+    return responseOffset;
   }
 
   @Override
@@ -532,19 +540,19 @@ public class MatchImpl implements Match {
 
   public void init() {
     zoneContext = Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
-    initPlayZones();
+    initSafeZones();
     initObstacles();
-    timer.schedule(
-        new TimerTask() {
-          @Override
-          public void run() {
-            start();
-          }
-        },
-        3000);
+//    timer.schedule(
+//        new TimerTask() {
+//          @Override
+//          public void run() {
+//            start();
+//          }
+//        },
+//        3000);
   }
 
-  private void initPlayZones() {
+  private void initSafeZones() {
     safeZones.add(
         new ImmutablePair<>(
             new Circle(GameConfig.getInstance().getDefaultSafeZoneRadius()),
@@ -552,16 +560,16 @@ public class MatchImpl implements Match {
                 GameConfig.getInstance().getDefaultSafeZoneCenterX(),
                 GameConfig.getInstance().getDefaultSafeZoneCenterY())));
     for (val radius : GameConfig.getInstance().getSafeZonesRadius()) {
-      val previousPlayZone = safeZones.get(safeZones.size() - 1);
-      val deltaRadius = previousPlayZone.getLeft().getRadius() - radius;
+      val previousSafeZone = safeZones.get(safeZones.size() - 1);
+      val deltaRadius = previousSafeZone.getLeft().getRadius() - radius;
       safeZones.add(
           new ImmutablePair<>(
               new Circle(radius),
               MathUtil.randomPosition(
-                  previousPlayZone.getRight().getX() - deltaRadius,
-                  previousPlayZone.getRight().getX() + deltaRadius,
-                  previousPlayZone.getRight().getY() - deltaRadius,
-                  previousPlayZone.getRight().getY() + deltaRadius)));
+                  previousSafeZone.getRight().getX() - deltaRadius,
+                  previousSafeZone.getRight().getX() + deltaRadius,
+                  previousSafeZone.getRight().getY() - deltaRadius,
+                  previousSafeZone.getRight().getY() + deltaRadius)));
     }
     nextSafeZone = 1;
   }
@@ -618,7 +626,7 @@ public class MatchImpl implements Match {
 
   private void initObstacles() {
     // TODO: random this
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 600; i++) {
       val tree = new Tree();
       tree.setShape(new Circle(35));
       int tryTime = 0;
@@ -632,7 +640,7 @@ public class MatchImpl implements Match {
       addMapObject(tree);
     }
 
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 700; i++) {
 
       val container = new Container();
       container.setShape(new Rectangle(100, 100));
@@ -682,13 +690,13 @@ public class MatchImpl implements Match {
 
   public void update() {
     currentTick++;
-    updatePlayZone();
+    updateSafeZone();
     updatePlayers();
     updateMapObjects();
   }
 
-  private void updatePlayZone() {
-    if (currentTick % GameConfig.getInstance().getTicksPerPlayZone() != 0) return;
+  private void updateSafeZone() {
+    if (currentTick % GameConfig.getInstance().getTicksPerSafeZone() != 0) return;
     nextSafeZone++;
     {
       val builder = new FlatBufferBuilder(0);
@@ -697,7 +705,7 @@ public class MatchImpl implements Match {
       val responseOffset = survival2d.flatbuffers.SafeZoneMove.endSafeZoneMove(builder);
 
       Packet.startPacket(builder);
-      Packet.addDataType(builder, PacketData.SafeZoneMove);
+      Packet.addDataType(builder, PacketData.SafeZoneMoveResponse);
       Packet.addData(builder, responseOffset);
       val packetOffset = Packet.endPacket(builder);
       builder.finish(packetOffset);
@@ -708,14 +716,14 @@ public class MatchImpl implements Match {
     if (nextSafeZone >= safeZones.size()) {
       return;
     }
-    val playZone = safeZones.get(nextSafeZone);
+    val safeZone = safeZones.get(nextSafeZone);
     val builder = new FlatBufferBuilder(0);
 
     survival2d.flatbuffers.NewSafeZoneResponse.startNewSafeZoneResponse(builder);
-    val playZoneOffset =
+    val safeZoneOffset =
         survival2d.flatbuffers.Vec2.createVec2(
-            builder, playZone.getRight().getX(), playZone.getRight().getY());
-    survival2d.flatbuffers.NewSafeZoneResponse.addSafeZone(builder, playZoneOffset);
+            builder, safeZone.getRight().getX(), safeZone.getRight().getY());
+    survival2d.flatbuffers.NewSafeZoneResponse.addSafeZone(builder, safeZoneOffset);
     val responseOffset = survival2d.flatbuffers.NewSafeZoneResponse.endNewSafeZoneResponse(builder);
 
     Packet.startPacket(builder);

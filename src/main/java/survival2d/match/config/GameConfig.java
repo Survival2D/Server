@@ -18,7 +18,7 @@ public class GameConfig implements PostProcessable {
   private double defaultSafeZoneCenterX;
   private double defaultSafeZoneCenterY;
   private double defaultSafeZoneRadius;
-  private int ticksPerPlayZone;
+  private int ticksPerSafeZone;
 
   public static void load() {
     InstanceHolder.instance =
@@ -34,7 +34,7 @@ public class GameConfig implements PostProcessable {
     defaultSafeZoneCenterX = mapWidth / 2;
     defaultSafeZoneCenterY = mapHeight / 2;
     defaultSafeZoneRadius = mapWidth;
-    ticksPerPlayZone = minutePerSafeZone * 60 * GameConstant.TICK_PER_SECOND;
+    ticksPerSafeZone = minutePerSafeZone * 60 * GameConstant.TICK_PER_SECOND;
   }
 
   private static class InstanceHolder {
