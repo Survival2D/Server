@@ -128,15 +128,15 @@ public class Survival2DStartup {
 
   public static class Survival2dAppEntry extends EzySimpleAppEntry {
 
-    @Override
-    protected String[] getScanableBeanPackages() {
-      return new String[] {PACKAGE_NAME};
-    }
+//    @Override
+//    protected String[] getScanableBeanPackages() {
+//      return new String[] {PACKAGE_NAME};
+//    }
 
-    @Override
-    protected String[] getScanableBindingPackages() {
-      return new String[] {PACKAGE_NAME};
-    }
+//    @Override
+//    protected String[] getScanableBindingPackages() {
+//      return new String[] {PACKAGE_NAME};
+//    }
 
     @Override
     protected void setupBeanContext(EzyAppContext context, EzyBeanContextBuilder builder) {

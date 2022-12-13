@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -101,7 +102,7 @@ public class MatchImpl implements Match {
   public boolean randomPositionForPlayer(String playerId) {
     val player = players.get(playerId);
     val newPosition =
-        new Vector2D(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
+        new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
     player.setPosition(newPosition);
     for (val object : objects.values()) {
       if (object instanceof Obstacle) {
@@ -420,8 +421,7 @@ public class MatchImpl implements Match {
     val packetOffset = Packet.endPacket(builder);
     builder.finish(packetOffset);
 
-    val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    return bytes;
+    return ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
   }
 
   public int putResponseData(FlatBufferBuilder builder) {
@@ -506,8 +506,7 @@ public class MatchImpl implements Match {
         Vec2.createVec2(
             builder, safeZones.get(0).getRight().getX(), safeZones.get(0).getRight().getY());
     MatchInfoResponse.addSafeZone(builder, safeZoneOffset);
-    val responseOffset = MatchInfoResponse.endMatchInfoResponse(builder);
-    return responseOffset;
+    return MatchInfoResponse.endMatchInfoResponse(builder);
   }
 
   @Override
@@ -593,11 +592,13 @@ public class MatchImpl implements Match {
   }
 
   private EzySession getSession(String username) {
-    return getUser(username).getSession();
+    val user = getUser(username);
+    if (user == null) return null;
+    return user.getSession();
   }
 
   private List<EzySession> getSessions(Collection<String> usernames) {
-    return usernames.stream().map(this::getSession).collect(Collectors.toList());
+    return usernames.stream().map(this::getSession).filter(Objects::nonNull).collect(Collectors.toList());
   }
 
   public void stop() {
