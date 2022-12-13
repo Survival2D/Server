@@ -228,9 +228,14 @@ public class MatchImpl implements Match {
   public void makeDamage(String playerId, Vector2D position, Shape shape, double damage) {
     val currentPlayer = players.get(playerId);
     for (val player : players.values()) {
+      //Cùng team thì không tính damage
       if (player.getTeam() == currentPlayer.getTeam()) {
         continue;
       }
+      //Chính người chơi đó thì mới không tính damage
+//      if (Objects.equals(player.getPlayerId(), playerId)) {
+//        continue;
+//      }
       if (player.isDestroyed()) {
         continue;
       }
@@ -242,7 +247,7 @@ public class MatchImpl implements Match {
         player.reduceHp(damage * damageMultiple);
         {
           val builder = new FlatBufferBuilder(0);
-          val usernameOffset = builder.createString(playerId);
+          val usernameOffset = builder.createString(player.getPlayerId());
 
           survival2d.flatbuffers.PlayerTakeDamageResponse.startPlayerTakeDamageResponse(builder);
           survival2d.flatbuffers.PlayerTakeDamageResponse.addUsername(builder, usernameOffset);
@@ -376,15 +381,15 @@ public class MatchImpl implements Match {
     addMapObject(bullet);
     val builder = new FlatBufferBuilder(0);
     val usernameOffset = builder.createString(playerId);
-    val positionOffset =
-        survival2d.flatbuffers.Vec2.createVec2(builder, position.getX(), position.getY());
-    val directionOffset =
-        survival2d.flatbuffers.Vec2.createVec2(builder, direction.getX(), direction.getY());
 
     survival2d.flatbuffers.Bullet.startBullet(builder);
     survival2d.flatbuffers.Bullet.addType(builder, (byte) type.ordinal());
     survival2d.flatbuffers.Bullet.addId(builder, bullet.getId());
+    val positionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, position.getX(), position.getY());
     survival2d.flatbuffers.Bullet.addPosition(builder, positionOffset);
+    val directionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, direction.getX(), direction.getY());
     survival2d.flatbuffers.Bullet.addDirection(builder, directionOffset);
     survival2d.flatbuffers.Bullet.addOwner(builder, usernameOffset);
     val bulletOffset = survival2d.flatbuffers.Bullet.endBullet(builder);
