@@ -439,6 +439,7 @@ public class MatchImpl implements Match {
           Vec2.createVec2(builder, player.getPosition().getX(), player.getPosition().getY());
       survival2d.flatbuffers.Player.addPosition(builder, positionOffset);
       survival2d.flatbuffers.Player.addRotation(builder, player.getRotation());
+      survival2d.flatbuffers.Player.addTeam(builder, player.getTeam());
       playerOffsets[i] = survival2d.flatbuffers.Player.endPlayer(builder);
     }
 
