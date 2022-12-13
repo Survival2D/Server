@@ -12,5 +12,5 @@ public class BulletItem implements Item {
 
   final ItemType itemType = ItemType.BULLET;
   BulletType bulletType;
-  long numBullet;
+  int numBullet;
 }

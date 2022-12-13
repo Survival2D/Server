@@ -851,13 +851,13 @@ public class MatchImpl implements Match {
       val bulletItem = (BulletItem) item;
       itemOffset =
           survival2d.flatbuffers.BulletItem.createBulletItem(
-              builder, (byte) bulletItem.getBulletType().ordinal());
+              builder, (byte) bulletItem.getBulletType().ordinal(), bulletItem.getNumBullet());
     } else if (item instanceof GunItem) {
       itemType = survival2d.flatbuffers.Item.GunItem;
       val gunItem = (GunItem) item;
       itemOffset =
           survival2d.flatbuffers.GunItem.createGunItem(
-              builder, (byte) gunItem.getGunType().ordinal());
+              builder, (byte) gunItem.getGunType().ordinal(), gunItem.getNumBullet());
     }
 
     survival2d.flatbuffers.CreateItemOnMapResponse.startCreateItemOnMapResponse(builder);

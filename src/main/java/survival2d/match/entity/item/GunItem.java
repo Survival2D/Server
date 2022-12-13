@@ -14,5 +14,5 @@ public class GunItem implements Item {
   final ItemType itemType = ItemType.WEAPON;
   final WeaponType weaponType = WeaponType.GUN;
   GunType gunType;
-  long numBullet;
+  int numBullet;
 }
