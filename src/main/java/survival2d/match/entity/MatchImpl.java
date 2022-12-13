@@ -861,6 +861,7 @@ public class MatchImpl implements Match {
     }
 
     survival2d.flatbuffers.CreateItemOnMapResponse.startCreateItemOnMapResponse(builder);
+    survival2d.flatbuffers.CreateItemOnMapResponse.addId(builder, itemOnMap.getId());
     survival2d.flatbuffers.CreateItemOnMapResponse.addItem(builder, itemOffset);
     survival2d.flatbuffers.CreateItemOnMapResponse.addItemType(builder, itemType);
     val positionOffset =
