@@ -813,11 +813,11 @@ public class MatchImpl implements Match {
       for (val action : playerActionMap.values()) {
         handlePlayerAction(player.getPlayerId(), action);
         // TODO: nếu mà client chưa sửa kịp, thì comment 3 dòng sau
-        if (!(action instanceof PlayerMove)) {
-          playerActionMap.remove(action.getClass());
-        }
+        //        if (!(action instanceof PlayerMove)) {
+        //          playerActionMap.remove(action.getClass());
+        //        }
       }
-      //      playerActionMap.clear();
+      playerActionMap.clear();
     }
   }
 
