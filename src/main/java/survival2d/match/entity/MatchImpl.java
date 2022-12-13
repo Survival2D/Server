@@ -151,7 +151,7 @@ public class MatchImpl implements Match {
     survival2d.flatbuffers.PlayerMoveResponse.startPlayerMoveResponse(builder);
     survival2d.flatbuffers.PlayerMoveResponse.addUsername(builder, usernameOffset);
     survival2d.flatbuffers.PlayerMoveResponse.addRotation(builder, rotation);
-    val positionOffset = Vec2.createVec2(builder, direction.getX(), direction.getY());
+    val positionOffset = Vec2.createVec2(builder, player.getPosition().getX(), player.getPosition().getY());
     survival2d.flatbuffers.PlayerMoveResponse.addPosition(builder, positionOffset);
     val responseOffset = survival2d.flatbuffers.PlayerMoveResponse.endPlayerMoveResponse(builder);
 
