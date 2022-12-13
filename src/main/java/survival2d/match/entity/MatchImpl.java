@@ -632,7 +632,7 @@ public class MatchImpl implements Match {
 
   private void initObstacles() {
     // TODO: random this
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 5; i++) {
       val tree = new Tree();
       tree.setShape(new Circle(35));
       int tryTime = 0;
@@ -646,7 +646,7 @@ public class MatchImpl implements Match {
       addMapObject(tree);
     }
 
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 5; i++) {
 
       val container = new Container();
       container.setShape(new Rectangle(100, 100));
