@@ -16,16 +16,20 @@ public final class BulletItem extends Table {
   public BulletItem __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public byte type() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public int numBullet() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createBulletItem(FlatBufferBuilder builder,
-      byte type) {
-    builder.startTable(1);
+      byte type,
+      int numBullet) {
+    builder.startTable(2);
+    BulletItem.addNumBullet(builder, numBullet);
     BulletItem.addType(builder, type);
     return BulletItem.endBulletItem(builder);
   }
 
-  public static void startBulletItem(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void startBulletItem(FlatBufferBuilder builder) { builder.startTable(2); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
+  public static void addNumBullet(FlatBufferBuilder builder, int numBullet) { builder.addInt(1, numBullet, 0); }
   public static int endBulletItem(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
