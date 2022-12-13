@@ -151,7 +151,8 @@ public class MatchImpl implements Match {
     survival2d.flatbuffers.PlayerMoveResponse.startPlayerMoveResponse(builder);
     survival2d.flatbuffers.PlayerMoveResponse.addUsername(builder, usernameOffset);
     survival2d.flatbuffers.PlayerMoveResponse.addRotation(builder, rotation);
-    val positionOffset = Vec2.createVec2(builder, player.getPosition().getX(), player.getPosition().getY());
+    val positionOffset =
+        Vec2.createVec2(builder, player.getPosition().getX(), player.getPosition().getY());
     survival2d.flatbuffers.PlayerMoveResponse.addPosition(builder, positionOffset);
     val responseOffset = survival2d.flatbuffers.PlayerMoveResponse.endPlayerMoveResponse(builder);
 
@@ -566,14 +567,14 @@ public class MatchImpl implements Match {
     for (val radius : GameConfig.getInstance().getSafeZonesRadius()) {
       val previousSafeZone = safeZones.get(safeZones.size() - 1);
       val deltaRadius = previousSafeZone.getLeft().getRadius() - radius;
-      val newPosition = new Vector2D();
-//          CommonConfig.testPing
-//              ? new Vector2D()
-//              : MathUtil.randomPosition(
-//                  previousSafeZone.getRight().getX() - deltaRadius,
-//                  previousSafeZone.getRight().getX() + deltaRadius,
-//                  previousSafeZone.getRight().getY() - deltaRadius,
-//                  previousSafeZone.getRight().getY() + deltaRadius);
+      val newPosition =
+          CommonConfig.testPing
+              ? new Vector2D()
+              : MathUtil.randomPosition(
+                  previousSafeZone.getRight().getX() - deltaRadius,
+                  previousSafeZone.getRight().getX() + deltaRadius,
+                  previousSafeZone.getRight().getY() - deltaRadius,
+                  previousSafeZone.getRight().getY() + deltaRadius);
       safeZones.add(new ImmutablePair<>(new Circle(radius), newPosition));
     }
     nextSafeZone = 1;
@@ -598,7 +599,10 @@ public class MatchImpl implements Match {
   }
 
   private List<EzySession> getSessions(Collection<String> usernames) {
-    return usernames.stream().map(this::getSession).filter(Objects::nonNull).collect(Collectors.toList());
+    return usernames.stream()
+        .map(this::getSession)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
   }
 
   public void stop() {
@@ -633,7 +637,7 @@ public class MatchImpl implements Match {
 
   private void initObstacles() {
     // TODO: random this
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 50; i++) {
       val tree = new Tree();
       tree.setShape(new Circle(35));
       int tryTime = 0;
@@ -647,7 +651,7 @@ public class MatchImpl implements Match {
       addMapObject(tree);
     }
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 50; i++) {
 
       val container = new Container();
       container.setShape(new Rectangle(100, 100));
@@ -859,15 +863,15 @@ public class MatchImpl implements Match {
           survival2d.flatbuffers.GunItem.createGunItem(
               builder, (byte) gunItem.getGunType().ordinal());
     }
-    val positionOffset =
-        survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
-    val rawPositionOffset =
-        survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
 
     survival2d.flatbuffers.CreateItemOnMapResponse.startCreateItemOnMapResponse(builder);
     survival2d.flatbuffers.CreateItemOnMapResponse.addItem(builder, itemOffset);
     survival2d.flatbuffers.CreateItemOnMapResponse.addItemType(builder, itemType);
+    val positionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
     survival2d.flatbuffers.CreateItemOnMapResponse.addPosition(builder, positionOffset);
+    val rawPositionOffset =
+        survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
     survival2d.flatbuffers.CreateItemOnMapResponse.addRawPosition(builder, rawPositionOffset);
     val responseOffset =
         survival2d.flatbuffers.CreateItemOnMapResponse.endCreateItemOnMapResponse(builder);
