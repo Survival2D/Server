@@ -8,6 +8,7 @@ database:
         ignored_suffix: Entity
 server:
   enableAuth: false
+  testPing: false
 game:
   room:
     max_players: 4

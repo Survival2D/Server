@@ -23,6 +23,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.locationtech.jts.math.Vector2D;
+import survival2d.Survival2DStartup;
 import survival2d.flatbuffers.MapObjectData;
 import survival2d.flatbuffers.MatchInfoResponse;
 import survival2d.flatbuffers.Packet;
@@ -34,6 +35,7 @@ import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.config.CommonConfig;
 import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Circle;
@@ -500,8 +502,9 @@ public class MatchImpl implements Match {
     MatchInfoResponse.startMatchInfoResponse(builder);
     MatchInfoResponse.addPlayers(builder, playersOffset);
     MatchInfoResponse.addMapObjects(builder, mapObjectsOffset);
-    val safeZoneOffset = Vec2.createVec2(
-        builder, safeZones.get(0).getRight().getX(), safeZones.get(0).getRight().getY());
+    val safeZoneOffset =
+        Vec2.createVec2(
+            builder, safeZones.get(0).getRight().getX(), safeZones.get(0).getRight().getY());
     MatchInfoResponse.addSafeZone(builder, safeZoneOffset);
     val responseOffset = MatchInfoResponse.endMatchInfoResponse(builder);
     return responseOffset;
@@ -538,17 +541,20 @@ public class MatchImpl implements Match {
   }
 
   public void init() {
-//    zoneContext = Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
+    if (!CommonConfig.testPing) {
+      zoneContext =
+          Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
+      timer.schedule(
+          new TimerTask() {
+            @Override
+            public void run() {
+              start();
+            }
+          },
+          3000);
+    }
     initSafeZones();
     initObstacles();
-//    timer.schedule(
-//        new TimerTask() {
-//          @Override
-//          public void run() {
-//            start();
-//          }
-//        },
-//        3000);
   }
 
   private void initSafeZones() {
@@ -561,16 +567,15 @@ public class MatchImpl implements Match {
     for (val radius : GameConfig.getInstance().getSafeZonesRadius()) {
       val previousSafeZone = safeZones.get(safeZones.size() - 1);
       val deltaRadius = previousSafeZone.getLeft().getRadius() - radius;
-      safeZones.add(
-          new ImmutablePair<>(
-              new Circle(radius),
-new Vector2D(0, 0)
-//              MathUtil.randomPosition(
+      val newPosition = new Vector2D();
+//          CommonConfig.testPing
+//              ? new Vector2D()
+//              : MathUtil.randomPosition(
 //                  previousSafeZone.getRight().getX() - deltaRadius,
 //                  previousSafeZone.getRight().getX() + deltaRadius,
 //                  previousSafeZone.getRight().getY() - deltaRadius,
-//                  previousSafeZone.getRight().getY() + deltaRadius)
-          ));
+//                  previousSafeZone.getRight().getY() + deltaRadius);
+      safeZones.add(new ImmutablePair<>(new Circle(radius), newPosition));
     }
     nextSafeZone = 1;
   }
