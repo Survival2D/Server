@@ -332,10 +332,7 @@ public class MatchImpl implements Match {
           if (obstacle instanceof Containable) {
             val containable = (Containable) obstacle;
             for (val item : containable.getItems()) {
-              createItemOnMap(
-                  item,
-                  obstacle.getPosition().add(MathUtil.randomPosition(-10, 10, -10, 10)),
-                  obstacle.getPosition());
+              createItemOnMap(item, obstacle.getPosition());
             }
           }
         }
@@ -639,7 +636,7 @@ public class MatchImpl implements Match {
     // TODO: random this
     for (int i = 0; i < 50; i++) {
       val tree = new Tree();
-      tree.setShape(new Circle(35));
+      tree.setShape(new Circle(50));
       int tryTime = 0;
       while (!randomPositionForObstacle(tree)) {
         tryTime++;
@@ -654,7 +651,7 @@ public class MatchImpl implements Match {
     for (int i = 0; i < 50; i++) {
 
       val container = new Container();
-      container.setShape(new Rectangle(100, 100));
+      container.setShape(new Rectangle(200, 200));
       container.setItems(
           Arrays.asList(
               GunItem.builder().gunType(GunType.NORMAL).numBullet(10).build(),
@@ -841,11 +838,10 @@ public class MatchImpl implements Match {
     }
   }
 
-  private void createItemOnMap(Item item, Vector2D position, Vector2D rawPosition) {
-    val randomNeighborPosition =
-        new Vector2D(RandomUtils.nextDouble(0, 20) - 10, RandomUtils.nextDouble(0, 20) - 10);
-    val itemOnMap =
-        ItemOnMap.builder().item(item).position(position.add(randomNeighborPosition)).build();
+  private void createItemOnMap(Item item, Vector2D rawPosition) {
+    val randomNeighborPosition = MathUtil.randomPosition(-100, 100, -100, 100);
+    val position = rawPosition.add(randomNeighborPosition);
+    val itemOnMap = ItemOnMap.builder().item(item).position(position).build();
     addMapObject(itemOnMap);
     val builder = new FlatBufferBuilder(0);
     var itemOffset = 0;
@@ -868,7 +864,7 @@ public class MatchImpl implements Match {
     survival2d.flatbuffers.CreateItemOnMapResponse.addItem(builder, itemOffset);
     survival2d.flatbuffers.CreateItemOnMapResponse.addItemType(builder, itemType);
     val positionOffset =
-        survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
+        survival2d.flatbuffers.Vec2.createVec2(builder, position.getX(), position.getY());
     survival2d.flatbuffers.CreateItemOnMapResponse.addPosition(builder, positionOffset);
     val rawPositionOffset =
         survival2d.flatbuffers.Vec2.createVec2(builder, rawPosition.getX(), rawPosition.getY());
