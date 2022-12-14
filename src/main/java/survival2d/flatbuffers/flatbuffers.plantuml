@@ -1,0 +1,1585 @@
+@startuml
+
+title __FLATBUFFERS's Class Diagram__\n
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.BandageItem {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endBandageItem()
+          {static} + getRootAsBandageItem()
+          {static} + getRootAsBandageItem()
+          {static} + startBandageItem()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.BandageItem.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Bullet {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addDirection()
+          {static} + addId()
+          {static} + addOwner()
+          {static} + addPosition()
+          {static} + addType()
+          + direction()
+          + direction()
+          {static} + endBullet()
+          {static} + getRootAsBullet()
+          {static} + getRootAsBullet()
+          + id()
+          + owner()
+          + ownerAsByteBuffer()
+          + ownerInByteBuffer()
+          + position()
+          + position()
+          {static} + startBullet()
+          + type()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Bullet.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.BulletItem {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addType()
+          {static} + createBulletItem()
+          {static} + endBulletItem()
+          {static} + getRootAsBulletItem()
+          {static} + getRootAsBulletItem()
+          {static} + startBulletItem()
+          + type()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.BulletItem.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.BulletType {
+          {static} + NORMAL : byte
+          {static} + names : String[]
+          {static} + name()
+          - BulletType()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.BulletWithQuantity {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addNum()
+          {static} + addType()
+          {static} + createBulletWithQuantity()
+          {static} + endBulletWithQuantity()
+          {static} + getRootAsBulletWithQuantity()
+          {static} + getRootAsBulletWithQuantity()
+          + num()
+          {static} + startBulletWithQuantity()
+          + type()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.BulletWithQuantity.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Container {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endContainer()
+          {static} + getRootAsContainer()
+          {static} + getRootAsContainer()
+          {static} + startContainer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Container.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.CreateBulletOnMapResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addBullet()
+          + bullet()
+          + bullet()
+          {static} + createCreateBulletOnMapResponse()
+          {static} + endCreateBulletOnMapResponse()
+          {static} + getRootAsCreateBulletOnMapResponse()
+          {static} + getRootAsCreateBulletOnMapResponse()
+          {static} + startCreateBulletOnMapResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.CreateBulletOnMapResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.CreateItemOnMapResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addItem()
+          {static} + addItemType()
+          {static} + addPosition()
+          {static} + addRawPosition()
+          {static} + endCreateItemOnMapResponse()
+          {static} + getRootAsCreateItemOnMapResponse()
+          {static} + getRootAsCreateItemOnMapResponse()
+          + item()
+          + itemType()
+          + position()
+          + position()
+          + rawPosition()
+          + rawPosition()
+          {static} + startCreateItemOnMapResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.CreateItemOnMapResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.EndGameResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addWinTeam()
+          {static} + createEndGameResponse()
+          {static} + endEndGameResponse()
+          {static} + getRootAsEndGameResponse()
+          {static} + getRootAsEndGameResponse()
+          {static} + startEndGameResponse()
+          + winTeam()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.EndGameResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Gun {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addRemainBullets()
+          {static} + addType()
+          {static} + createGun()
+          {static} + endGun()
+          {static} + getRootAsGun()
+          {static} + getRootAsGun()
+          + remainBullets()
+          {static} + startGun()
+          + type()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Gun.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.GunItem {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addType()
+          {static} + createGunItem()
+          {static} + endGunItem()
+          {static} + getRootAsGunItem()
+          {static} + getRootAsGunItem()
+          {static} + startGunItem()
+          + type()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.GunItem.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.GunType {
+          {static} + NORMAL : byte
+          {static} + names : String[]
+          {static} + name()
+          - GunType()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Hand {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endHand()
+          {static} + getRootAsHand()
+          {static} + getRootAsHand()
+          {static} + startHand()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Hand.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.HelmetItem {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endHelmetItem()
+          {static} + getRootAsHelmetItem()
+          {static} + getRootAsHelmetItem()
+          {static} + startHelmetItem()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.HelmetItem.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Item {
+          {static} + BulletItem : byte
+          {static} + GunItem : byte
+          {static} + NONE : byte
+          {static} + names : String[]
+          {static} + name()
+          - Item()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MapObject {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addData()
+          {static} + addDataType()
+          {static} + addId()
+          {static} + addPosition()
+          + data()
+          + dataType()
+          {static} + endMapObject()
+          {static} + getRootAsMapObject()
+          {static} + getRootAsMapObject()
+          + id()
+          + position()
+          + position()
+          {static} + startMapObject()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MapObject.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MapObjectData {
+          {static} + BandageItem : byte
+          {static} + BulletItem : byte
+          {static} + Container : byte
+          {static} + GunItem : byte
+          {static} + HelmetItem : byte
+          {static} + MedKitItem : byte
+          {static} + NONE : byte
+          {static} + Stone : byte
+          {static} + Tree : byte
+          {static} + VestItem : byte
+          {static} + Wall : byte
+          {static} + names : String[]
+          {static} + name()
+          - MapObjectData()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MatchInfoRequest {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endMatchInfoRequest()
+          {static} + getRootAsMatchInfoRequest()
+          {static} + getRootAsMatchInfoRequest()
+          {static} + startMatchInfoRequest()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MatchInfoRequest.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MatchInfoResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addMapObjects()
+          {static} + addPlayZone()
+          {static} + addPlayers()
+          {static} + createMapObjectsVector()
+          {static} + createPlayersVector()
+          {static} + endMatchInfoResponse()
+          {static} + getRootAsMatchInfoResponse()
+          {static} + getRootAsMatchInfoResponse()
+          + mapObjects()
+          + mapObjects()
+          + mapObjectsLength()
+          + mapObjectsVector()
+          + mapObjectsVector()
+          + playZone()
+          + playZone()
+          + players()
+          + players()
+          + playersLength()
+          + playersVector()
+          + playersVector()
+          {static} + startMapObjectsVector()
+          {static} + startMatchInfoResponse()
+          {static} + startPlayersVector()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MatchInfoResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MedKitItem {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endMedKitItem()
+          {static} + getRootAsMedKitItem()
+          {static} + getRootAsMedKitItem()
+          {static} + startMedKitItem()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.MedKitItem.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.NewSafeZoneResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addSafeZone()
+          {static} + endNewSafeZoneResponse()
+          {static} + getRootAsNewSafeZoneResponse()
+          {static} + getRootAsNewSafeZoneResponse()
+          + safeZone()
+          + safeZone()
+          {static} + startNewSafeZoneResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.NewSafeZoneResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.ObstacleDestroyResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addId()
+          {static} + createObstacleDestroyResponse()
+          {static} + endObstacleDestroyResponse()
+          {static} + getRootAsObstacleDestroyResponse()
+          {static} + getRootAsObstacleDestroyResponse()
+          + id()
+          {static} + startObstacleDestroyResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.ObstacleDestroyResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.ObstacleTakeDamageResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addId()
+          {static} + addRemainHp()
+          {static} + createObstacleTakeDamageResponse()
+          {static} + endObstacleTakeDamageResponse()
+          {static} + getRootAsObstacleTakeDamageResponse()
+          {static} + getRootAsObstacleTakeDamageResponse()
+          + id()
+          + remainHp()
+          {static} + startObstacleTakeDamageResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.ObstacleTakeDamageResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Packet {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addData()
+          {static} + addDataType()
+          {static} + createPacket()
+          + data()
+          + dataType()
+          {static} + endPacket()
+          {static} + finishPacketBuffer()
+          {static} + finishSizePrefixedPacketBuffer()
+          {static} + getRootAsPacket()
+          {static} + getRootAsPacket()
+          {static} + startPacket()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Packet.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PacketData {
+          {static} + CreateBulletOnMapResponse : byte
+          {static} + CreateItemOnMapResponse : byte
+          {static} + EndGameResponse : byte
+          {static} + MatchInfoRequest : byte
+          {static} + MatchInfoResponse : byte
+          {static} + NONE : byte
+          {static} + NewSafeZoneResponse : byte
+          {static} + ObstacleDestroyResponse : byte
+          {static} + ObstacleTakeDamageResponse : byte
+          {static} + PlayerAttackRequest : byte
+          {static} + PlayerAttackResponse : byte
+          {static} + PlayerChangeWeaponRequest : byte
+          {static} + PlayerChangeWeaponResponse : byte
+          {static} + PlayerDeadResponse : byte
+          {static} + PlayerInfoResponse : byte
+          {static} + PlayerMoveRequest : byte
+          {static} + PlayerMoveResponse : byte
+          {static} + PlayerReloadWeaponRequest : byte
+          {static} + PlayerReloadWeaponResponse : byte
+          {static} + PlayerTakeDamageResponse : byte
+          {static} + PlayerTakeItemRequest : byte
+          {static} + PlayerTakeItemResponse : byte
+          {static} + SafeZoneMove : byte
+          {static} + StartGameResponse : byte
+          {static} + names : String[]
+          {static} + name()
+          - PacketData()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Player {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addPosition()
+          {static} + addRotation()
+          {static} + addTeam()
+          {static} + addUsername()
+          {static} + endPlayer()
+          {static} + getRootAsPlayer()
+          {static} + getRootAsPlayer()
+          + position()
+          + position()
+          + rotation()
+          {static} + startPlayer()
+          + team()
+          + username()
+          + usernameAsByteBuffer()
+          + usernameInByteBuffer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Player.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerAttackRequest {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endPlayerAttackRequest()
+          {static} + getRootAsPlayerAttackRequest()
+          {static} + getRootAsPlayerAttackRequest()
+          {static} + startPlayerAttackRequest()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerAttackRequest.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerAttackResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addPosition()
+          {static} + addSlot()
+          {static} + addUsername()
+          {static} + endPlayerAttackResponse()
+          {static} + getRootAsPlayerAttackResponse()
+          {static} + getRootAsPlayerAttackResponse()
+          + position()
+          + position()
+          + slot()
+          {static} + startPlayerAttackResponse()
+          + username()
+          + usernameAsByteBuffer()
+          + usernameInByteBuffer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerAttackResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerChangeWeaponRequest {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addSlot()
+          {static} + createPlayerChangeWeaponRequest()
+          {static} + endPlayerChangeWeaponRequest()
+          {static} + getRootAsPlayerChangeWeaponRequest()
+          {static} + getRootAsPlayerChangeWeaponRequest()
+          + slot()
+          {static} + startPlayerChangeWeaponRequest()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerChangeWeaponRequest.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerChangeWeaponResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addSlot()
+          {static} + addUsername()
+          {static} + createPlayerChangeWeaponResponse()
+          {static} + endPlayerChangeWeaponResponse()
+          {static} + getRootAsPlayerChangeWeaponResponse()
+          {static} + getRootAsPlayerChangeWeaponResponse()
+          + slot()
+          {static} + startPlayerChangeWeaponResponse()
+          + username()
+          + usernameAsByteBuffer()
+          + usernameInByteBuffer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerChangeWeaponResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerDeadResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addUsername()
+          {static} + createPlayerDeadResponse()
+          {static} + endPlayerDeadResponse()
+          {static} + getRootAsPlayerDeadResponse()
+          {static} + getRootAsPlayerDeadResponse()
+          {static} + startPlayerDeadResponse()
+          + username()
+          + usernameAsByteBuffer()
+          + usernameInByteBuffer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerDeadResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerDropItemRequest {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addId()
+          {static} + createPlayerDropItemRequest()
+          {static} + endPlayerDropItemRequest()
+          {static} + getRootAsPlayerDropItemRequest()
+          {static} + getRootAsPlayerDropItemRequest()
+          + id()
+          {static} + startPlayerDropItemRequest()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerDropItemRequest.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerDropItemResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endPlayerDropItemResponse()
+          {static} + getRootAsPlayerDropItemResponse()
+          {static} + getRootAsPlayerDropItemResponse()
+          {static} + startPlayerDropItemResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerDropItemResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerInfoResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addBullets()
+          {static} + addHp()
+          {static} + addWeapon()
+          + bullets()
+          + bullets()
+          + bulletsLength()
+          + bulletsVector()
+          + bulletsVector()
+          {static} + createBulletsVector()
+          {static} + createPlayerInfoResponse()
+          {static} + createWeaponVector()
+          {static} + endPlayerInfoResponse()
+          {static} + getRootAsPlayerInfoResponse()
+          {static} + getRootAsPlayerInfoResponse()
+          + hp()
+          {static} + startBulletsVector()
+          {static} + startPlayerInfoResponse()
+          {static} + startWeaponVector()
+          + weapon()
+          + weapon()
+          + weaponLength()
+          + weaponVector()
+          + weaponVector()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerInfoResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerMoveRequest {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addDirection()
+          {static} + addRotation()
+          + direction()
+          + direction()
+          {static} + endPlayerMoveRequest()
+          {static} + getRootAsPlayerMoveRequest()
+          {static} + getRootAsPlayerMoveRequest()
+          + rotation()
+          {static} + startPlayerMoveRequest()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerMoveRequest.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerMoveResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addPosition()
+          {static} + addRotation()
+          {static} + addUsername()
+          {static} + endPlayerMoveResponse()
+          {static} + getRootAsPlayerMoveResponse()
+          {static} + getRootAsPlayerMoveResponse()
+          + position()
+          + position()
+          + rotation()
+          {static} + startPlayerMoveResponse()
+          + username()
+          + usernameAsByteBuffer()
+          + usernameInByteBuffer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerMoveResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerReloadWeaponRequest {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endPlayerReloadWeaponRequest()
+          {static} + getRootAsPlayerReloadWeaponRequest()
+          {static} + getRootAsPlayerReloadWeaponRequest()
+          {static} + startPlayerReloadWeaponRequest()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerReloadWeaponRequest.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerReloadWeaponResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addRemainBullets()
+          {static} + addRemainBulletsInGun()
+          {static} + createPlayerReloadWeaponResponse()
+          {static} + endPlayerReloadWeaponResponse()
+          {static} + getRootAsPlayerReloadWeaponResponse()
+          {static} + getRootAsPlayerReloadWeaponResponse()
+          + remainBullets()
+          + remainBulletsInGun()
+          {static} + startPlayerReloadWeaponResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerReloadWeaponResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerTakeDamageResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addRemainHp()
+          {static} + addUsername()
+          {static} + createPlayerTakeDamageResponse()
+          {static} + endPlayerTakeDamageResponse()
+          {static} + getRootAsPlayerTakeDamageResponse()
+          {static} + getRootAsPlayerTakeDamageResponse()
+          + remainHp()
+          {static} + startPlayerTakeDamageResponse()
+          + username()
+          + usernameAsByteBuffer()
+          + usernameInByteBuffer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerTakeDamageResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerTakeItemRequest {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endPlayerTakeItemRequest()
+          {static} + getRootAsPlayerTakeItemRequest()
+          {static} + getRootAsPlayerTakeItemRequest()
+          {static} + startPlayerTakeItemRequest()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerTakeItemRequest.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerTakeItemResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addId()
+          {static} + addUsername()
+          {static} + createPlayerTakeItemResponse()
+          {static} + endPlayerTakeItemResponse()
+          {static} + getRootAsPlayerTakeItemResponse()
+          {static} + getRootAsPlayerTakeItemResponse()
+          + id()
+          {static} + startPlayerTakeItemResponse()
+          + username()
+          + usernameAsByteBuffer()
+          + usernameInByteBuffer()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.PlayerTakeItemResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.SafeZoneMove {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endSafeZoneMove()
+          {static} + getRootAsSafeZoneMove()
+          {static} + getRootAsSafeZoneMove()
+          {static} + startSafeZoneMove()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.SafeZoneMove.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.StartGameResponse {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endStartGameResponse()
+          {static} + getRootAsStartGameResponse()
+          {static} + getRootAsStartGameResponse()
+          {static} + startStartGameResponse()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.StartGameResponse.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Stone {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endStone()
+          {static} + getRootAsStone()
+          {static} + getRootAsStone()
+          {static} + startStone()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Stone.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Tree {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endTree()
+          {static} + getRootAsTree()
+          {static} + getRootAsTree()
+          {static} + startTree()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Tree.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Vec2 {
+          + __assign()
+          + __init()
+          {static} + createVec2()
+          + x()
+          + y()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Vec2.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.VestItem {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endVestItem()
+          {static} + getRootAsVestItem()
+          {static} + getRootAsVestItem()
+          {static} + startVestItem()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.VestItem.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Wall {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + endWall()
+          {static} + getRootAsWall()
+          {static} + getRootAsWall()
+          {static} + startWall()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Wall.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Weapon {
+          {static} + ValidateVersion()
+          + __assign()
+          + __init()
+          {static} + addData()
+          {static} + addDataType()
+          {static} + createWeapon()
+          + data()
+          + dataType()
+          {static} + endWeapon()
+          {static} + getRootAsWeapon()
+          {static} + getRootAsWeapon()
+          {static} + startWeapon()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.Weapon.Vector {
+          + __assign()
+          + get()
+          + get()
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace flatbuffers {
+      class survival2d.flatbuffers.WeaponData {
+          {static} + Gun : byte
+          {static} + Hand : byte
+          {static} + NONE : byte
+          {static} + names : String[]
+          {static} + name()
+          - WeaponData()
+      }
+    }
+  }
+  
+
+  survival2d.flatbuffers.BandageItem -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.BandageItem +-down- survival2d.flatbuffers.BandageItem.Vector
+  survival2d.flatbuffers.BandageItem.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Bullet -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Bullet +-down- survival2d.flatbuffers.Bullet.Vector
+  survival2d.flatbuffers.Bullet.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.BulletItem -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.BulletItem +-down- survival2d.flatbuffers.BulletItem.Vector
+  survival2d.flatbuffers.BulletItem.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.BulletWithQuantity -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.BulletWithQuantity +-down- survival2d.flatbuffers.BulletWithQuantity.Vector
+  survival2d.flatbuffers.BulletWithQuantity.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Container -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Container +-down- survival2d.flatbuffers.Container.Vector
+  survival2d.flatbuffers.Container.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.CreateBulletOnMapResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.CreateBulletOnMapResponse +-down- survival2d.flatbuffers.CreateBulletOnMapResponse.Vector
+  survival2d.flatbuffers.CreateBulletOnMapResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.CreateItemOnMapResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.CreateItemOnMapResponse +-down- survival2d.flatbuffers.CreateItemOnMapResponse.Vector
+  survival2d.flatbuffers.CreateItemOnMapResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.EndGameResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.EndGameResponse +-down- survival2d.flatbuffers.EndGameResponse.Vector
+  survival2d.flatbuffers.EndGameResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Gun -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Gun +-down- survival2d.flatbuffers.Gun.Vector
+  survival2d.flatbuffers.Gun.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.GunItem -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.GunItem +-down- survival2d.flatbuffers.GunItem.Vector
+  survival2d.flatbuffers.GunItem.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Hand -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Hand +-down- survival2d.flatbuffers.Hand.Vector
+  survival2d.flatbuffers.Hand.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.HelmetItem -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.HelmetItem +-down- survival2d.flatbuffers.HelmetItem.Vector
+  survival2d.flatbuffers.HelmetItem.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.MapObject -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.MapObject +-down- survival2d.flatbuffers.MapObject.Vector
+  survival2d.flatbuffers.MapObject.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.MatchInfoRequest -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.MatchInfoRequest +-down- survival2d.flatbuffers.MatchInfoRequest.Vector
+  survival2d.flatbuffers.MatchInfoRequest.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.MatchInfoResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.MatchInfoResponse +-down- survival2d.flatbuffers.MatchInfoResponse.Vector
+  survival2d.flatbuffers.MatchInfoResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.MedKitItem -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.MedKitItem +-down- survival2d.flatbuffers.MedKitItem.Vector
+  survival2d.flatbuffers.MedKitItem.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.NewSafeZoneResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.NewSafeZoneResponse +-down- survival2d.flatbuffers.NewSafeZoneResponse.Vector
+  survival2d.flatbuffers.NewSafeZoneResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.ObstacleDestroyResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.ObstacleDestroyResponse +-down- survival2d.flatbuffers.ObstacleDestroyResponse.Vector
+  survival2d.flatbuffers.ObstacleDestroyResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.ObstacleTakeDamageResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.ObstacleTakeDamageResponse +-down- survival2d.flatbuffers.ObstacleTakeDamageResponse.Vector
+  survival2d.flatbuffers.ObstacleTakeDamageResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Packet -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Packet +-down- survival2d.flatbuffers.Packet.Vector
+  survival2d.flatbuffers.Packet.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Player -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Player +-down- survival2d.flatbuffers.Player.Vector
+  survival2d.flatbuffers.Player.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerAttackRequest -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerAttackRequest +-down- survival2d.flatbuffers.PlayerAttackRequest.Vector
+  survival2d.flatbuffers.PlayerAttackRequest.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerAttackResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerAttackResponse +-down- survival2d.flatbuffers.PlayerAttackResponse.Vector
+  survival2d.flatbuffers.PlayerAttackResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerChangeWeaponRequest -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerChangeWeaponRequest +-down- survival2d.flatbuffers.PlayerChangeWeaponRequest.Vector
+  survival2d.flatbuffers.PlayerChangeWeaponRequest.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerChangeWeaponResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerChangeWeaponResponse +-down- survival2d.flatbuffers.PlayerChangeWeaponResponse.Vector
+  survival2d.flatbuffers.PlayerChangeWeaponResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerDeadResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerDeadResponse +-down- survival2d.flatbuffers.PlayerDeadResponse.Vector
+  survival2d.flatbuffers.PlayerDeadResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerDropItemRequest -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerDropItemRequest +-down- survival2d.flatbuffers.PlayerDropItemRequest.Vector
+  survival2d.flatbuffers.PlayerDropItemRequest.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerDropItemResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerDropItemResponse +-down- survival2d.flatbuffers.PlayerDropItemResponse.Vector
+  survival2d.flatbuffers.PlayerDropItemResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerInfoResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerInfoResponse +-down- survival2d.flatbuffers.PlayerInfoResponse.Vector
+  survival2d.flatbuffers.PlayerInfoResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerMoveRequest -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerMoveRequest +-down- survival2d.flatbuffers.PlayerMoveRequest.Vector
+  survival2d.flatbuffers.PlayerMoveRequest.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerMoveResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerMoveResponse +-down- survival2d.flatbuffers.PlayerMoveResponse.Vector
+  survival2d.flatbuffers.PlayerMoveResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerReloadWeaponRequest -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerReloadWeaponRequest +-down- survival2d.flatbuffers.PlayerReloadWeaponRequest.Vector
+  survival2d.flatbuffers.PlayerReloadWeaponRequest.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerReloadWeaponResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerReloadWeaponResponse +-down- survival2d.flatbuffers.PlayerReloadWeaponResponse.Vector
+  survival2d.flatbuffers.PlayerReloadWeaponResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerTakeDamageResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerTakeDamageResponse +-down- survival2d.flatbuffers.PlayerTakeDamageResponse.Vector
+  survival2d.flatbuffers.PlayerTakeDamageResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerTakeItemRequest -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerTakeItemRequest +-down- survival2d.flatbuffers.PlayerTakeItemRequest.Vector
+  survival2d.flatbuffers.PlayerTakeItemRequest.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.PlayerTakeItemResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.PlayerTakeItemResponse +-down- survival2d.flatbuffers.PlayerTakeItemResponse.Vector
+  survival2d.flatbuffers.PlayerTakeItemResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.SafeZoneMove -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.SafeZoneMove +-down- survival2d.flatbuffers.SafeZoneMove.Vector
+  survival2d.flatbuffers.SafeZoneMove.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.StartGameResponse -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.StartGameResponse +-down- survival2d.flatbuffers.StartGameResponse.Vector
+  survival2d.flatbuffers.StartGameResponse.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Stone -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Stone +-down- survival2d.flatbuffers.Stone.Vector
+  survival2d.flatbuffers.Stone.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Tree -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Tree +-down- survival2d.flatbuffers.Tree.Vector
+  survival2d.flatbuffers.Tree.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Vec2 -up-|> com.google.flatbuffers.Struct
+  survival2d.flatbuffers.Vec2 +-down- survival2d.flatbuffers.Vec2.Vector
+  survival2d.flatbuffers.Vec2.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.VestItem -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.VestItem +-down- survival2d.flatbuffers.VestItem.Vector
+  survival2d.flatbuffers.VestItem.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Wall -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Wall +-down- survival2d.flatbuffers.Wall.Vector
+  survival2d.flatbuffers.Wall.Vector -up-|> com.google.flatbuffers.BaseVector
+  survival2d.flatbuffers.Weapon -up-|> com.google.flatbuffers.Table
+  survival2d.flatbuffers.Weapon +-down- survival2d.flatbuffers.Weapon.Vector
+  survival2d.flatbuffers.Weapon.Vector -up-|> com.google.flatbuffers.BaseVector
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

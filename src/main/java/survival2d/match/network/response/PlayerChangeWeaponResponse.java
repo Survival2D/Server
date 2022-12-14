@@ -1,6 +1,6 @@
 package survival2d.match.network.response;
 
-import survival2d.match.entity.Weapon;
+import survival2d.match.entity.weapon.Weapon;
 import survival2d.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyMarshaller;
 import com.tvd12.ezyfox.binding.EzyWriter;

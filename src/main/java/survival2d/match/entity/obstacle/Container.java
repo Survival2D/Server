@@ -4,7 +4,7 @@ import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.Rectangle;
-import survival2d.match.entity.weapon.Containable;
+import survival2d.match.entity.base.Containable;
 import java.util.List;
 import lombok.Data;
 import org.locationtech.jts.math.Vector2D;

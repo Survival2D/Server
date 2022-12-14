@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import survival2d.match.entity.Match;
-import survival2d.match.entity.MatchImpl;
+import survival2d.match.entity.match.Match;
+import survival2d.match.entity.match.MatchImpl;
 import survival2d.service.LobbyTeamService;
 import survival2d.service.MatchingService;
 
