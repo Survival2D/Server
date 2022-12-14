@@ -1,7 +1,7 @@
 package survival2d.misc.util;
 
 import org.locationtech.jts.math.Vector2D;
-import survival2d.match.entity.MatchImpl;
+import survival2d.match.entity.match.MatchImpl;
 
 public class SamplePingData {
   public static String username = "player_9999";

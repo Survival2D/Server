@@ -11,4 +11,9 @@ public class BulletItem implements Item {
   final ItemType itemType = ItemType.BULLET;
   BulletType bulletType;
   int numBullet;
+
+  public BulletItem(BulletType bulletType, int numBullet) {
+    this.bulletType = bulletType;
+    this.numBullet = numBullet;
+  }
 }
