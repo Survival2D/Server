@@ -36,7 +36,7 @@ import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
-import survival2d.match.config.CommonConfig;
+import survival2d.common.CommonConfig;
 import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Circle;

@@ -2,7 +2,7 @@ package survival2d.login;
 
 import static com.tvd12.ezyfoxserver.constant.EzyEventNames.USER_LOGIN;
 
-import survival2d.login.config.LoginConfig;
+import survival2d.common.CommonConfig;
 import survival2d.login.entity.User;
 import survival2d.login.service.UserService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
@@ -32,7 +32,7 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
     String username = event.getUsername();
     logger.info("{} login in", username);
 
-    if (LoginConfig.isEnableAuth) {
+    if (CommonConfig.isEnableAuth) {
       String password = event.getPassword();
       loginWithAuth(username, password);
     } else {
@@ -52,7 +52,7 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
     if (EzyStrings.isNoContent(username)) {
       throw new EzyLoginErrorException(EzyLoginError.INVALID_USERNAME);
     }
-    if (LoginConfig.isEnableAuth && EzyStrings.isNoContent(password)) {
+    if (CommonConfig.isEnableAuth && EzyStrings.isNoContent(password)) {
       throw new EzyLoginErrorException(EzyLoginError.INVALID_PASSWORD);
     }
     User user = userService.getUser(username);

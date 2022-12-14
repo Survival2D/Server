@@ -1,6 +1,7 @@
 package survival2d.match.config;
 
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import survival2d.match.constant.GameConstant;
 import survival2d.util.config.ConfigReader;
@@ -19,6 +20,7 @@ public class GameConfig implements PostProcessable {
   private double defaultSafeZoneCenterY;
   private double defaultSafeZoneRadius;
   private int ticksPerSafeZone;
+  private Map<Integer, ObstacleConfig> obstacles;
 
   public static void load() {
     InstanceHolder.instance =

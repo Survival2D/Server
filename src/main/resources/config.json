@@ -7,5 +7,27 @@
     50,
     0
   ],
-  "minutePerSafeZone": 3
+  "minutePerSafeZone": 3,
+  "obstacles": {
+    "1": {
+      "width": 1,
+      "height": 1,
+      "weight": 2
+    },
+    "2": {
+      "width": 1,
+      "height": 1,
+      "weight": 2
+    },
+    "3": {
+      "width": 2,
+      "height": 2,
+      "weight": 2
+    },
+    "4": {
+      "width": 2,
+      "height": 2,
+      "weight": 1
+    }
+  }
 }
