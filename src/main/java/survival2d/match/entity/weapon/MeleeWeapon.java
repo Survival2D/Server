@@ -1,6 +1,6 @@
 package survival2d.match.entity.weapon;
 
-//public class MeleeWeapon extends Weapon {
+// public class MeleeWeapon extends Weapon {
 //
 //  @Override
 //  public WeaponType getWeaponType() {
@@ -11,4 +11,4 @@ package survival2d.match.entity.weapon;
 //  public final AttachType getAttachType() {
 //    return AttachType.MELEE;
 //  }
-//}
+// }

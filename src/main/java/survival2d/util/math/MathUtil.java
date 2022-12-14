@@ -2,7 +2,7 @@ package survival2d.util.math;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Circle;
 import survival2d.match.entity.base.Dot;
 import survival2d.match.entity.base.Rectangle;
@@ -11,8 +11,6 @@ import survival2d.util.random.RandomUtil;
 
 @Slf4j
 public class MathUtil {
-
-  public static final Vector2D ZERO = new Vector2D(0, 0);
 
   public static Vector2D randomPosition(double fromX, double toX, double fromY, double toY) {
     return new Vector2D(RandomUtil.random(fromX, toX), RandomUtil.random(fromY, toY));
@@ -23,7 +21,7 @@ public class MathUtil {
   }
 
   public static boolean isZero(Vector2D vector) {
-    return vector.equals(ZERO);
+    return vector.equals(Vector2D.ZERO);
   }
 
   public static boolean isCollision(Vector2D v1, Shape s1, Vector2D v2, Shape s2) {

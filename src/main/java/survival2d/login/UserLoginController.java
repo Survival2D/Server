@@ -2,9 +2,6 @@ package survival2d.login;
 
 import static com.tvd12.ezyfoxserver.constant.EzyEventNames.USER_LOGIN;
 
-import survival2d.common.CommonConfig;
-import survival2d.login.entity.User;
-import survival2d.login.service.UserService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
 import com.tvd12.ezyfox.core.annotation.EzyEventHandler;
@@ -16,6 +13,9 @@ import com.tvd12.ezyfoxserver.controller.EzyAbstractPluginEventController;
 import com.tvd12.ezyfoxserver.event.EzyUserLoginEvent;
 import com.tvd12.ezyfoxserver.exception.EzyLoginErrorException;
 import org.apache.commons.lang3.RandomStringUtils;
+import survival2d.common.CommonConfig;
+import survival2d.login.entity.User;
+import survival2d.login.service.UserService;
 
 @EzySingleton
 @EzyEventHandler(USER_LOGIN)
@@ -23,8 +23,7 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
 
   public static final int DEFAULT_RANDOM_USERNAME_LENGTH = 10;
 
-  @EzyAutoBind
-  private UserService userService;
+  @EzyAutoBind private UserService userService;
 
   @Override
   public void handle(EzyPluginContext ctx, EzyUserLoginEvent event) {

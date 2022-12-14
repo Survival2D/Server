@@ -3,7 +3,6 @@
 package survival2d.flatbuffers;
 
 public final class MapObjectData {
-  private MapObjectData() { }
   public static final byte NONE = 0;
   public static final byte BulletItem = 1;
   public static final byte GunItem = 2;
@@ -15,9 +14,23 @@ public final class MapObjectData {
   public static final byte Container = 8;
   public static final byte Stone = 9;
   public static final byte Wall = 10;
+  public static final String[] names = {
+    "NONE",
+    "BulletItem",
+    "GunItem",
+    "VestItem",
+    "HelmetItem",
+    "BandageItem",
+    "MedKitItem",
+    "Tree",
+    "Container",
+    "Stone",
+    "Wall",
+  };
 
-  public static final String[] names = { "NONE", "BulletItem", "GunItem", "VestItem", "HelmetItem", "BandageItem", "MedKitItem", "Tree", "Container", "Stone", "Wall", };
+  private MapObjectData() {}
 
-  public static String name(int e) { return names[e]; }
+  public static String name(int e) {
+    return names[e];
+  }
 }
-

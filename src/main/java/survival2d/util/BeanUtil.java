@@ -9,9 +9,7 @@ import survival2d.service.MatchingService;
 @EzyConfigurationAfter
 public class BeanUtil {
 
-  @EzyAutoBind
-  @Getter
-  private static MatchingService matchingService;
+  @EzyAutoBind @Getter private static MatchingService matchingService;
 
   @EzyAutoBind("pluginResponseFactory")
   @Getter

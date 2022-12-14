@@ -3,7 +3,7 @@ package survival2d.match.action;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @Builder
 @Getter

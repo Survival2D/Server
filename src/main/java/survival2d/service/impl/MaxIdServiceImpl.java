@@ -1,17 +1,16 @@
 package survival2d.service.impl;
 
-import survival2d.service.MaxIdService;
 import com.tvd12.ezydata.database.repository.EzyMaxIdRepository;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.bean.annotation.EzySingleton;
 import lombok.Setter;
+import survival2d.service.MaxIdService;
 
 @Setter
 @EzySingleton("maxIdService")
 public class MaxIdServiceImpl implements MaxIdService {
 
-  @EzyAutoBind
-  private EzyMaxIdRepository maxIdRepository;
+  @EzyAutoBind private EzyMaxIdRepository maxIdRepository;
 
   @Override
   public void loadAll() {

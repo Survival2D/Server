@@ -1,7 +1,7 @@
 package survival2d.login.service;
 
-import survival2d.login.entity.User;
 import java.util.List;
+import survival2d.login.entity.User;
 
 public interface UserService {
 

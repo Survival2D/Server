@@ -7,7 +7,7 @@ import com.tvd12.ezyfoxserver.controller.EzyAbstractZoneEventController;
 import com.tvd12.ezyfoxserver.event.EzyStreamingEvent;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.flatbuffers.Packet;
 import survival2d.flatbuffers.PacketData;
 import survival2d.flatbuffers.PlayerAttackRequest;

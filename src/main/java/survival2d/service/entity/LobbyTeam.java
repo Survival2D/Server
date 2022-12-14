@@ -8,8 +8,7 @@ import survival2d.match.constant.GameConstant;
 
 public class LobbyTeam implements Team {
 
-  @Getter
-  private final int id;
+  @Getter private final int id;
   private final Set<String> playerUsernames = new HashSet<>(GameConstant.TEAM_PLAYER);
 
   public LobbyTeam(int teamId) {

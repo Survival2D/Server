@@ -20,8 +20,7 @@ public class MatchingServiceImpl implements MatchingService {
   private final AtomicInteger currentMatchId = new AtomicInteger();
   private final Map<Integer, Match> matchIdToMatch = new ConcurrentHashMap<>();
   private final Map<String, Integer> playerIdToMatchId = new ConcurrentHashMap<>();
-  @EzyAutoBind
-  LobbyTeamService teamService;
+  @EzyAutoBind LobbyTeamService teamService;
 
   @Override
   public int createMatch(List<Integer> teamIds) {

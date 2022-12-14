@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Circle;
 import survival2d.match.entity.base.Containable;

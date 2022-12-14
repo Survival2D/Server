@@ -1,16 +1,5 @@
 package survival2d.match.network;
 
-import survival2d.match.network.request.PlayerChangeWeaponRequest;
-import survival2d.match.network.request.PlayerDropItemRequest;
-import survival2d.match.network.request.PlayerMoveRequest;
-import survival2d.match.action.PlayerAttack;
-import survival2d.match.action.PlayerChangeWeapon;
-import survival2d.match.action.PlayerDropItem;
-import survival2d.match.action.PlayerMove;
-import survival2d.match.action.PlayerReloadWeapon;
-import survival2d.match.action.PlayerTakeItem;
-import survival2d.match.network.request.PlayerAttackRequest;
-import survival2d.service.MatchingService;
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.core.annotation.EzyDoHandle;
 import com.tvd12.ezyfox.core.annotation.EzyRequestController;
@@ -18,15 +7,24 @@ import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import survival2d.match.action.PlayerAttack;
+import survival2d.match.action.PlayerChangeWeapon;
+import survival2d.match.action.PlayerDropItem;
+import survival2d.match.action.PlayerMove;
+import survival2d.match.action.PlayerReloadWeapon;
+import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.network.request.PlayerAttackRequest;
+import survival2d.match.network.request.PlayerChangeWeaponRequest;
+import survival2d.match.network.request.PlayerDropItemRequest;
+import survival2d.match.network.request.PlayerMoveRequest;
+import survival2d.service.MatchingService;
 
 @EzyRequestController
 @Slf4j
 public class MatchRequestController {
 
-  @EzyAutoBind
-  MatchingService matchingService;
-  @EzyAutoBind
-  private EzyResponseFactory responseFactory;
+  @EzyAutoBind MatchingService matchingService;
+  @EzyAutoBind private EzyResponseFactory responseFactory;
 
   @EzyDoHandle(MatchCommand.MATCH_INFO)
   public void handleMatchInfo(EzyUser user) {
@@ -37,8 +35,12 @@ public class MatchRequestController {
       return;
     }
     val match = optMatch.get();
-    responseFactory.newObjectResponse().command(MatchCommand.MATCH_INFO).data(match)
-        .username(playerId).execute();
+    responseFactory
+        .newObjectResponse()
+        .command(MatchCommand.MATCH_INFO)
+        .data(match)
+        .username(playerId)
+        .execute();
   }
 
   @EzyDoHandle(MatchCommand.PLAYER_MOVE)

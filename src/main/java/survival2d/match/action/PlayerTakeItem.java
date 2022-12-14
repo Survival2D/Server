@@ -1,5 +1,3 @@
 package survival2d.match.action;
 
-public class PlayerTakeItem implements PlayerAction {
-
-}
+public class PlayerTakeItem implements PlayerAction {}

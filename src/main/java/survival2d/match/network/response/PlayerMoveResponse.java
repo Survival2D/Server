@@ -1,13 +1,13 @@
 package survival2d.match.network.response;
 
-import survival2d.util.packet.PacketUtil;
 import com.tvd12.ezyfox.binding.EzyMarshaller;
 import com.tvd12.ezyfox.binding.EzyWriter;
 import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import survival2d.util.packet.PacketUtil;
 
 @Data
 @Builder

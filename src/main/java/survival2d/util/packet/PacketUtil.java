@@ -6,7 +6,7 @@ import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.util.serialize.GsonHolder;
 
 public class PacketUtil {

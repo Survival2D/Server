@@ -2,44 +2,83 @@
 
 package survival2d.flatbuffers;
 
-import java.nio.*;
-import java.lang.*;
-import java.util.*;
-import com.google.flatbuffers.*;
+import com.google.flatbuffers.BaseVector;
+import com.google.flatbuffers.Constants;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class Weapon extends Table {
-  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
-  public static Weapon getRootAsWeapon(ByteBuffer _bb) { return getRootAsWeapon(_bb, new Weapon()); }
-  public static Weapon getRootAsWeapon(ByteBuffer _bb, Weapon obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
-  public Weapon __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public static void ValidateVersion() {
+    Constants.FLATBUFFERS_1_12_0();
+  }
 
-  public byte dataType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public Table data(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
+  public static Weapon getRootAsWeapon(ByteBuffer _bb) {
+    return getRootAsWeapon(_bb, new Weapon());
+  }
 
-  public static int createWeapon(FlatBufferBuilder builder,
-      byte data_type,
-      int dataOffset) {
+  public static Weapon getRootAsWeapon(ByteBuffer _bb, Weapon obj) {
+    _bb.order(ByteOrder.LITTLE_ENDIAN);
+    return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+  }
+
+  public static int createWeapon(FlatBufferBuilder builder, byte data_type, int dataOffset) {
     builder.startTable(2);
     Weapon.addData(builder, dataOffset);
     Weapon.addDataType(builder, data_type);
     return Weapon.endWeapon(builder);
   }
 
-  public static void startWeapon(FlatBufferBuilder builder) { builder.startTable(2); }
-  public static void addDataType(FlatBufferBuilder builder, byte dataType) { builder.addByte(0, dataType, 0); }
-  public static void addData(FlatBufferBuilder builder, int dataOffset) { builder.addOffset(1, dataOffset, 0); }
+  public static void startWeapon(FlatBufferBuilder builder) {
+    builder.startTable(2);
+  }
+
+  public static void addDataType(FlatBufferBuilder builder, byte dataType) {
+    builder.addByte(0, dataType, 0);
+  }
+
+  public static void addData(FlatBufferBuilder builder, int dataOffset) {
+    builder.addOffset(1, dataOffset, 0);
+  }
+
   public static int endWeapon(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
 
-  public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
+  public void __init(int _i, ByteBuffer _bb) {
+    __reset(_i, _bb);
+  }
 
-    public Weapon get(int j) { return get(new Weapon(), j); }
-    public Weapon get(Weapon obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
+  public Weapon __assign(int _i, ByteBuffer _bb) {
+    __init(_i, _bb);
+    return this;
+  }
+
+  public byte dataType() {
+    int o = __offset(4);
+    return o != 0 ? bb.get(o + bb_pos) : 0;
+  }
+
+  public Table data(Table obj) {
+    int o = __offset(6);
+    return o != 0 ? __union(obj, o + bb_pos) : null;
+  }
+
+  public static final class Vector extends BaseVector {
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) {
+      __reset(_vector, _element_size, _bb);
+      return this;
+    }
+
+    public Weapon get(int j) {
+      return get(new Weapon(), j);
+    }
+
+    public Weapon get(Weapon obj, int j) {
+      return obj.__assign(__indirect(__element(j), bb), bb);
+    }
   }
 }
-

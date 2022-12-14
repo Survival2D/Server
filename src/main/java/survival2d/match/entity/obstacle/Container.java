@@ -2,7 +2,7 @@ package survival2d.match.entity.obstacle;
 
 import java.util.List;
 import lombok.Data;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;

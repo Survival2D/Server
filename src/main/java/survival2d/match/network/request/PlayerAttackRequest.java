@@ -2,8 +2,7 @@ package survival2d.match.network.request;
 
 import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
 import lombok.Data;
-import org.locationtech.jts.math.Vector2D;
-
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @Data
 @EzyObjectBinding

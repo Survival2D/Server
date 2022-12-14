@@ -1,11 +1,10 @@
 package survival2d.match.entity.match;
 
+import java.util.Collection;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.action.PlayerAction;
 import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.BulletType;
-import java.util.Collection;
-import org.locationtech.jts.math.Vector2D;
-
 
 public interface Match {
 
@@ -20,7 +19,6 @@ public interface Match {
   void onPlayerAttack(String playerId, Vector2D direction);
 
   void createDamage(String playerId, Vector2D position, Shape shape, double damage);
-
 
   void makeDamage(String playerId, Vector2D position, Shape shape, double damage);
 

@@ -1,7 +1,7 @@
 package survival2d.service;
 
-import survival2d.service.entity.LobbyTeam;
 import java.util.Optional;
+import survival2d.service.entity.LobbyTeam;
 
 public interface LobbyTeamService {
 

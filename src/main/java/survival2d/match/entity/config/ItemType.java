@@ -11,5 +11,5 @@ public enum ItemType {
   MED_KIT,
   SODA,
   PILL,
-  //TODO
+  // TODO
 }

@@ -1,11 +1,10 @@
 package survival2d.match.network.request;
 
-import survival2d.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyReader;
 import com.tvd12.ezyfox.binding.EzyUnmarshaller;
 import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
 import lombok.Data;
-
+import survival2d.util.serialize.GsonHolder;
 
 @Data
 public class PlayerDropItemRequest {

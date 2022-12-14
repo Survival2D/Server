@@ -1,12 +1,11 @@
 package survival2d.match.entity.player;
 
-import org.locationtech.jts.math.Vector2D;
+import java.util.Optional;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.HasShape;
 import survival2d.match.entity.base.Movable;
 import survival2d.match.entity.base.Shape;
-
-import java.util.Optional;
 import survival2d.match.entity.weapon.Weapon;
 
 public interface Player extends Movable, HasShape, HasHp {
@@ -21,7 +20,7 @@ public interface Player extends Movable, HasShape, HasHp {
 
   void setRotation(double rotation);
 
-//  PlayerState getState();
+  //  PlayerState getState();
 
   double getSpeed();
 

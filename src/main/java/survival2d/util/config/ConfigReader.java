@@ -2,11 +2,11 @@ package survival2d.util.config;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import survival2d.util.resource.ResourceUtil;
-import survival2d.util.serialize.GsonHolder;
 import java.io.InputStreamReader;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import survival2d.util.resource.ResourceUtil;
+import survival2d.util.serialize.GsonHolder;
 
 @Slf4j
 public class ConfigReader {

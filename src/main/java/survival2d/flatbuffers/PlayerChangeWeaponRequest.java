@@ -2,40 +2,74 @@
 
 package survival2d.flatbuffers;
 
-import java.nio.*;
-import java.lang.*;
-import java.util.*;
-import com.google.flatbuffers.*;
+import com.google.flatbuffers.BaseVector;
+import com.google.flatbuffers.Constants;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class PlayerChangeWeaponRequest extends Table {
-  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
-  public static PlayerChangeWeaponRequest getRootAsPlayerChangeWeaponRequest(ByteBuffer _bb) { return getRootAsPlayerChangeWeaponRequest(_bb, new PlayerChangeWeaponRequest()); }
-  public static PlayerChangeWeaponRequest getRootAsPlayerChangeWeaponRequest(ByteBuffer _bb, PlayerChangeWeaponRequest obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
-  public PlayerChangeWeaponRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public static void ValidateVersion() {
+    Constants.FLATBUFFERS_1_12_0();
+  }
 
-  public byte slot() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public static PlayerChangeWeaponRequest getRootAsPlayerChangeWeaponRequest(ByteBuffer _bb) {
+    return getRootAsPlayerChangeWeaponRequest(_bb, new PlayerChangeWeaponRequest());
+  }
 
-  public static int createPlayerChangeWeaponRequest(FlatBufferBuilder builder,
-      byte slot) {
+  public static PlayerChangeWeaponRequest getRootAsPlayerChangeWeaponRequest(
+      ByteBuffer _bb, PlayerChangeWeaponRequest obj) {
+    _bb.order(ByteOrder.LITTLE_ENDIAN);
+    return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+  }
+
+  public static int createPlayerChangeWeaponRequest(FlatBufferBuilder builder, byte slot) {
     builder.startTable(1);
     PlayerChangeWeaponRequest.addSlot(builder, slot);
     return PlayerChangeWeaponRequest.endPlayerChangeWeaponRequest(builder);
   }
 
-  public static void startPlayerChangeWeaponRequest(FlatBufferBuilder builder) { builder.startTable(1); }
-  public static void addSlot(FlatBufferBuilder builder, byte slot) { builder.addByte(0, slot, 0); }
+  public static void startPlayerChangeWeaponRequest(FlatBufferBuilder builder) {
+    builder.startTable(1);
+  }
+
+  public static void addSlot(FlatBufferBuilder builder, byte slot) {
+    builder.addByte(0, slot, 0);
+  }
+
   public static int endPlayerChangeWeaponRequest(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
 
-  public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
+  public void __init(int _i, ByteBuffer _bb) {
+    __reset(_i, _bb);
+  }
 
-    public PlayerChangeWeaponRequest get(int j) { return get(new PlayerChangeWeaponRequest(), j); }
-    public PlayerChangeWeaponRequest get(PlayerChangeWeaponRequest obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
+  public PlayerChangeWeaponRequest __assign(int _i, ByteBuffer _bb) {
+    __init(_i, _bb);
+    return this;
+  }
+
+  public byte slot() {
+    int o = __offset(4);
+    return o != 0 ? bb.get(o + bb_pos) : 0;
+  }
+
+  public static final class Vector extends BaseVector {
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) {
+      __reset(_vector, _element_size, _bb);
+      return this;
+    }
+
+    public PlayerChangeWeaponRequest get(int j) {
+      return get(new PlayerChangeWeaponRequest(), j);
+    }
+
+    public PlayerChangeWeaponRequest get(PlayerChangeWeaponRequest obj, int j) {
+      return obj.__assign(__indirect(__element(j), bb), bb);
+    }
   }
 }
-

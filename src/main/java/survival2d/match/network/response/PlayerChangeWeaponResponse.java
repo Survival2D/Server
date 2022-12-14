@@ -1,7 +1,5 @@
 package survival2d.match.network.response;
 
-import survival2d.match.entity.weapon.Weapon;
-import survival2d.util.serialize.GsonHolder;
 import com.tvd12.ezyfox.binding.EzyMarshaller;
 import com.tvd12.ezyfox.binding.EzyWriter;
 import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
@@ -9,6 +7,8 @@ import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;
+import survival2d.match.entity.weapon.Weapon;
+import survival2d.util.serialize.GsonHolder;
 
 @Data
 @Builder

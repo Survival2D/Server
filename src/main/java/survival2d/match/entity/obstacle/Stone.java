@@ -1,7 +1,7 @@
 package survival2d.match.entity.obstacle;
 
 import lombok.Data;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Circle;
 
 @Data

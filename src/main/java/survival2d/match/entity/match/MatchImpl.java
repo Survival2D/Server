@@ -23,8 +23,9 @@ import lombok.var;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.Survival2DStartup;
+import survival2d.common.CommonConfig;
 import survival2d.flatbuffers.MapObjectData;
 import survival2d.flatbuffers.MatchInfoResponse;
 import survival2d.flatbuffers.Packet;
@@ -36,10 +37,10 @@ import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
-import survival2d.common.CommonConfig;
 import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Circle;
+import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
@@ -49,18 +50,17 @@ import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.AttachType;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
-import survival2d.match.entity.weapon.Bullet;
-import survival2d.match.entity.item.ItemOnMap;
-import survival2d.match.entity.player.Player;
-import survival2d.match.entity.player.PlayerImpl;
 import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.GunItem;
+import survival2d.match.entity.item.ItemOnMap;
 import survival2d.match.entity.obstacle.Container;
 import survival2d.match.entity.obstacle.Obstacle;
 import survival2d.match.entity.obstacle.Stone;
 import survival2d.match.entity.obstacle.Tree;
 import survival2d.match.entity.obstacle.Wall;
-import survival2d.match.entity.base.Containable;
+import survival2d.match.entity.player.Player;
+import survival2d.match.entity.player.PlayerImpl;
+import survival2d.match.entity.weapon.Bullet;
 import survival2d.util.math.MathUtil;
 import survival2d.util.serialize.ExcludeFromGson;
 import survival2d.util.stream.ByteBufferUtil;
@@ -146,7 +146,7 @@ public class MatchImpl implements Match {
     }
     if (!MathUtil.isZero(direction)) {
       val unitDirection = direction.normalize();
-      val moveBy = unitDirection.multiply(player.getSpeed());
+      val moveBy = unitDirection.scalarMultiply(player.getSpeed());
       player.moveBy(moveBy);
     }
     player.setRotation(rotation);
@@ -180,7 +180,10 @@ public class MatchImpl implements Match {
           playerId,
           player
               .getPosition()
-              .add(player.getAttackDirection().multiply(((Circle) player.getShape()).getRadius())),
+              .add(
+                  player
+                      .getAttackDirection()
+                      .scalarMultiply(((Circle) player.getShape()).getRadius())),
           new Circle(10),
           5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
@@ -191,7 +194,7 @@ public class MatchImpl implements Match {
               .add(
                   player
                       .getAttackDirection()
-                      .multiply(
+                      .scalarMultiply(
                           ((Circle) player.getShape()).getRadius()
                               + GameConstant.INITIAL_BULLET_DISTANCE)),
           direction,
@@ -233,14 +236,14 @@ public class MatchImpl implements Match {
   public void makeDamage(String playerId, Vector2D position, Shape shape, double damage) {
     val currentPlayer = players.get(playerId);
     for (val player : players.values()) {
-      //Cùng team thì không tính damage
+      // Cùng team thì không tính damage
       if (player.getTeam() == currentPlayer.getTeam()) {
         continue;
       }
-      //Chính người chơi đó thì mới không tính damage
-//      if (Objects.equals(player.getPlayerId(), playerId)) {
-//        continue;
-//      }
+      // Chính người chơi đó thì mới không tính damage
+      //      if (Objects.equals(player.getPlayerId(), playerId)) {
+      //        continue;
+      //      }
       if (player.isDestroyed()) {
         continue;
       }
@@ -577,7 +580,7 @@ public class MatchImpl implements Match {
       val deltaRadius = previousSafeZone.getLeft().getRadius() - radius;
       val newPosition =
           CommonConfig.testPing
-              ? new Vector2D()
+              ? new Vector2D(0, 0)
               : MathUtil.randomPosition(
                   previousSafeZone.getRight().getX() - deltaRadius,
                   previousSafeZone.getRight().getX() + deltaRadius,
@@ -664,9 +667,7 @@ public class MatchImpl implements Match {
       val container = new Container();
       container.setShape(new Rectangle(200, 200));
       container.setItems(
-          Arrays.asList(
-              new GunItem(GunType.NORMAL, 10),
-              new BulletItem(BulletType.NORMAL, 10)));
+          Arrays.asList(new GunItem(GunType.NORMAL, 10), new BulletItem(BulletType.NORMAL, 10)));
       int tryTime = 0;
       while (!randomPositionForObstacle(container)) {
         tryTime++;

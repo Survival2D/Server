@@ -1,6 +1,6 @@
 package survival2d.misc.util;
 
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.match.MatchImpl;
 
 public class SamplePingData {

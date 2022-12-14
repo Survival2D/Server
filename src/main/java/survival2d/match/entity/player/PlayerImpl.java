@@ -8,14 +8,14 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
-import org.locationtech.jts.math.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Circle;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
-import survival2d.match.entity.weapon.Weapon;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
+import survival2d.match.entity.weapon.Weapon;
 import survival2d.util.serialize.ExcludeFromGson;
 
 @Data
