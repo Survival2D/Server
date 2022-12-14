@@ -1,7 +1,6 @@
 package survival2d.match.entity.weapon;
 
-import survival2d.match.entity.Weapon;
-import survival2d.match.entity.WeaponType;
+import survival2d.match.entity.config.WeaponType;
 import survival2d.match.entity.config.GunType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,0 +1,672 @@
+@startuml
+
+title __RESPONSE's Class Diagram__\n
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.CreateBulletResponse {
+            {static} + builder()
+            + equals()
+            + getBullet()
+            + hashCode()
+            + setBullet()
+            + toString()
+            # canEqual()
+            ~ CreateBulletResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.CreateBulletResponse.CreateBulletResponseBuilder {
+            + build()
+            + bullet()
+            + toString()
+            ~ CreateBulletResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.CreateBulletResponse.CreateBulletResponseResponseWriter {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.CreateItemResponse {
+            {static} + builder()
+            + equals()
+            + getItem()
+            + hashCode()
+            + setItem()
+            + toString()
+            # canEqual()
+            ~ CreateItemResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.CreateItemResponse.CreateItemResponseBuilder {
+            + build()
+            + item()
+            + toString()
+            ~ CreateItemResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.CreateItemResponse.CreateItemResponseResponseWriter {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.EndGameResponse {
+            ~ winTeam : long
+            {static} + builder()
+            + equals()
+            + getWinTeam()
+            + hashCode()
+            + setWinTeam()
+            + toString()
+            # canEqual()
+            ~ EndGameResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.EndGameResponse.EndGameResponseBuilder {
+            - winTeam : long
+            + build()
+            + toString()
+            + winTeam()
+            ~ EndGameResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.MatchInfoResponse {
+            {static} - log : Logger
+            {static} + builder()
+            + equals()
+            + getMatch()
+            + hashCode()
+            + setMatch()
+            + toString()
+            # canEqual()
+            ~ MatchInfoResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.MatchInfoResponse.MatchInfoResponseBuilder {
+            + build()
+            + match()
+            + toString()
+            ~ MatchInfoResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.MatchInfoResponse.MatchWriter {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.ObstacleDestroyedResponse {
+            - obstacleId : long
+            {static} + builder()
+            + equals()
+            + getObstacleId()
+            + hashCode()
+            + setObstacleId()
+            + toString()
+            # canEqual()
+            ~ ObstacleDestroyedResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.ObstacleDestroyedResponse.ObstacleDestroyedResponseBuilder {
+            - obstacleId : long
+            + build()
+            + obstacleId()
+            + toString()
+            ~ ObstacleDestroyedResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.ObstacleTakeDamageResponse {
+            - hp : double
+            - obstacleId : long
+            {static} + builder()
+            + equals()
+            + getHp()
+            + getObstacleId()
+            + hashCode()
+            + setHp()
+            + setObstacleId()
+            + toString()
+            # canEqual()
+            ~ ObstacleTakeDamageResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.ObstacleTakeDamageResponse.ObstacleTakeDamageResponseBuilder {
+            - hp : double
+            - obstacleId : long
+            + build()
+            + hp()
+            + obstacleId()
+            + toString()
+            ~ ObstacleTakeDamageResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerAttackResponse {
+            - position : Vector2D
+            - username : String
+            {static} + builder()
+            + equals()
+            + getPosition()
+            + getUsername()
+            + getWeapon()
+            + hashCode()
+            + setPosition()
+            + setUsername()
+            + setWeapon()
+            + toString()
+            # canEqual()
+            ~ PlayerAttackResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerAttackResponse.PlayerAttackResponseBuilder {
+            - position : Vector2D
+            - username : String
+            + build()
+            + position()
+            + toString()
+            + username()
+            + weapon()
+            ~ PlayerAttackResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerAttackResponse.Writer {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerChangeWeaponResponse {
+            - slot : int
+            - username : String
+            {static} + builder()
+            + equals()
+            + getSlot()
+            + getUsername()
+            + getWeapon()
+            + hashCode()
+            + setSlot()
+            + setUsername()
+            + setWeapon()
+            + toString()
+            # canEqual()
+            ~ PlayerChangeWeaponResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerChangeWeaponResponse.PlayerChangeWeaponResponseBuilder {
+            - slot : int
+            - username : String
+            + build()
+            + slot()
+            + toString()
+            + username()
+            + weapon()
+            ~ PlayerChangeWeaponResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerChangeWeaponResponse.PlayerChangeWeaponResponseWriter {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerDeadResponse {
+            - username : String
+            {static} + builder()
+            + equals()
+            + getUsername()
+            + hashCode()
+            + setUsername()
+            + toString()
+            # canEqual()
+            ~ PlayerDeadResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerDeadResponse.PlayerDeadResponseBuilder {
+            - username : String
+            + build()
+            + toString()
+            + username()
+            ~ PlayerDeadResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerDropItemResponse {
+            - username : String
+            {static} + builder()
+            + equals()
+            + getItem()
+            + getUsername()
+            + hashCode()
+            + setItem()
+            + setUsername()
+            + toString()
+            # canEqual()
+            ~ PlayerDropItemResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerDropItemResponse.PlayerDropItemResponseBuilder {
+            - username : String
+            + build()
+            + item()
+            + toString()
+            + username()
+            ~ PlayerDropItemResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerDropItemResponse.ResponseWriter {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerMoveResponse {
+            - position : Vector2D
+            - rotation : double
+            - username : String
+            {static} + builder()
+            + equals()
+            + getPosition()
+            + getRotation()
+            + getUsername()
+            + hashCode()
+            + setPosition()
+            + setRotation()
+            + setUsername()
+            + toString()
+            # canEqual()
+            ~ PlayerMoveResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerMoveResponse.PlayerMoveResponseBuilder {
+            - position : Vector2D
+            - rotation : double
+            - username : String
+            + build()
+            + position()
+            + rotation()
+            + toString()
+            + username()
+            ~ PlayerMoveResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerMoveResponse.Writer {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerReloadWeaponResponse {
+            {static} + builder()
+            + equals()
+            + getPlayer()
+            + hashCode()
+            + setPlayer()
+            + toString()
+            # canEqual()
+            ~ PlayerReloadWeaponResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerReloadWeaponResponse.PlayerReloadWeaponResponseBuilder {
+            + build()
+            + player()
+            + toString()
+            ~ PlayerReloadWeaponResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerReloadWeaponResponse.ResponseWriter {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerTakeDamageResponse {
+            - hp : double
+            - username : String
+            {static} + builder()
+            + equals()
+            + getHp()
+            + getUsername()
+            + hashCode()
+            + setHp()
+            + setUsername()
+            + toString()
+            # canEqual()
+            ~ PlayerTakeDamageResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerTakeDamageResponse.PlayerTakeDamageResponseBuilder {
+            - hp : double
+            - username : String
+            + build()
+            + hp()
+            + toString()
+            + username()
+            ~ PlayerTakeDamageResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerTakeItemResponse {
+            - username : String
+            {static} + builder()
+            + equals()
+            + getItem()
+            + getUsername()
+            + hashCode()
+            + setItem()
+            + setUsername()
+            + toString()
+            # canEqual()
+            ~ PlayerTakeItemResponse()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerTakeItemResponse.PlayerTakeItemResponseBuilder {
+            - username : String
+            + build()
+            + item()
+            + toString()
+            + username()
+            ~ PlayerTakeItemResponseBuilder()
+        }
+      }
+    }
+  }
+  
+
+  namespace survival2d {
+    namespace match.network {
+      namespace response {
+        class survival2d.match.network.response.PlayerTakeItemResponse.ResponseWriter {
+            + write()
+        }
+      }
+    }
+  }
+  
+
+  survival2d.match.network.response.CreateBulletResponse o-- survival2d.match.entity.weapon.Bullet : bullet
+  survival2d.match.network.response.CreateBulletResponse +-down- survival2d.match.network.response.CreateBulletResponse.CreateBulletResponseBuilder
+  survival2d.match.network.response.CreateBulletResponse +-down- survival2d.match.network.response.CreateBulletResponse.CreateBulletResponseResponseWriter
+  survival2d.match.network.response.CreateBulletResponse.CreateBulletResponseBuilder o-- survival2d.match.entity.weapon.Bullet : bullet
+  survival2d.match.network.response.CreateBulletResponse.CreateBulletResponseResponseWriter .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.CreateItemResponse o-- survival2d.match.entity.item.ItemOnMap : item
+  survival2d.match.network.response.CreateItemResponse +-down- survival2d.match.network.response.CreateItemResponse.CreateItemResponseBuilder
+  survival2d.match.network.response.CreateItemResponse +-down- survival2d.match.network.response.CreateItemResponse.CreateItemResponseResponseWriter
+  survival2d.match.network.response.CreateItemResponse.CreateItemResponseBuilder o-- survival2d.match.entity.item.ItemOnMap : item
+  survival2d.match.network.response.CreateItemResponse.CreateItemResponseResponseWriter .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.EndGameResponse +-down- survival2d.match.network.response.EndGameResponse.EndGameResponseBuilder
+  survival2d.match.network.response.MatchInfoResponse o-- survival2d.match.entity.match.Match : match
+  survival2d.match.network.response.MatchInfoResponse +-down- survival2d.match.network.response.MatchInfoResponse.MatchInfoResponseBuilder
+  survival2d.match.network.response.MatchInfoResponse +-down- survival2d.match.network.response.MatchInfoResponse.MatchWriter
+  survival2d.match.network.response.MatchInfoResponse.MatchInfoResponseBuilder o-- survival2d.match.entity.match.Match : match
+  survival2d.match.network.response.MatchInfoResponse.MatchWriter .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.ObstacleDestroyedResponse +-down- survival2d.match.network.response.ObstacleDestroyedResponse.ObstacleDestroyedResponseBuilder
+  survival2d.match.network.response.ObstacleTakeDamageResponse +-down- survival2d.match.network.response.ObstacleTakeDamageResponse.ObstacleTakeDamageResponseBuilder
+  survival2d.match.network.response.PlayerAttackResponse o-- survival2d.match.entity.weapon.Weapon : weapon
+  survival2d.match.network.response.PlayerAttackResponse +-down- survival2d.match.network.response.PlayerAttackResponse.PlayerAttackResponseBuilder
+  survival2d.match.network.response.PlayerAttackResponse +-down- survival2d.match.network.response.PlayerAttackResponse.Writer
+  survival2d.match.network.response.PlayerAttackResponse.PlayerAttackResponseBuilder o-- survival2d.match.entity.weapon.Weapon : weapon
+  survival2d.match.network.response.PlayerAttackResponse.Writer .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.PlayerChangeWeaponResponse o-- survival2d.match.entity.weapon.Weapon : weapon
+  survival2d.match.network.response.PlayerChangeWeaponResponse +-down- survival2d.match.network.response.PlayerChangeWeaponResponse.PlayerChangeWeaponResponseBuilder
+  survival2d.match.network.response.PlayerChangeWeaponResponse +-down- survival2d.match.network.response.PlayerChangeWeaponResponse.PlayerChangeWeaponResponseWriter
+  survival2d.match.network.response.PlayerChangeWeaponResponse.PlayerChangeWeaponResponseBuilder o-- survival2d.match.entity.weapon.Weapon : weapon
+  survival2d.match.network.response.PlayerChangeWeaponResponse.PlayerChangeWeaponResponseWriter .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.PlayerDeadResponse +-down- survival2d.match.network.response.PlayerDeadResponse.PlayerDeadResponseBuilder
+  survival2d.match.network.response.PlayerDropItemResponse o-- survival2d.match.entity.base.Item : item
+  survival2d.match.network.response.PlayerDropItemResponse +-down- survival2d.match.network.response.PlayerDropItemResponse.PlayerDropItemResponseBuilder
+  survival2d.match.network.response.PlayerDropItemResponse +-down- survival2d.match.network.response.PlayerDropItemResponse.ResponseWriter
+  survival2d.match.network.response.PlayerDropItemResponse.PlayerDropItemResponseBuilder o-- survival2d.match.entity.base.Item : item
+  survival2d.match.network.response.PlayerDropItemResponse.ResponseWriter .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.PlayerMoveResponse +-down- survival2d.match.network.response.PlayerMoveResponse.PlayerMoveResponseBuilder
+  survival2d.match.network.response.PlayerMoveResponse +-down- survival2d.match.network.response.PlayerMoveResponse.Writer
+  survival2d.match.network.response.PlayerMoveResponse.Writer .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.PlayerReloadWeaponResponse o-- survival2d.match.entity.player.Player : player
+  survival2d.match.network.response.PlayerReloadWeaponResponse +-down- survival2d.match.network.response.PlayerReloadWeaponResponse.PlayerReloadWeaponResponseBuilder
+  survival2d.match.network.response.PlayerReloadWeaponResponse +-down- survival2d.match.network.response.PlayerReloadWeaponResponse.ResponseWriter
+  survival2d.match.network.response.PlayerReloadWeaponResponse.PlayerReloadWeaponResponseBuilder o-- survival2d.match.entity.player.Player : player
+  survival2d.match.network.response.PlayerReloadWeaponResponse.ResponseWriter .up.|> com.tvd12.ezyfox.binding.EzyWriter
+  survival2d.match.network.response.PlayerTakeDamageResponse +-down- survival2d.match.network.response.PlayerTakeDamageResponse.PlayerTakeDamageResponseBuilder
+  survival2d.match.network.response.PlayerTakeItemResponse o-- survival2d.match.entity.item.ItemOnMap : item
+  survival2d.match.network.response.PlayerTakeItemResponse +-down- survival2d.match.network.response.PlayerTakeItemResponse.PlayerTakeItemResponseBuilder
+  survival2d.match.network.response.PlayerTakeItemResponse +-down- survival2d.match.network.response.PlayerTakeItemResponse.ResponseWriter
+  survival2d.match.network.response.PlayerTakeItemResponse.PlayerTakeItemResponseBuilder o-- survival2d.match.entity.item.ItemOnMap : item
+  survival2d.match.network.response.PlayerTakeItemResponse.ResponseWriter .up.|> com.tvd12.ezyfox.binding.EzyWriter
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
