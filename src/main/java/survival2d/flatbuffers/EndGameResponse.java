@@ -2,73 +2,40 @@
 
 package survival2d.flatbuffers;
 
-import com.google.flatbuffers.BaseVector;
-import com.google.flatbuffers.Constants;
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class EndGameResponse extends Table {
-  public static void ValidateVersion() {
-    Constants.FLATBUFFERS_1_12_0();
-  }
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
+  public static EndGameResponse getRootAsEndGameResponse(ByteBuffer _bb) { return getRootAsEndGameResponse(_bb, new EndGameResponse()); }
+  public static EndGameResponse getRootAsEndGameResponse(ByteBuffer _bb, EndGameResponse obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public EndGameResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public static EndGameResponse getRootAsEndGameResponse(ByteBuffer _bb) {
-    return getRootAsEndGameResponse(_bb, new EndGameResponse());
-  }
+  public int winTeam() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static EndGameResponse getRootAsEndGameResponse(ByteBuffer _bb, EndGameResponse obj) {
-    _bb.order(ByteOrder.LITTLE_ENDIAN);
-    return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-  }
-
-  public static int createEndGameResponse(FlatBufferBuilder builder, int winTeam) {
+  public static int createEndGameResponse(FlatBufferBuilder builder,
+      int winTeam) {
     builder.startTable(1);
     EndGameResponse.addWinTeam(builder, winTeam);
     return EndGameResponse.endEndGameResponse(builder);
   }
 
-  public static void startEndGameResponse(FlatBufferBuilder builder) {
-    builder.startTable(1);
-  }
-
-  public static void addWinTeam(FlatBufferBuilder builder, int winTeam) {
-    builder.addInt(0, winTeam, 0);
-  }
-
+  public static void startEndGameResponse(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addWinTeam(FlatBufferBuilder builder, int winTeam) { builder.addInt(0, winTeam, 0); }
   public static int endEndGameResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
 
-  public void __init(int _i, ByteBuffer _bb) {
-    __reset(_i, _bb);
-  }
-
-  public EndGameResponse __assign(int _i, ByteBuffer _bb) {
-    __init(_i, _bb);
-    return this;
-  }
-
-  public int winTeam() {
-    int o = __offset(4);
-    return o != 0 ? bb.getInt(o + bb_pos) : 0;
-  }
-
   public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) {
-      __reset(_vector, _element_size, _bb);
-      return this;
-    }
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
 
-    public EndGameResponse get(int j) {
-      return get(new EndGameResponse(), j);
-    }
-
-    public EndGameResponse get(EndGameResponse obj, int j) {
-      return obj.__assign(__indirect(__element(j), bb), bb);
-    }
+    public EndGameResponse get(int j) { return get(new EndGameResponse(), j); }
+    public EndGameResponse get(EndGameResponse obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
+

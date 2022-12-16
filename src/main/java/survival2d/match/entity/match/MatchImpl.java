@@ -119,7 +119,7 @@ public class MatchImpl implements Match {
     for (val object : objects.values()) {
       if (object instanceof Obstacle) {
         val obstacle = (Obstacle) object;
-        if (MathUtil.isCollision(
+        if (MathUtil.isIntersect(
             player.getPosition(), player.getShape(), obstacle.getPosition(), obstacle.getShape())) {
           return false;
         }
@@ -254,9 +254,9 @@ public class MatchImpl implements Match {
       if (player.isDestroyed()) {
         continue;
       }
-      if (MathUtil.isCollision(player.getPosition(), player.getShape(), position, shape)) {
+      if (MathUtil.isIntersect(player.getPosition(), player.getShape(), position, shape)) {
         val isHeadshot =
-            MathUtil.isCollision(player.getPosition(), player.getHead(), position, shape);
+            MathUtil.isIntersect(player.getPosition(), player.getHead(), position, shape);
         val damageMultiple = isHeadshot ? GameConstant.HEADSHOT_DAMAGE : GameConstant.BODY_DAMAGE;
         val totalDamage = damage * damageMultiple;
         val reduceDamage =
@@ -318,7 +318,7 @@ public class MatchImpl implements Match {
         continue;
       }
       val hasHp = (HasHp) obstacle;
-      if (MathUtil.isCollision(obstacle.getPosition(), obstacle.getShape(), position, shape)) {
+      if (MathUtil.isIntersect(obstacle.getPosition(), obstacle.getShape(), position, shape)) {
         hasHp.reduceHp(damage);
         log.info(
             "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, hasHp.getHp());
@@ -637,7 +637,7 @@ public class MatchImpl implements Match {
         new Vector2D(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
     obstacle.setPosition(newPosition);
     for (val player : players.values()) {
-      if (MathUtil.isCollision(
+      if (MathUtil.isIntersect(
           player.getPosition(), player.getShape(), newPosition, obstacle.getShape())) {
         return false;
       }
@@ -645,7 +645,7 @@ public class MatchImpl implements Match {
     for (val object : objects.values()) {
       if (object instanceof Obstacle) {
         val otherObstacle = (Obstacle) object;
-        if (MathUtil.isCollision(
+        if (MathUtil.isIntersect(
             otherObstacle.getPosition(),
             otherObstacle.getShape(),
             newPosition,
@@ -796,7 +796,7 @@ public class MatchImpl implements Match {
             continue;
           }
           log.info("player position {}", player.getPosition());
-          if (MathUtil.isCollision(
+          if (MathUtil.isIntersect(
               player.getPosition(), player.getShape(), bullet.getPosition(), bullet.getShape())) {
             log.info("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
             makeDamage(
@@ -817,7 +817,7 @@ public class MatchImpl implements Match {
               continue;
             }
           }
-          if (MathUtil.isCollision(
+          if (MathUtil.isIntersect(
               otherObject.getPosition(),
               otherObject.getShape(),
               bullet.getPosition(),
@@ -891,6 +891,28 @@ public class MatchImpl implements Match {
       itemOffset =
           survival2d.flatbuffers.GunItem.createGunItem(
               builder, (byte) gunItem.getGunType().ordinal(), gunItem.getNumBullet());
+    } else if (item instanceof HelmetItem) {
+      itemType = survival2d.flatbuffers.Item.HelmetItem;
+      val helmetItem = (HelmetItem) item;
+      itemOffset =
+          survival2d.flatbuffers.HelmetItem.createHelmetItem(
+              builder, (byte) helmetItem.getHelmetType().ordinal());
+    } else if (item instanceof VestItem) {
+      itemType = survival2d.flatbuffers.Item.VestItem;
+      val vestItem = (VestItem) item;
+      itemOffset =
+          survival2d.flatbuffers.VestItem.createVestItem(
+              builder, (byte) vestItem.getVestType().ordinal());
+    } else if (item instanceof MedKitItem) {
+      itemType = survival2d.flatbuffers.Item.MedKitItem;
+      val medKitItem = (MedKitItem) item;
+      survival2d.flatbuffers.MedKitItem.startMedKitItem(builder);
+      itemOffset = survival2d.flatbuffers.MedKitItem.endMedKitItem(builder);
+    } else if (item instanceof BandageItem) {
+      itemType = survival2d.flatbuffers.Item.BandageItem;
+      val bandageItem = (BandageItem) item;
+      survival2d.flatbuffers.BandageItem.startBandageItem(builder);
+      itemOffset = survival2d.flatbuffers.BandageItem.endBandageItem(builder);
     }
 
     survival2d.flatbuffers.CreateItemOnMapResponse.startCreateItemOnMapResponse(builder);
@@ -923,7 +945,7 @@ public class MatchImpl implements Match {
         continue;
       }
       val itemOnMap = (ItemOnMap) object;
-      if (MathUtil.isCollision(
+      if (MathUtil.isIntersect(
           player.getPosition(), player.getShape(), itemOnMap.getPosition(), itemOnMap.getShape())) {
         player.takeItem(itemOnMap.getItem());
         objects.remove(itemOnMap.getId());

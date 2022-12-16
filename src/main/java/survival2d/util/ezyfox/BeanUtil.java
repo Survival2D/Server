@@ -1,4 +1,4 @@
-package survival2d.util;
+package survival2d.util.ezyfox;
 
 import com.tvd12.ezyfox.bean.annotation.EzyAutoBind;
 import com.tvd12.ezyfox.bean.annotation.EzyConfigurationAfter;

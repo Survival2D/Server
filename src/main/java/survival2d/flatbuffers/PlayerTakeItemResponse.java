@@ -2,93 +2,46 @@
 
 package survival2d.flatbuffers;
 
-import com.google.flatbuffers.BaseVector;
-import com.google.flatbuffers.Constants;
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class PlayerTakeItemResponse extends Table {
-  public static void ValidateVersion() {
-    Constants.FLATBUFFERS_1_12_0();
-  }
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
+  public static PlayerTakeItemResponse getRootAsPlayerTakeItemResponse(ByteBuffer _bb) { return getRootAsPlayerTakeItemResponse(_bb, new PlayerTakeItemResponse()); }
+  public static PlayerTakeItemResponse getRootAsPlayerTakeItemResponse(ByteBuffer _bb, PlayerTakeItemResponse obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public PlayerTakeItemResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public static PlayerTakeItemResponse getRootAsPlayerTakeItemResponse(ByteBuffer _bb) {
-    return getRootAsPlayerTakeItemResponse(_bb, new PlayerTakeItemResponse());
-  }
+  public String username() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer usernameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
+  public ByteBuffer usernameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
+  public int id() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static PlayerTakeItemResponse getRootAsPlayerTakeItemResponse(
-      ByteBuffer _bb, PlayerTakeItemResponse obj) {
-    _bb.order(ByteOrder.LITTLE_ENDIAN);
-    return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-  }
-
-  public static int createPlayerTakeItemResponse(
-      FlatBufferBuilder builder, int usernameOffset, int id) {
+  public static int createPlayerTakeItemResponse(FlatBufferBuilder builder,
+      int usernameOffset,
+      int id) {
     builder.startTable(2);
     PlayerTakeItemResponse.addId(builder, id);
     PlayerTakeItemResponse.addUsername(builder, usernameOffset);
     return PlayerTakeItemResponse.endPlayerTakeItemResponse(builder);
   }
 
-  public static void startPlayerTakeItemResponse(FlatBufferBuilder builder) {
-    builder.startTable(2);
-  }
-
-  public static void addUsername(FlatBufferBuilder builder, int usernameOffset) {
-    builder.addOffset(0, usernameOffset, 0);
-  }
-
-  public static void addId(FlatBufferBuilder builder, int id) {
-    builder.addInt(1, id, 0);
-  }
-
+  public static void startPlayerTakeItemResponse(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void addUsername(FlatBufferBuilder builder, int usernameOffset) { builder.addOffset(0, usernameOffset, 0); }
+  public static void addId(FlatBufferBuilder builder, int id) { builder.addInt(1, id, 0); }
   public static int endPlayerTakeItemResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
 
-  public void __init(int _i, ByteBuffer _bb) {
-    __reset(_i, _bb);
-  }
-
-  public PlayerTakeItemResponse __assign(int _i, ByteBuffer _bb) {
-    __init(_i, _bb);
-    return this;
-  }
-
-  public String username() {
-    int o = __offset(4);
-    return o != 0 ? __string(o + bb_pos) : null;
-  }
-
-  public ByteBuffer usernameAsByteBuffer() {
-    return __vector_as_bytebuffer(4, 1);
-  }
-
-  public ByteBuffer usernameInByteBuffer(ByteBuffer _bb) {
-    return __vector_in_bytebuffer(_bb, 4, 1);
-  }
-
-  public int id() {
-    int o = __offset(6);
-    return o != 0 ? bb.getInt(o + bb_pos) : 0;
-  }
-
   public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) {
-      __reset(_vector, _element_size, _bb);
-      return this;
-    }
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
 
-    public PlayerTakeItemResponse get(int j) {
-      return get(new PlayerTakeItemResponse(), j);
-    }
-
-    public PlayerTakeItemResponse get(PlayerTakeItemResponse obj, int j) {
-      return obj.__assign(__indirect(__element(j), bb), bb);
-    }
+    public PlayerTakeItemResponse get(int j) { return get(new PlayerTakeItemResponse(), j); }
+    public PlayerTakeItemResponse get(PlayerTakeItemResponse obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
+

@@ -1,18 +1,12 @@
 package survival2d.match.util;
 
 import com.google.common.collect.Lists;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.RandomUtils;
@@ -282,70 +276,5 @@ public class MapGenerator {
     for (val position : positions) {
       fillMap(position.x, position.y, obstacle);
     }
-  }
-
-  @AllArgsConstructor
-  public enum Obstacle {
-    WALL(1, 1, 1),
-    TREE(1, 1, 1),
-    BOX(2, 2, 1),
-    ROCK(2, 2, 1);
-
-    //    int type;
-    int width;
-    int height;
-    int weight;
-
-    public static List<Obstacle> getListObstacles() {
-      return new LinkedList<>(Arrays.asList(Obstacle.values()));
-    }
-
-    public static TreeMap<Integer, Obstacle> buildObstacleWeight() {
-      val map = new TreeMap<Integer, Obstacle>();
-      var weight = 0;
-      for (val obstacle : Obstacle.values()) {
-        weight += obstacle.weight;
-        map.put(weight, obstacle);
-      }
-      return map;
-    }
-  }
-
-  @AllArgsConstructor
-  @Getter
-  @ToString
-  public static class Tile {
-    Obstacle type;
-    Position position;
-  }
-
-  @AllArgsConstructor
-  @Getter
-  @ToString
-  public static class Position {
-    public static List<Position> _4_NEIGHBOURS =
-        Arrays.asList(
-            new Position(-1, 0), new Position(1, 0), new Position(0, -1), new Position(0, 1));
-    int x;
-    int y;
-
-    public Position(Position position) {
-      this.x = position.x;
-      this.y = position.y;
-    }
-  }
-
-  @AllArgsConstructor
-  public static class Rectangle {
-    Position position;
-    int width;
-    int height;
-  }
-
-  @Builder
-  @Getter
-  @ToString
-  public static class MapGeneratorResult {
-    List<Tile> mapObjects;
   }
 }

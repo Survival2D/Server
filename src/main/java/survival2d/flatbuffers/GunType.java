@@ -3,14 +3,11 @@
 package survival2d.flatbuffers;
 
 public final class GunType {
+  private GunType() { }
   public static final byte NORMAL = 0;
-  public static final String[] names = {
-    "NORMAL",
-  };
 
-  private GunType() {}
+  public static final String[] names = { "NORMAL", };
 
-  public static String name(int e) {
-    return names[e];
-  }
+  public static String name(int e) { return names[e]; }
 }
+

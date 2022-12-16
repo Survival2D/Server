@@ -11,49 +11,32 @@ import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class HelmetItem extends Table {
-  public static void ValidateVersion() {
-    Constants.FLATBUFFERS_1_12_0();
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
+  public static HelmetItem getRootAsHelmetItem(ByteBuffer _bb) { return getRootAsHelmetItem(_bb, new HelmetItem()); }
+  public static HelmetItem getRootAsHelmetItem(ByteBuffer _bb, HelmetItem obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public HelmetItem __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public byte type() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+
+  public static int createHelmetItem(FlatBufferBuilder builder,
+      byte type) {
+    builder.startTable(1);
+    HelmetItem.addType(builder, type);
+    return HelmetItem.endHelmetItem(builder);
   }
 
-  public static HelmetItem getRootAsHelmetItem(ByteBuffer _bb) {
-    return getRootAsHelmetItem(_bb, new HelmetItem());
-  }
-
-  public static HelmetItem getRootAsHelmetItem(ByteBuffer _bb, HelmetItem obj) {
-    _bb.order(ByteOrder.LITTLE_ENDIAN);
-    return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-  }
-
-  public static void startHelmetItem(FlatBufferBuilder builder) {
-    builder.startTable(0);
-  }
-
+  public static void startHelmetItem(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static int endHelmetItem(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
 
-  public void __init(int _i, ByteBuffer _bb) {
-    __reset(_i, _bb);
-  }
-
-  public HelmetItem __assign(int _i, ByteBuffer _bb) {
-    __init(_i, _bb);
-    return this;
-  }
-
   public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) {
-      __reset(_vector, _element_size, _bb);
-      return this;
-    }
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
 
-    public HelmetItem get(int j) {
-      return get(new HelmetItem(), j);
-    }
-
-    public HelmetItem get(HelmetItem obj, int j) {
-      return obj.__assign(__indirect(__element(j), bb), bb);
-    }
+    public HelmetItem get(int j) { return get(new HelmetItem(), j); }
+    public HelmetItem get(HelmetItem obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }

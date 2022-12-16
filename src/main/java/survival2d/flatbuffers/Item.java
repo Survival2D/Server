@@ -3,16 +3,17 @@
 package survival2d.flatbuffers;
 
 public final class Item {
+  private Item() { }
   public static final byte NONE = 0;
   public static final byte BulletItem = 1;
   public static final byte GunItem = 2;
-  public static final String[] names = {
-    "NONE", "BulletItem", "GunItem",
-  };
+  public static final byte VestItem = 3;
+  public static final byte HelmetItem = 4;
+  public static final byte BandageItem = 5;
+  public static final byte MedKitItem = 6;
 
-  private Item() {}
+  public static final String[] names = { "NONE", "BulletItem", "GunItem", "VestItem", "HelmetItem", "BandageItem", "MedKitItem", };
 
-  public static String name(int e) {
-    return names[e];
-  }
+  public static String name(int e) { return names[e]; }
 }
+

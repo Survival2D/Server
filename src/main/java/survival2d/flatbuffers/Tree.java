@@ -2,58 +2,31 @@
 
 package survival2d.flatbuffers;
 
-import com.google.flatbuffers.BaseVector;
-import com.google.flatbuffers.Constants;
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class Tree extends Table {
-  public static void ValidateVersion() {
-    Constants.FLATBUFFERS_1_12_0();
-  }
+  public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
+  public static Tree getRootAsTree(ByteBuffer _bb) { return getRootAsTree(_bb, new Tree()); }
+  public static Tree getRootAsTree(ByteBuffer _bb, Tree obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
+  public Tree __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public static Tree getRootAsTree(ByteBuffer _bb) {
-    return getRootAsTree(_bb, new Tree());
-  }
 
-  public static Tree getRootAsTree(ByteBuffer _bb, Tree obj) {
-    _bb.order(ByteOrder.LITTLE_ENDIAN);
-    return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-  }
-
-  public static void startTree(FlatBufferBuilder builder) {
-    builder.startTable(0);
-  }
-
+  public static void startTree(FlatBufferBuilder builder) { builder.startTable(0); }
   public static int endTree(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
 
-  public void __init(int _i, ByteBuffer _bb) {
-    __reset(_i, _bb);
-  }
-
-  public Tree __assign(int _i, ByteBuffer _bb) {
-    __init(_i, _bb);
-    return this;
-  }
-
   public static final class Vector extends BaseVector {
-    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) {
-      __reset(_vector, _element_size, _bb);
-      return this;
-    }
+    public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
 
-    public Tree get(int j) {
-      return get(new Tree(), j);
-    }
-
-    public Tree get(Tree obj, int j) {
-      return obj.__assign(__indirect(__element(j), bb), bb);
-    }
+    public Tree get(int j) { return get(new Tree(), j); }
+    public Tree get(Tree obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
+

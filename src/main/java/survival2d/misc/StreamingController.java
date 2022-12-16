@@ -19,7 +19,7 @@ import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.misc.util.SamplePingData;
-import survival2d.util.BeanUtil;
+import survival2d.util.ezyfox.BeanUtil;
 import survival2d.util.stream.ByteBufferUtil;
 
 @EzySingleton
