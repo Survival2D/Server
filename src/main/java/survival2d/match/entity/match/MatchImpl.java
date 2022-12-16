@@ -7,7 +7,6 @@ import com.tvd12.ezyfoxserver.entity.EzySession;
 import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.wrapper.EzyZoneUserManager;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +44,9 @@ import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.MapObject;
-import survival2d.match.entity.base.Rectangle;
 import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.AttachType;
 import survival2d.match.entity.config.BulletType;
-import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.GunItem;
 import survival2d.match.entity.item.ItemOnMap;
@@ -61,6 +58,7 @@ import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
 import survival2d.match.entity.player.PlayerImpl;
 import survival2d.match.entity.weapon.Bullet;
+import survival2d.match.util.MapGenerator;
 import survival2d.util.math.MathUtil;
 import survival2d.util.serialize.ExcludeFromGson;
 import survival2d.util.stream.ByteBufferUtil;
@@ -647,36 +645,40 @@ public class MatchImpl implements Match {
   }
 
   private void initObstacles() {
-    // TODO: random this
-    for (int i = 0; i < 50; i++) {
-      val tree = new Tree();
-      tree.setShape(new Circle(50));
-      int tryTime = 0;
-      while (!randomPositionForObstacle(tree)) {
-        tryTime++;
-        if (tryTime > 100) {
-          log.error("Can't random position for tree {}", tree.getId());
-          break;
-        }
+    val generateResult = MapGenerator.generateMap();
+    for (val obstacle : generateResult.getMapObjects()) {
+      val position = new Vector2D(obstacle.getPosition().getX() * 100, obstacle.getPosition().getY() * 100);
+      switch (obstacle.getType()) {
+        case WALL:
+          {
+            val wall = new Wall();
+            wall.setPosition(position);
+            addMapObject(wall);
+            break;
+          }
+        case TREE:
+          {
+            val tree = new Tree();
+            // TODO: căn chỉnh lại vị trí cây do hình tròn
+            tree.setPosition(position);
+            addMapObject(tree);
+            break;
+          }
+        case BOX:
+          {
+            val container = new Container();
+            container.setPosition(position);
+            addMapObject(container);
+            break;
+          }
+        case ROCK:
+          {
+            val stone = new Stone();
+            stone.setPosition(position);
+            addMapObject(stone);
+            break;
+          }
       }
-      addMapObject(tree);
-    }
-
-    for (int i = 0; i < 50; i++) {
-
-      val container = new Container();
-      container.setShape(new Rectangle(200, 200));
-      container.setItems(
-          Arrays.asList(new GunItem(GunType.NORMAL, 10), new BulletItem(BulletType.NORMAL, 10)));
-      int tryTime = 0;
-      while (!randomPositionForObstacle(container)) {
-        tryTime++;
-        if (tryTime > 100) {
-          log.error("Can't random position for container {}", container.getId());
-          break;
-        }
-      }
-      addMapObject(container);
     }
   }
 

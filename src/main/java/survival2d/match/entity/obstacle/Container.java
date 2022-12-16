@@ -16,7 +16,7 @@ public class Container implements Destroyable, HasHp, Obstacle, Containable {
   @ExcludeFromGson int id;
   @ExcludeFromGson double hp = 100;
   Vector2D position;
-  @ExcludeFromGson Rectangle shape;
+  @ExcludeFromGson Rectangle shape = new Rectangle(200, 200);
   @ExcludeFromGson List<Item> items;
   ObstacleType type = ObstacleType.CONTAINER;
 

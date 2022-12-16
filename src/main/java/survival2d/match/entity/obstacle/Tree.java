@@ -13,7 +13,7 @@ public class Tree implements Destroyable, HasHp, Obstacle {
   @ExcludeFromGson int id;
   @ExcludeFromGson double hp = 100;
   Vector2D position;
-  @ExcludeFromGson Circle shape;
+  @ExcludeFromGson Circle shape =new Circle(50);
   ObstacleType type = ObstacleType.TREE;
 
   @Override
