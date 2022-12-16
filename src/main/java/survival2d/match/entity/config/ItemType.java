@@ -8,7 +8,7 @@ public enum ItemType {
   HELMET,
   VEST,
   BANDAGE,
-  MED_KIT,
+  MEDKIT,
   SODA,
   PILL,
   // TODO

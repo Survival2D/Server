@@ -9,10 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Circle;
 import survival2d.match.entity.base.Item;
+import survival2d.match.entity.config.BackPackType;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
+import survival2d.match.entity.config.HelmetType;
+import survival2d.match.entity.config.VestType;
+import survival2d.match.entity.item.BulletItem;
+import survival2d.match.entity.item.HelmetItem;
+import survival2d.match.entity.item.VestItem;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
 import survival2d.match.entity.weapon.Weapon;
@@ -21,16 +28,18 @@ import survival2d.util.serialize.ExcludeFromGson;
 @Data
 @Slf4j
 public class PlayerImpl implements Player {
-
-  String playerId;
+  int id; // Id trên map
+  String playerId; // Username của player
   Vector2D position =
       new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
   double rotation;
-  @ExcludeFromGson double speed = 10;
-  @ExcludeFromGson double hp = 100;
+  @ExcludeFromGson double speed = GameConfig.getInstance().getDefaultPlayerSpeed();
+  @ExcludeFromGson double hp = GameConfig.getInstance().getDefaultPlayerHp();
   @ExcludeFromGson Vector2D direction;
   @ExcludeFromGson List<Weapon> weapons = new ArrayList<>();
-  @ExcludeFromGson Map<Item, Integer> items; // Map item to quantity
+  @ExcludeFromGson BackPackType backPackType = BackPackType.LEVEL_0;
+  @ExcludeFromGson HelmetType helmetType = HelmetType.LEVEL_0;
+  @ExcludeFromGson VestType vestType = VestType.LEVEL_0;
   @ExcludeFromGson Map<BulletType, Integer> bullets; // Map bullet to quantity
   @ExcludeFromGson int currentWeaponIndex;
   int team;
@@ -67,11 +76,6 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public void reduceHp(double damage) {
-    hp -= damage;
-  }
-
-  @Override
   public void reloadWeapon() {
     val optWeapon = getCurrentWeapon();
     if (!optWeapon.isPresent()) {
@@ -82,5 +86,60 @@ public class PlayerImpl implements Player {
     if (weapon instanceof Gun) {
       ((Gun) weapon).reload(100);
     }
+  }
+
+  @Override
+  public void takeItem(Item item) {
+    switch (item.getItemType()) {
+      case WEAPON:
+        // TODO:
+        break;
+      case BULLET:
+        val bulletItem = (BulletItem) item;
+        takeBullet(bulletItem.getBulletType(), bulletItem.getNumBullet());
+        break;
+      case HELMET:
+        val helmetItem = (HelmetItem) item;
+        takeHelmet(helmetItem.getHelmetType());
+        break;
+      case VEST:
+        val vestItem = (VestItem) item;
+        takeVest(vestItem.getVestType());
+        break;
+      case MEDKIT:
+        takeMedKit();
+        break;
+      case BANDAGE:
+        takeBandage();
+        break;
+    }
+  }
+
+  private void takeBullet(BulletType bulletType, int numBullet) {
+    bullets.merge(bulletType, numBullet, Integer::sum);
+  }
+
+  private void takeHelmet(HelmetType helmetType) {
+    if (helmetType.compareTo(this.helmetType) > 0) {
+      this.helmetType = helmetType;
+    }
+  }
+
+  private void takeVest(VestType vestType) {
+    if (vestType.compareTo(this.vestType) > 0) {
+      this.vestType = vestType;
+    }
+  }
+
+  private void takeMedKit() {
+    heal(GameConfig.getInstance().getMedKitHeal());
+  }
+
+  private void takeBandage() {
+    heal(GameConfig.getInstance().getBandageHeal());
+  }
+
+  private void heal(double amount) {
+    hp = Math.min(hp + amount, GameConfig.getInstance().getDefaultPlayerHp());
   }
 }

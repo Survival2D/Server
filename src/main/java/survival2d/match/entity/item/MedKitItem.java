@@ -7,5 +7,5 @@ import survival2d.match.entity.config.ItemType;
 @Getter
 public class MedKitItem implements Item {
 
-  final ItemType itemType = ItemType.MED_KIT;
+  final ItemType itemType = ItemType.MEDKIT;
 }

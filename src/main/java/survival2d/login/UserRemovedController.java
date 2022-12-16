@@ -20,20 +20,5 @@ public class UserRemovedController extends EzyAbstractAppEventController<EzyUser
   public void handle(EzyAppContext ctx, EzyUserRemovedEvent event) {
     logger.info("EzySmashers app: user {} removed", event.getUser());
     // TODO
-    //    String playerName = event.getUser().getName();
-    //    NormalRoom room = roomService.removePlayer(playerName);
-    //
-    //    if (!(room instanceof MMORoom)) {
-    //      return;
-    //    }
-    //
-    //    List<String> playerNames = roomService.getRoomPlayerNames(room);
-    //
-    //    responseFactory
-    //        .newObjectResponse()
-    //        .command(Commands.ANOTHER_EXIT_MMO_ROOM)
-    //        .param("playerName", playerName)
-    //        .usernames(playerNames)
-    //        .execute();
   }
 }

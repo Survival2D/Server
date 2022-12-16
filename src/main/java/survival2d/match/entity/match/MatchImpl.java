@@ -7,6 +7,7 @@ import com.tvd12.ezyfoxserver.entity.EzySession;
 import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.wrapper.EzyZoneUserManager;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +48,17 @@ import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.AttachType;
 import survival2d.match.entity.config.BulletType;
+import survival2d.match.entity.config.GunType;
+import survival2d.match.entity.config.HelmetType;
+import survival2d.match.entity.config.VestType;
+import survival2d.match.entity.item.BackPackItem;
+import survival2d.match.entity.item.BandageItem;
 import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.GunItem;
+import survival2d.match.entity.item.HelmetItem;
 import survival2d.match.entity.item.ItemOnMap;
+import survival2d.match.entity.item.MedKitItem;
+import survival2d.match.entity.item.VestItem;
 import survival2d.match.entity.obstacle.Container;
 import survival2d.match.entity.obstacle.Obstacle;
 import survival2d.match.entity.obstacle.Stone;
@@ -246,11 +255,16 @@ public class MatchImpl implements Match {
         continue;
       }
       if (MathUtil.isCollision(player.getPosition(), player.getShape(), position, shape)) {
-        val damageMultiple =
-            MathUtil.isCollision(player.getPosition(), player.getHead(), position, shape)
-                ? GameConstant.HEADSHOT_DAMAGE
-                : GameConstant.BODY_DAMAGE;
-        player.reduceHp(damage * damageMultiple);
+        val isHeadshot =
+            MathUtil.isCollision(player.getPosition(), player.getHead(), position, shape);
+        val damageMultiple = isHeadshot ? GameConstant.HEADSHOT_DAMAGE : GameConstant.BODY_DAMAGE;
+        val totalDamage = damage * damageMultiple;
+        val reduceDamage =
+            isHeadshot
+                ? player.getHelmetType().getReduceDamage()
+                : player.getVestType().getReduceDamage();
+        val finalDamage = totalDamage - reduceDamage;
+        player.reduceHp(finalDamage);
         {
           val builder = new FlatBufferBuilder(0);
           val usernameOffset = builder.createString(player.getPlayerId());
@@ -495,7 +509,6 @@ public class MatchImpl implements Match {
         val wallOffset = survival2d.flatbuffers.Wall.endWall(builder);
         survival2d.flatbuffers.MapObject.addData(builder, wallOffset);
       }
-      // TODO: add more map object
       survival2d.flatbuffers.MapObject.startMapObject(builder);
       survival2d.flatbuffers.MapObject.addId(builder, object.getId());
       val positionOffset =
@@ -647,7 +660,8 @@ public class MatchImpl implements Match {
   private void initObstacles() {
     val generateResult = MapGenerator.generateMap();
     for (val obstacle : generateResult.getMapObjects()) {
-      val position = new Vector2D(obstacle.getPosition().getX() * 100, obstacle.getPosition().getY() * 100);
+      val position =
+          new Vector2D(obstacle.getPosition().getX() * 100, obstacle.getPosition().getY() * 100);
       switch (obstacle.getType()) {
         case WALL:
           {
@@ -668,6 +682,15 @@ public class MatchImpl implements Match {
           {
             val container = new Container();
             container.setPosition(position);
+            container.setItems(
+                Arrays.asList(
+                    new GunItem(GunType.NORMAL, 10),
+                    new BulletItem(BulletType.NORMAL, 10),
+                    new VestItem(VestType.LEVEL_1),
+                    new HelmetItem(HelmetType.LEVEL_1),
+                    new BackPackItem(),
+                    new MedKitItem(),
+                    new BandageItem()));
             addMapObject(container);
             break;
           }
@@ -826,10 +849,6 @@ public class MatchImpl implements Match {
       }
       for (val action : playerActionMap.values()) {
         handlePlayerAction(player.getPlayerId(), action);
-        // TODO: nếu mà client chưa sửa kịp, thì comment 3 dòng sau
-        //        if (!(action instanceof PlayerMove)) {
-        //          playerActionMap.remove(action.getClass());
-        //        }
       }
       playerActionMap.clear();
     }
@@ -906,7 +925,7 @@ public class MatchImpl implements Match {
       val itemOnMap = (ItemOnMap) object;
       if (MathUtil.isCollision(
           player.getPosition(), player.getShape(), itemOnMap.getPosition(), itemOnMap.getShape())) {
-        //        player.addItem(itemOnMap.getItem()); //TODO: add item to player
+        player.takeItem(itemOnMap.getItem());
         objects.remove(itemOnMap.getId());
 
         val builder = new FlatBufferBuilder(0);
