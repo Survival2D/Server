@@ -34,8 +34,10 @@ public final class PacketData {
   public static final byte PingByPlayerMoveResponse = 27;
   public static final byte PingByMatchInfoRequest = 28;
   public static final byte PingByMatchInfoResponse = 29;
+  public static final byte UseHealItemRequest = 30;
+  public static final byte UseHealItemResponse = 31;
 
-  public static final String[] names = { "NONE", "MatchInfoRequest", "MatchInfoResponse", "PlayerMoveRequest", "PlayerMoveResponse", "PlayerAttackRequest", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponRequest", "PlayerReloadWeaponResponse", "PlayerChangeWeaponRequest", "PlayerChangeWeaponResponse", "PlayerTakeItemRequest", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "PingRequest", "PingResponse", "PingByPlayerMoveRequest", "PingByPlayerMoveResponse", "PingByMatchInfoRequest", "PingByMatchInfoResponse", };
+  public static final String[] names = { "NONE", "MatchInfoRequest", "MatchInfoResponse", "PlayerMoveRequest", "PlayerMoveResponse", "PlayerAttackRequest", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponRequest", "PlayerReloadWeaponResponse", "PlayerChangeWeaponRequest", "PlayerChangeWeaponResponse", "PlayerTakeItemRequest", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "PingRequest", "PingResponse", "PingByPlayerMoveRequest", "PingByPlayerMoveResponse", "PingByMatchInfoRequest", "PingByMatchInfoResponse", "UseHealItemRequest", "UseHealItemResponse", };
 
   public static String name(int e) { return names[e]; }
 }

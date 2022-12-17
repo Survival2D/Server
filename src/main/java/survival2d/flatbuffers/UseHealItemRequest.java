@@ -15,21 +15,17 @@ public final class UseHealItemRequest extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public UseHealItemRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public byte typeType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public Table type(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
+  public byte type() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
 
   public static int createUseHealItemRequest(FlatBufferBuilder builder,
-      byte type_type,
-      int typeOffset) {
-    builder.startTable(2);
-    UseHealItemRequest.addType(builder, typeOffset);
-    UseHealItemRequest.addTypeType(builder, type_type);
+      byte type) {
+    builder.startTable(1);
+    UseHealItemRequest.addType(builder, type);
     return UseHealItemRequest.endUseHealItemRequest(builder);
   }
 
-  public static void startUseHealItemRequest(FlatBufferBuilder builder) { builder.startTable(2); }
-  public static void addTypeType(FlatBufferBuilder builder, byte typeType) { builder.addByte(0, typeType, 0); }
-  public static void addType(FlatBufferBuilder builder, int typeOffset) { builder.addOffset(1, typeOffset, 0); }
+  public static void startUseHealItemRequest(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static int endUseHealItemRequest(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

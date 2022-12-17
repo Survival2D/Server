@@ -16,16 +16,24 @@ public final class UseHealItemResponse extends Table {
   public UseHealItemResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public double remainHp() { int o = __offset(4); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
+  public byte itemType() { int o = __offset(6); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public int remainItem() { int o = __offset(8); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createUseHealItemResponse(FlatBufferBuilder builder,
-      double remainHp) {
-    builder.startTable(1);
+      double remainHp,
+      byte itemType,
+      int remainItem) {
+    builder.startTable(3);
     UseHealItemResponse.addRemainHp(builder, remainHp);
+    UseHealItemResponse.addRemainItem(builder, remainItem);
+    UseHealItemResponse.addItemType(builder, itemType);
     return UseHealItemResponse.endUseHealItemResponse(builder);
   }
 
-  public static void startUseHealItemResponse(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void startUseHealItemResponse(FlatBufferBuilder builder) { builder.startTable(3); }
   public static void addRemainHp(FlatBufferBuilder builder, double remainHp) { builder.addDouble(0, remainHp, 0.0); }
+  public static void addItemType(FlatBufferBuilder builder, byte itemType) { builder.addByte(1, itemType, 0); }
+  public static void addRemainItem(FlatBufferBuilder builder, int remainItem) { builder.addInt(2, remainItem, 0); }
   public static int endUseHealItemResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
