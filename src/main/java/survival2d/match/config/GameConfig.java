@@ -23,6 +23,8 @@ public class GameConfig implements PostProcessable {
   private double defaultPlayerSpeed;
   private double bandageHeal;
   private double medKitHeal;
+  private double playerViewWidth;
+  private double playerViewHeight;
 
   public static void load() {
     InstanceHolder.instance =

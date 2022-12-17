@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
@@ -17,17 +18,21 @@ import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.config.HelmetType;
 import survival2d.match.entity.config.VestType;
+import survival2d.match.entity.item.BackPackItem;
 import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.HelmetItem;
 import survival2d.match.entity.item.VestItem;
+import survival2d.match.entity.quadtree.BaseMapObject;
+import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
 import survival2d.match.entity.weapon.Weapon;
 import survival2d.util.serialize.ExcludeFromGson;
 
-@Data
+@Getter
+@Setter
 @Slf4j
-public class PlayerImpl implements Player {
+public class PlayerImpl extends BaseMapObject implements Player {
   int id; // Id trên map
   String playerId; // Username của player
   Vector2D position =
@@ -43,10 +48,10 @@ public class PlayerImpl implements Player {
   @ExcludeFromGson Map<BulletType, Integer> bullets; // Map bullet to quantity
   @ExcludeFromGson int currentWeaponIndex;
   int team;
-  @ExcludeFromGson Circle shape = new Circle(30);
   @ExcludeFromGson Circle head = new Circle(10);
 
   public PlayerImpl(String playerId, int team) {
+    super(new Circle(30));
     this.playerId = playerId;
     this.team = team;
     this.weapons.add(new Hand());
@@ -94,6 +99,10 @@ public class PlayerImpl implements Player {
       case WEAPON:
         // TODO:
         break;
+      case BACKPACK:
+        val backPackItem = (BackPackItem) item;
+        takeBackPack(backPackItem.getBackPackType());
+        break;
       case BULLET:
         val bulletItem = (BulletItem) item;
         takeBullet(bulletItem.getBulletType(), bulletItem.getNumBullet());
@@ -112,6 +121,12 @@ public class PlayerImpl implements Player {
       case BANDAGE:
         takeBandage();
         break;
+    }
+  }
+
+  private void takeBackPack(BackPackType backPackType) {
+    if (backPackType.compareTo(this.backPackType) > 0) {
+      this.backPackType = backPackType;
     }
   }
 
@@ -141,5 +156,12 @@ public class PlayerImpl implements Player {
 
   private void heal(double amount) {
     hp = Math.min(hp + amount, GameConfig.getInstance().getDefaultPlayerHp());
+  }
+
+  public RectangleBoundary getPlayerView() {
+    val width = GameConfig.getInstance().getPlayerViewWidth();
+    val height = GameConfig.getInstance().getPlayerViewHeight();
+    return new RectangleBoundary(
+        position.getX() - width / 2, position.getY() - height / 2, width, height);
   }
 }

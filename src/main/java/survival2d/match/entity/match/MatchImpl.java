@@ -60,6 +60,7 @@ import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
 import survival2d.match.entity.player.PlayerImpl;
 import survival2d.match.entity.quadtree.QuadTree;
+import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
 import survival2d.match.entity.weapon.Bullet;
 import survival2d.match.util.MapGenerator;
 import survival2d.util.ezyfox.EzyFoxUtil;
@@ -69,12 +70,8 @@ import survival2d.util.stream.ByteBufferUtil;
 
 @Getter
 @Slf4j
-public class MatchImpl implements Match {
+public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Match {
   @ExcludeFromGson private final long id;
-  private final Hashtable<Integer, MapObject> objects = new Hashtable<>();
-  private final QuadTree quadTree =
-      new QuadTree(
-          0, 0, GameConfig.getInstance().getMapWidth(), GameConfig.getInstance().getMapHeight());
 
   @ExcludeFromGson
   private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
@@ -82,7 +79,7 @@ public class MatchImpl implements Match {
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
   @ExcludeFromGson private final Timer timer = new Timer();
-  private final List<Pair<Circle, Vector2D>> safeZones = new ArrayList<>();
+  @ExcludeFromGson private final List<Pair<Circle, Vector2D>> safeZones = new ArrayList<>();
   @ExcludeFromGson int nextSafeZone;
   @ExcludeFromGson private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
@@ -90,12 +87,17 @@ public class MatchImpl implements Match {
 
   public MatchImpl(long id) {
     this.id = id;
+    objects = new Hashtable<>();
+    quadTree =
+        new QuadTree(
+            0, 0, GameConfig.getInstance().getMapWidth(), GameConfig.getInstance().getMapHeight());
     init();
   }
 
   @Override
   public void addPlayer(int teamId, String playerId) {
-    players.putIfAbsent(playerId, new PlayerImpl(playerId, teamId));
+    PlayerImpl value = new PlayerImpl(playerId, teamId);
+    players.putIfAbsent(playerId, value);
     int tryCount = 0;
     while (!randomPositionForPlayer(playerId)) {
       tryCount++;
@@ -105,6 +107,7 @@ public class MatchImpl implements Match {
       }
     }
     playerRequests.put(playerId, new ConcurrentHashMap<>());
+    addMapObject(players.get(playerId));
   }
 
   public boolean randomPositionForPlayer(String playerId) {
@@ -205,9 +208,13 @@ public class MatchImpl implements Match {
     }
   }
 
-  public void addMapObject(MapObject mapObject) {
-    mapObject.setId(currentMapObjectId++);
-    objects.put(mapObject.getId(), mapObject);
+  public void addMapObject(MapObject object) {
+    object.setId(currentMapObjectId++);
+    objects.put(object.getId(), object);
+  }
+
+  public void onMapObjectMove(MapObject object) {
+    quadTree.update(object);
   }
 
   @Override

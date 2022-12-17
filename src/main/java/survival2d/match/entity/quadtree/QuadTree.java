@@ -7,10 +7,10 @@ import lombok.val;
 
 @Getter
 public class QuadTree {
-  private static final int CAPACITY = 4; // Sức chứa của mỗi quadtree
+  private static final int CAPACITY = 10; // Sức chứa của mỗi quadtree
   RectangleBoundary boundary;
   boolean partitioned = false;
-  Hashtable<Integer, Node<?>> nodes = new Hashtable<>();
+  Hashtable<Integer, Node> nodes = new Hashtable<>();
   QuadTree northwest;
   QuadTree northeast;
   QuadTree southwest;
@@ -20,24 +20,35 @@ public class QuadTree {
     boundary = new RectangleBoundary(x, y, width, height);
   }
 
-  public void add(BaseMapObject object) {
-    if (!boundary.contains(object)) return;
+  public void add(Node node) {
+    if (!boundary.contains(node)) return;
+
+    if (nodes.contains(node)) return;
 
     if (nodes.size() < CAPACITY) {
-      nodes.put(object.id, object);
+      nodes.put(node.getId(), node);
       return;
     }
 
     if (!partitioned) partition();
-    if (northwest.boundary.contains(object)) {
-      northwest.add(object);
-    } else if (northeast.boundary.contains(object)) {
-      northeast.add(object);
-    } else if (southwest.boundary.contains(object)) {
-      southwest.add(object);
-    } else if (southeast.boundary.contains(object)) {
-      southeast.add(object);
+    if (northwest.boundary.contains(node)) {
+      northwest.add(node);
+    } else if (northeast.boundary.contains(node)) {
+      northeast.add(node);
+    } else if (southwest.boundary.contains(node)) {
+      southwest.add(node);
+    } else if (southeast.boundary.contains(node)) {
+      southeast.add(node);
     }
+  }
+
+  public void remove(Node node) {
+    nodes.remove(node.getId());
+    if (!partitioned) return;
+    northwest.remove(node);
+    northeast.remove(node);
+    southwest.remove(node);
+    southeast.remove(node);
   }
 
   private void partition() {
@@ -54,7 +65,7 @@ public class QuadTree {
     partitioned = true;
   }
 
-  public Collection<Node<?>> query(Boundary boundary, Collection<Node<?>> relevantNodes) {
+  public Collection<Node> query(BaseBoundary boundary, Collection<Node> relevantNodes) {
     if (boundary.isIntersect(boundary)) {
       nodes.values().stream().filter(boundary::contains).forEach(relevantNodes::add);
       if (partitioned) {
@@ -67,7 +78,7 @@ public class QuadTree {
     return relevantNodes;
   }
 
-  public Collection<Node<?>> getAllObjects(Collection<Node<?>> relevantNodes) {
+  public Collection<Node> getAllObjects(Collection<Node> relevantNodes) {
     relevantNodes.addAll(nodes.values());
     if (partitioned) {
       northwest.getAllObjects(relevantNodes);
@@ -76,5 +87,10 @@ public class QuadTree {
       southeast.getAllObjects(relevantNodes);
     }
     return relevantNodes;
+  }
+
+  public void update(Node node) {
+    remove(node);
+    add(node);
   }
 }

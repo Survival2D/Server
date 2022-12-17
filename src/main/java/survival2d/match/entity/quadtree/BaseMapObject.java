@@ -1,24 +1,24 @@
 package survival2d.match.entity.quadtree;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.base.Shape;
 import survival2d.util.math.MathUtil;
+import survival2d.util.serialize.ExcludeFromGson;
 
+@AllArgsConstructor
 @Getter
+@NoArgsConstructor
+//@RequiredArgsConstructor
 @Setter
 @Slf4j
-public class BaseMapObject extends Node<BaseMapObject> implements MapObject {
+public class BaseMapObject extends BaseNode<BaseMapObject> implements MapObject {
 
-  Shape shape;
-
-  BaseMapObject(int id, Vector2D position, Shape shape) {
-    super(id, position);
-    this.shape = shape;
-  }
+  @ExcludeFromGson protected Shape shape;
 
   @Override
   public boolean isCollision(BaseMapObject other) {

@@ -1,3 +1,5 @@
 package survival2d.match.entity.base;
 
-public interface MapObject extends HasId, HasPosition, HasShape {}
+import survival2d.match.entity.quadtree.Node;
+
+public interface MapObject extends Node, HasId, HasPosition, HasShape {}

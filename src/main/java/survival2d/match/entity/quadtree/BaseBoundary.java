@@ -9,21 +9,21 @@ import survival2d.util.math.MathUtil;
 
 @Getter
 @Setter
-public abstract class Boundary {
+public abstract class BaseBoundary {
   Vector2D position;
   Shape shape;
 
-  public Boundary(double x, double y, Shape shape) {
+  public BaseBoundary(double x, double y, Shape shape) {
     position = new Vector2D(x, y);
     this.shape = shape;
   }
 
-  public boolean contains(Node<?> object) {
-    // Chứa object nếu chứa tâm của object đó
-    return MathUtil.isIntersect(position, shape, object.getPosition(), Dot.DOT);
+  public boolean contains(Node node) {
+    // Chứa node nếu chứa tâm của node đó
+    return MathUtil.isIntersect(position, shape, node.getPosition(), Dot.DOT);
   }
 
-  public boolean isIntersect(Boundary other) {
+  public boolean isIntersect(BaseBoundary other) {
     return MathUtil.isIntersect(position, shape, other.position, other.shape);
   }
 }

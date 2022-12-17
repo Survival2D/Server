@@ -1,17 +1,20 @@
 package survival2d.match.entity.obstacle;
 
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.Rectangle;
+import survival2d.match.entity.quadtree.BaseMapObject;
 import survival2d.util.serialize.ExcludeFromGson;
 
-@Data
-public class Container implements Destroyable, HasHp, Obstacle, Containable {
+@Getter
+@Setter
+public class Container extends BaseMapObject implements Destroyable, HasHp, Obstacle, Containable {
 
   @ExcludeFromGson int id;
   @ExcludeFromGson double hp = 100;

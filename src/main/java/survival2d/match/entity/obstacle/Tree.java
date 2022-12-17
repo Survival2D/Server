@@ -1,14 +1,17 @@
 package survival2d.match.entity.obstacle;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Circle;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
+import survival2d.match.entity.quadtree.BaseMapObject;
 import survival2d.util.serialize.ExcludeFromGson;
 
-@Data
-public class Tree implements Destroyable, HasHp, Obstacle {
+@Getter
+@Setter
+public class Tree extends BaseMapObject implements Destroyable, HasHp, Obstacle {
 
   @ExcludeFromGson int id;
   @ExcludeFromGson double hp = 100;
