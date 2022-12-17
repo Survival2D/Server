@@ -1,21 +1,15 @@
 package survival2d.match.entity.match;
 
 import com.google.flatbuffers.FlatBufferBuilder;
-import com.tvd12.ezyfoxserver.EzyZone;
-import com.tvd12.ezyfoxserver.context.EzyZoneContext;
-import com.tvd12.ezyfoxserver.entity.EzySession;
-import com.tvd12.ezyfoxserver.entity.EzyUser;
-import com.tvd12.ezyfoxserver.wrapper.EzyZoneUserManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +18,6 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import survival2d.Survival2DStartup;
 import survival2d.common.CommonConfig;
 import survival2d.flatbuffers.MapObjectData;
 import survival2d.flatbuffers.MatchInfoResponse;
@@ -66,8 +59,10 @@ import survival2d.match.entity.obstacle.Tree;
 import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
 import survival2d.match.entity.player.PlayerImpl;
+import survival2d.match.entity.quadtree.QuadTree;
 import survival2d.match.entity.weapon.Bullet;
 import survival2d.match.util.MapGenerator;
+import survival2d.util.ezyfox.EzyFoxUtil;
 import survival2d.util.math.MathUtil;
 import survival2d.util.serialize.ExcludeFromGson;
 import survival2d.util.stream.ByteBufferUtil;
@@ -75,9 +70,11 @@ import survival2d.util.stream.ByteBufferUtil;
 @Getter
 @Slf4j
 public class MatchImpl implements Match {
-
   @ExcludeFromGson private final long id;
-  private final Map<Integer, MapObject> objects = new ConcurrentHashMap<>();
+  private final Hashtable<Integer, MapObject> objects = new Hashtable<>();
+  private final QuadTree quadTree =
+      new QuadTree(
+          0, 0, GameConfig.getInstance().getMapWidth(), GameConfig.getInstance().getMapHeight());
 
   @ExcludeFromGson
   private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
@@ -90,7 +87,6 @@ public class MatchImpl implements Match {
   @ExcludeFromGson private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   @ExcludeFromGson private long currentTick;
-  @ExcludeFromGson private EzyZoneContext zoneContext;
 
   public MatchImpl(long id) {
     this.id = id;
@@ -175,7 +171,7 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 
   @Override
@@ -235,7 +231,7 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
     makeDamage(playerId, position, shape, damage);
   }
 
@@ -282,7 +278,7 @@ public class MatchImpl implements Match {
           builder.finish(packetOffset);
 
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          EzyFoxUtil.stream(bytes, getAllPlayers());
         }
         if (player.isDestroyed()) {
           val builder = new FlatBufferBuilder(0);
@@ -300,7 +296,7 @@ public class MatchImpl implements Match {
           builder.finish(packetOffset);
 
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          EzyFoxUtil.stream(bytes, getAllPlayers());
           checkEndGame();
         }
       }
@@ -336,7 +332,7 @@ public class MatchImpl implements Match {
           builder.finish(packetOffset);
 
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          EzyFoxUtil.stream(bytes, getAllPlayers());
         }
         if (destroyable.isDestroyed()) {
           log.info("Obstacle {} destroyed", obstacle.getId());
@@ -353,7 +349,7 @@ public class MatchImpl implements Match {
           builder.finish(packetOffset);
 
           val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          EzyFoxUtil.stream(bytes, getAllPlayers());
           if (obstacle instanceof Containable) {
             val containable = (Containable) obstacle;
             for (val item : containable.getItems()) {
@@ -389,7 +385,7 @@ public class MatchImpl implements Match {
       builder.finish(packetOffset);
 
       val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-      zoneContext.stream(bytes, getSessions(getAllPlayers()));
+      EzyFoxUtil.stream(bytes, getAllPlayers());
       stop();
     }
   }
@@ -424,13 +420,13 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 
   @Override
   public void responseMatchInfo(String username) {
     final byte[] bytes = getMatchInfoPacket();
-    zoneContext.stream(bytes, getSession(username));
+    EzyFoxUtil.stream(bytes, username);
   }
 
   private byte[] getMatchInfoPacket() {
@@ -535,7 +531,7 @@ public class MatchImpl implements Match {
   @Override
   public void responseMatchInfo() {
     val bytes = getMatchInfoPacket();
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 
   public void onPlayerSwitchWeapon(String playerId, int weaponId) {
@@ -559,13 +555,11 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 
   public void init() {
     if (!CommonConfig.testPing) {
-      zoneContext =
-          Survival2DStartup.getServerContext().getZoneContext(Survival2DStartup.ZONE_NAME);
       timer.schedule(
           new TimerTask() {
             @Override
@@ -600,31 +594,6 @@ public class MatchImpl implements Match {
       safeZones.add(new ImmutablePair<>(new Circle(radius), newPosition));
     }
     nextSafeZone = 1;
-  }
-
-  private EzyZone getZone() {
-    return zoneContext.getZone();
-  }
-
-  private EzyZoneUserManager getZoneUserManager() {
-    return getZone().getUserManager();
-  }
-
-  private EzyUser getUser(String username) {
-    return getZoneUserManager().getUser(username);
-  }
-
-  private EzySession getSession(String username) {
-    val user = getUser(username);
-    if (user == null) return null;
-    return user.getSession();
-  }
-
-  private List<EzySession> getSessions(Collection<String> usernames) {
-    return usernames.stream()
-        .map(this::getSession)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
   }
 
   public void stop() {
@@ -725,7 +694,7 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 
   public void end() {
@@ -756,7 +725,7 @@ public class MatchImpl implements Match {
       builder.finish(packetOffset);
 
       val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-      zoneContext.stream(bytes, getSessions(getAllPlayers()));
+      EzyFoxUtil.stream(bytes, getAllPlayers());
     }
     if (nextSafeZone >= safeZones.size()) {
       return;
@@ -778,7 +747,7 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 
   private void updateMapObjects() {
@@ -935,7 +904,7 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 
   private void onPlayerTakeItem(String playerId) {
@@ -964,7 +933,7 @@ public class MatchImpl implements Match {
         builder.finish(packetOffset);
 
         val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-        zoneContext.stream(bytes, getSessions(getAllPlayers()));
+        EzyFoxUtil.stream(bytes, getAllPlayers());
       }
     }
   }
@@ -985,6 +954,6 @@ public class MatchImpl implements Match {
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    EzyFoxUtil.stream(bytes, getAllPlayers());
   }
 }

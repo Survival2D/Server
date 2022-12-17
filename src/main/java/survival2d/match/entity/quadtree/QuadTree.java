@@ -16,7 +16,7 @@ public class QuadTree {
   QuadTree southwest;
   QuadTree southeast;
 
-  QuadTree(double x, double y, double width, double height) {
+  public QuadTree(double x, double y, double width, double height) {
     boundary = new RectangleBoundary(x, y, width, height);
   }
 
@@ -47,22 +47,33 @@ public class QuadTree {
     val height = boundary.getShape().getHeight();
     val halfWidth = width / 2;
     val halfHeight = height / 2;
-    this.northwest = new QuadTree(x, y, halfWidth, halfHeight);
-    this.northeast = new QuadTree(x, y + halfHeight, halfWidth, halfHeight);
-    this.southwest = new QuadTree(x + halfWidth, y, halfWidth, halfHeight);
-    this.southeast = new QuadTree(x + halfWidth, y + halfHeight, halfWidth, halfHeight);
-    this.partitioned = true;
+    northwest = new QuadTree(x, y, halfWidth, halfHeight);
+    northeast = new QuadTree(x, y + halfHeight, halfWidth, halfHeight);
+    southwest = new QuadTree(x + halfWidth, y, halfWidth, halfHeight);
+    southeast = new QuadTree(x + halfWidth, y + halfHeight, halfWidth, halfHeight);
+    partitioned = true;
   }
 
   public Collection<Node<?>> query(Boundary boundary, Collection<Node<?>> relevantNodes) {
-    if (this.boundary.isIntersect(boundary)) {
-      this.nodes.values().stream().filter(boundary::contains).forEach(relevantNodes::add);
-      if (this.partitioned) {
-        this.northwest.query(boundary, relevantNodes);
-        this.northeast.query(boundary, relevantNodes);
-        this.southwest.query(boundary, relevantNodes);
-        this.southeast.query(boundary, relevantNodes);
+    if (boundary.isIntersect(boundary)) {
+      nodes.values().stream().filter(boundary::contains).forEach(relevantNodes::add);
+      if (partitioned) {
+        northwest.query(boundary, relevantNodes);
+        northeast.query(boundary, relevantNodes);
+        southwest.query(boundary, relevantNodes);
+        southeast.query(boundary, relevantNodes);
       }
+    }
+    return relevantNodes;
+  }
+
+  public Collection<Node<?>> getAllObjects(Collection<Node<?>> relevantNodes) {
+    relevantNodes.addAll(nodes.values());
+    if (partitioned) {
+      northwest.getAllObjects(relevantNodes);
+      northeast.getAllObjects(relevantNodes);
+      southwest.getAllObjects(relevantNodes);
+      southeast.getAllObjects(relevantNodes);
     }
     return relevantNodes;
   }
