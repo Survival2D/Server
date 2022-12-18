@@ -160,7 +160,8 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       val unitDirection = direction.normalize();
       val moveBy = unitDirection.scalarMultiply(player.getSpeed());
       player.moveBy(moveBy);
-      if (isValidToMove(player)) {
+      if (!isValidToMove(player)) {
+        log.warn("Player {} can not move to {}", playerId, player.getPosition());
         val reverse = moveBy.scalarMultiply(-1);
         player.moveBy(reverse);
       }
@@ -275,6 +276,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   public void addMapObject(MapObject object) {
     object.setId(currentMapObjectId++);
     objects.put(object.getId(), object);
+    quadTree.add(object);
   }
 
   public void onMapObjectMove(MapObject object) {

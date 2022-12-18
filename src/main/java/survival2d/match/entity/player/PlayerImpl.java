@@ -1,6 +1,7 @@
 package survival2d.match.entity.player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class PlayerImpl extends BaseMapObject implements Player {
   @ExcludeFromGson HelmetType helmetType = HelmetType.LEVEL_0;
   @ExcludeFromGson VestType vestType = VestType.LEVEL_0;
   @ExcludeFromGson Map<BulletType, Integer> bullets; // Map bullet to quantity
-  @ExcludeFromGson Map<ItemType, Integer> items; // Chỉ map những item 1 loại
+  @ExcludeFromGson Map<ItemType, Integer> items = new HashMap<>(); // Chỉ map những item 1 loại
   @ExcludeFromGson int currentWeaponIndex;
   int team;
   @ExcludeFromGson Circle head = HEAD_SHAPE;
