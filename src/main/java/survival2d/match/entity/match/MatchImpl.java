@@ -529,8 +529,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       playerOffsets[i] = survival2d.flatbuffers.Player.endPlayer(builder);
     }
 
-    int[] mapObjectOffsets = new int[objects.size()];
-    val mapObjects = objects.values().toArray(new MapObject[0]);
+    val mapObjects =
+        objects.values().stream()
+            .filter(mapObject -> !(mapObject instanceof Player))
+            .toArray(MapObject[]::new);
+    int[] mapObjectOffsets = new int[mapObjects.length];
     for (int i = 0; i < mapObjects.length; i++) {
       val object = mapObjects[i];
       var objectDataOffset = 0;
@@ -574,8 +577,6 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         survival2d.flatbuffers.Wall.startWall(builder);
         val wallOffset = survival2d.flatbuffers.Wall.endWall(builder);
         survival2d.flatbuffers.MapObject.addData(builder, wallOffset);
-      } else {
-        continue;
       }
       survival2d.flatbuffers.MapObject.startMapObject(builder);
       survival2d.flatbuffers.MapObject.addId(builder, object.getId());
@@ -927,6 +928,13 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       val bandageItem = (BandageItem) item;
       survival2d.flatbuffers.BandageItem.startBandageItem(builder);
       itemOffset = survival2d.flatbuffers.BandageItem.endBandageItem(builder);
+    } else if (item instanceof BackPackItem) {
+      val backPackItem = (BackPackItem) item;
+      itemType = survival2d.flatbuffers.Item.BackPackItem;
+      survival2d.flatbuffers.BackPackItem.startBackPackItem(builder);
+      itemOffset = survival2d.flatbuffers.BackPackItem.endBackPackItem(builder);
+    } else {
+      log.warn("Unknown item type {}", item.getClass());
     }
 
     survival2d.flatbuffers.CreateItemOnMapResponse.startCreateItemOnMapResponse(builder);

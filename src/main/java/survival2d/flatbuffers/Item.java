@@ -11,8 +11,9 @@ public final class Item {
   public static final byte HelmetItem = 4;
   public static final byte BandageItem = 5;
   public static final byte MedKitItem = 6;
+  public static final byte BackPackItem = 7;
 
-  public static final String[] names = { "NONE", "BulletItem", "GunItem", "VestItem", "HelmetItem", "BandageItem", "MedKitItem", };
+  public static final String[] names = { "NONE", "BulletItem", "GunItem", "VestItem", "HelmetItem", "BandageItem", "MedKitItem", "BackPackItem", };
 
   public static String name(int e) { return names[e]; }
 }
