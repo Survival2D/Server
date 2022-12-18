@@ -1,5 +1,7 @@
 package survival2d.match.entity.config;
 
+import survival2d.flatbuffers.Item;
+
 public enum ItemType {
   WEAPON,
   BULLET,
@@ -11,5 +13,12 @@ public enum ItemType {
   MEDKIT,
   SODA,
   PILL,
-  // TODO
+  UNKNOWN; //For parse check
+
+  public static ItemType parse(int itemId) {
+    if (itemId < 0 || itemId >= Item.names.length) {
+      return UNKNOWN;
+    }
+    return ItemType.values()[itemId];
+  }
 }

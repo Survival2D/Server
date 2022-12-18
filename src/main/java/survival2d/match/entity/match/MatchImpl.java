@@ -34,6 +34,7 @@ import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.action.PlayerUseHealItem;
 import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Circle;
@@ -361,7 +362,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
           }
           if (player.isDestroyed()) {
             val builder = new FlatBufferBuilder(0);
-            val usernameOffset = builder.createString(playerId);
+            val usernameOffset = builder.createString(player.getPlayerId());
 
             survival2d.flatbuffers.PlayerDeadResponse.startPlayerDeadResponse(builder);
             survival2d.flatbuffers.PlayerDeadResponse.addUsername(builder, usernameOffset);
@@ -890,6 +891,9 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       onPlayerReloadWeapon(playerId);
     } else if (action instanceof PlayerTakeItem) {
       onPlayerTakeItem(playerId);
+    } else if (action instanceof PlayerUseHealItem) {
+      val playerUseHealItem = (PlayerUseHealItem) action;
+      onPlayerUseHealItem(playerId, playerUseHealItem.getItemId());
     }
   }
 
@@ -1015,5 +1019,36 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
     EzyFoxUtil.stream(bytes, getAllUsernames());
+  }
+
+  private void onPlayerUseHealItem(String playerId, int itemId) {
+    val player = players.get(playerId);
+    var result = false;
+    switch (itemId) {
+      case survival2d.flatbuffers.Item.BandageItem:
+        result = player.useBandage();
+        break;
+      case survival2d.flatbuffers.Item.MedKitItem:
+        result = player.useMedKit();
+        break;
+      default:
+        log.warn("Not handle use item {}", itemId);
+    }
+    if (result) {
+      val builder = new FlatBufferBuilder(0);
+
+      val responseOffset =
+          survival2d.flatbuffers.UseHealItemResponse.createUseHealItemResponse(
+              builder, player.getHp(), (byte) itemId, player.getNumItem(itemId));
+
+      Packet.startPacket(builder);
+      Packet.addDataType(builder, PacketData.UseHealItemResponse);
+      Packet.addData(builder, responseOffset);
+      val packetOffset = Packet.endPacket(builder);
+      builder.finish(packetOffset);
+
+      val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+      EzyFoxUtil.stream(bytes, getAllUsernames());
+    }
   }
 }

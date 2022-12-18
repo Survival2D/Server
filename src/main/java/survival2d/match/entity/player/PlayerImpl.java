@@ -161,7 +161,8 @@ public class PlayerImpl extends BaseMapObject implements Player {
     items.merge(ItemType.BANDAGE, 1, Integer::sum);
   }
 
-  private boolean useMedKit() {
+  @Override
+  public boolean useMedKit() {
     if (items.get(ItemType.MEDKIT) == null || items.get(ItemType.MEDKIT) <= 0) {
       return false;
     }
@@ -170,13 +171,19 @@ public class PlayerImpl extends BaseMapObject implements Player {
     return true;
   }
 
-  private boolean useBandage() {
+  @Override
+  public boolean useBandage() {
     if (items.get(ItemType.BANDAGE) == null || items.get(ItemType.BANDAGE) <= 0) {
       return false;
     }
     items.put(ItemType.BANDAGE, items.get(ItemType.BANDAGE) - 1);
     heal(GameConfig.getInstance().getBandageHeal());
     return true;
+  }
+
+  @Override
+  public int getNumItem(int itemId) {
+    return items.getOrDefault(ItemType.parse(itemId), 0);
   }
 
   private void heal(double amount) {

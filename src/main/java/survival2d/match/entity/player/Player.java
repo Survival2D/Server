@@ -44,4 +44,10 @@ public interface Player extends MapObject, Movable, HasHp {
   VestType getVestType();
 
   HelmetType getHelmetType();
+
+  boolean useMedKit();
+
+  boolean useBandage();
+
+  int getNumItem(int itemId);
 }

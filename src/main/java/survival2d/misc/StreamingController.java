@@ -13,11 +13,13 @@ import survival2d.flatbuffers.PacketData;
 import survival2d.flatbuffers.PlayerAttackRequest;
 import survival2d.flatbuffers.PlayerChangeWeaponRequest;
 import survival2d.flatbuffers.PlayerMoveRequest;
+import survival2d.flatbuffers.UseHealItemRequest;
 import survival2d.match.action.PlayerAttack;
 import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.action.PlayerUseHealItem;
 import survival2d.misc.util.SamplePingData;
 import survival2d.util.ezyfox.EzyFoxUtil;
 import survival2d.util.stream.ByteBufferUtil;
@@ -110,6 +112,19 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
           match.onReceivePlayerAction(username, new PlayerTakeItem());
           break;
         }
+      case PacketData.UseHealItemRequest:{
+        val optMatch = EzyFoxUtil.getMatchingService().getMatchOfPlayer(username);
+        if (!optMatch.isPresent()) {
+          log.warn("match is not present");
+          return;
+        }
+        val request = new UseHealItemRequest();
+        packet.data(request);
+
+        val match = optMatch.get();
+        match.onReceivePlayerAction(username, new PlayerUseHealItem(request.type()));
+        break;
+      }
       case PacketData.PingRequest:
         {
           val builder = new FlatBufferBuilder(0);
