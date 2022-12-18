@@ -574,6 +574,8 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         survival2d.flatbuffers.Wall.startWall(builder);
         val wallOffset = survival2d.flatbuffers.Wall.endWall(builder);
         survival2d.flatbuffers.MapObject.addData(builder, wallOffset);
+      } else {
+        continue;
       }
       survival2d.flatbuffers.MapObject.startMapObject(builder);
       survival2d.flatbuffers.MapObject.addId(builder, object.getId());
