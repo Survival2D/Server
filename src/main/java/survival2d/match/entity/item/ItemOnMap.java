@@ -18,7 +18,8 @@ import survival2d.match.entity.quadtree.BaseMapObject;
 @Setter
 public class ItemOnMap extends BaseMapObject implements Containable, MapObject {
 
-  final Circle shape = new Circle(GameConstant.ITEM_ON_MAP_RADIUS);
+  private static final Circle ITEM_SHAPE = new Circle(GameConstant.ITEM_ON_MAP_RADIUS);
+  final Circle shape = ITEM_SHAPE;
   int id;
   Item item;
   Vector2D position;

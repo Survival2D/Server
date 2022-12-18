@@ -16,10 +16,11 @@ import survival2d.util.serialize.ExcludeFromGson;
 @Setter
 public class Container extends BaseMapObject implements Destroyable, HasHp, Obstacle, Containable {
 
+  private static final Rectangle CONTAINER_SHAPE = new Rectangle(200, 200);
   @ExcludeFromGson int id;
   @ExcludeFromGson double hp = 100;
   Vector2D position;
-  @ExcludeFromGson Rectangle shape = new Rectangle(200, 200);
+  @ExcludeFromGson Rectangle shape = CONTAINER_SHAPE;
   @ExcludeFromGson List<Item> items;
   ObstacleType type = ObstacleType.CONTAINER;
 

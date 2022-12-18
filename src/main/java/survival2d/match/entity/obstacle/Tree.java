@@ -13,11 +13,13 @@ import survival2d.util.serialize.ExcludeFromGson;
 @Setter
 public class Tree extends BaseMapObject implements Destroyable, HasHp, Obstacle {
 
+  private static final Circle ROOT_SHAPE = new Circle(50);
+  private static final Circle FOLIAGE_SHAPE = new Circle(150);
   @ExcludeFromGson int id;
   @ExcludeFromGson double hp = 100;
   Vector2D position;
-  @ExcludeFromGson Circle shape = new Circle(50);
-  @ExcludeFromGson Circle foliage = new Circle(150);
+  @ExcludeFromGson Circle shape = ROOT_SHAPE;
+  @ExcludeFromGson Circle foliage = FOLIAGE_SHAPE;
   ObstacleType type = ObstacleType.TREE;
 
   @Override

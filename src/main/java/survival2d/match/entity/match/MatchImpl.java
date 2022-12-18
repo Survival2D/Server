@@ -1,5 +1,6 @@
 package survival2d.match.entity.match;
 
+import static survival2d.match.constant.GameConstant.DAMAGE_SHAPE;
 import static survival2d.match.constant.GameConstant.DOUBLE_MAX_OBJECT_SIZE;
 import static survival2d.match.constant.GameConstant.QUAD_MAX_OBJECT_SIZE;
 
@@ -159,7 +160,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       val unitDirection = direction.normalize();
       val moveBy = unitDirection.scalarMultiply(player.getSpeed());
       player.moveBy(moveBy);
-      if (isCollisionWithObstacle(player)) {
+      if (isValidToMove(player)) {
         val reverse = moveBy.scalarMultiply(-1);
         player.moveBy(reverse);
       }
@@ -211,6 +212,21 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         .collect(Collectors.toList());
   }
 
+  private boolean isValidPositionForPlayer(Vector2D position) {
+    return position.getX() - PlayerImpl.BODY_RADIUS >= 0
+        && position.getX() + PlayerImpl.BODY_RADIUS <= GameConfig.getInstance().getMapWidth()
+        && position.getY() - PlayerImpl.BODY_RADIUS >= 0
+        && position.getY() + PlayerImpl.BODY_RADIUS <= GameConfig.getInstance().getMapHeight();
+  }
+
+  private boolean isValidToMove(MapObject mapObject) {
+    val isCollide = isCollisionWithObstacle(mapObject);
+    if (isCollide) {
+      return false;
+    }
+    return isValidPositionForPlayer(mapObject.getPosition());
+  }
+
   private boolean isCollisionWithObstacle(MapObject mapObject) {
     return getNearBy(mapObject.getPosition()).stream()
         .filter(object -> object instanceof Obstacle)
@@ -238,7 +254,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                   player
                       .getAttackDirection()
                       .scalarMultiply(((Circle) player.getShape()).getRadius())),
-          new Circle(10),
+          DAMAGE_SHAPE,
           5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
       createBullet(

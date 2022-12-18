@@ -34,6 +34,10 @@ import survival2d.util.serialize.ExcludeFromGson;
 @Setter
 @Slf4j
 public class PlayerImpl extends BaseMapObject implements Player {
+
+  public static final int BODY_RADIUS = 30;
+  public static final Circle BODY_SHAPE = new Circle(BODY_RADIUS);
+  public static final Circle HEAD_SHAPE = new Circle(10);
   int id; // Id trên map
   String playerId; // Username của player
   Vector2D position =
@@ -50,10 +54,10 @@ public class PlayerImpl extends BaseMapObject implements Player {
   @ExcludeFromGson Map<ItemType, Integer> items; // Chỉ map những item 1 loại
   @ExcludeFromGson int currentWeaponIndex;
   int team;
-  @ExcludeFromGson Circle head = new Circle(10);
+  @ExcludeFromGson Circle head = HEAD_SHAPE;
 
   public PlayerImpl(String playerId, int team) {
-    super(new Circle(30));
+    super(BODY_SHAPE);
     this.playerId = playerId;
     this.team = team;
     weapons.add(new Hand());

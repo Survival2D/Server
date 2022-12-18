@@ -11,8 +11,9 @@ import survival2d.util.serialize.ExcludeFromGson;
 @Setter
 public class Wall extends BaseMapObject implements Obstacle {
 
+  private static final Rectangle WALL_SHAPE = new Rectangle(100, 100);
   int id;
   Vector2D position;
-  @ExcludeFromGson Rectangle shape = new Rectangle(100, 100);
+  @ExcludeFromGson Rectangle shape = WALL_SHAPE;
   ObstacleType type = ObstacleType.WALL;
 }

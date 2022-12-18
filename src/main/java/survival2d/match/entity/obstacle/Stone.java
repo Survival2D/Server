@@ -13,6 +13,7 @@ public class Stone extends BaseMapObject implements Obstacle {
 
   int id;
   Vector2D position;
-  @ExcludeFromGson Circle shape = new Circle(100);
+  private static final Circle STONE_SHAPE = new Circle(100);
+  @ExcludeFromGson Circle shape = STONE_SHAPE;
   ObstacleType type = ObstacleType.STONE;
 }
