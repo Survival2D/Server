@@ -8,7 +8,6 @@ import com.google.flatbuffers.FlatBufferBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -93,7 +92,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   public MatchImpl(int id) {
     this.id = id;
-    objects = new Hashtable<>();
+    objects = new ConcurrentHashMap<>();
     quadTree =
         new QuadTree<>(
             0, 0, GameConfig.getInstance().getMapWidth(), GameConfig.getInstance().getMapHeight());
@@ -230,7 +229,10 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   private boolean isCollisionWithObstacle(MapObject mapObject) {
     return getNearBy(mapObject.getPosition()).stream()
-        .filter(object -> object instanceof Obstacle)
+        .filter(
+            object ->
+                object instanceof Obstacle
+                    && (!(object instanceof Destroyable) || !((Destroyable) object).isDestroyed()))
         .anyMatch(
             object -> {
               val obstacle = (Obstacle) object;
@@ -277,6 +279,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     object.setId(currentMapObjectId++);
     objects.put(object.getId(), object);
     quadTree.add(object);
+  }
+
+  private void removeMapObject(MapObject mapObject) {
+    objects.remove(mapObject.getId());
+    quadTree.remove(mapObject);
   }
 
   public void onMapObjectMove(MapObject object) {
@@ -849,7 +856,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
         var isDestroy = bullet.isDestroyed() || bullet.isOutOfBound();
         if (isDestroy) {
-          objects.remove(bullet.getId());
+          removeMapObject(bullet);
           log.info("bullet {} is destroyed", bullet.getId());
         }
       }
@@ -970,7 +977,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       if (MathUtil.isIntersect(
           player.getPosition(), player.getShape(), itemOnMap.getPosition(), itemOnMap.getShape())) {
         player.takeItem(itemOnMap.getItem());
-        objects.remove(itemOnMap.getId());
+        removeMapObject(itemOnMap);
 
         val builder = new FlatBufferBuilder(0);
         val usernameOffset = builder.createString(playerId);

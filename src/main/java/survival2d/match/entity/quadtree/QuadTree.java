@@ -2,8 +2,9 @@ package survival2d.match.entity.quadtree;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.val;
@@ -13,7 +14,7 @@ public class QuadTree<T extends Node> {
   private static final int CAPACITY = 10; // Sức chứa của mỗi quadtree
   RectangleBoundary boundary;
   boolean partitioned = false;
-  Hashtable<Integer, T> nodes = new Hashtable<>();
+  Map<Integer, T> nodes = new ConcurrentHashMap<>();
   QuadTree<T> northwest;
   QuadTree<T> northeast;
   QuadTree<T> southwest;
@@ -26,7 +27,7 @@ public class QuadTree<T extends Node> {
   public void add(T node) {
     if (!boundary.contains(node)) return;
 
-    if (nodes.contains(node)) return;
+    if (nodes.containsKey(node.getId())) return;
 
     if (nodes.size() < CAPACITY) {
       nodes.put(node.getId(), node);

@@ -51,7 +51,7 @@ public class PlayerImpl extends BaseMapObject implements Player {
   @ExcludeFromGson BackPackType backPackType = BackPackType.LEVEL_0;
   @ExcludeFromGson HelmetType helmetType = HelmetType.LEVEL_0;
   @ExcludeFromGson VestType vestType = VestType.LEVEL_0;
-  @ExcludeFromGson Map<BulletType, Integer> bullets; // Map bullet to quantity
+  @ExcludeFromGson Map<BulletType, Integer> bullets = new HashMap<>(); // Map bullet to quantity
   @ExcludeFromGson Map<ItemType, Integer> items = new HashMap<>(); // Chỉ map những item 1 loại
   @ExcludeFromGson int currentWeaponIndex;
   int team;
