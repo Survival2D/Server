@@ -9,4 +9,7 @@ public class GameConstant {
   public static final int HEADSHOT_DAMAGE = 3;
   public static final int BODY_DAMAGE = 1;
   public static final int PLAY_ZONE_TIME = 3 * 60 * TICK_PER_SECOND;
+  public static final int MAX_OBJECT_SIZE = 200;
+  public static final int DOUBLE_MAX_OBJECT_SIZE = 2 * MAX_OBJECT_SIZE;
+  public static final int QUAD_MAX_OBJECT_SIZE = 2 * DOUBLE_MAX_OBJECT_SIZE;
 }

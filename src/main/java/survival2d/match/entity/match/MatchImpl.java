@@ -1,5 +1,8 @@
 package survival2d.match.entity.match;
 
+import static survival2d.match.constant.GameConstant.DOUBLE_MAX_OBJECT_SIZE;
+import static survival2d.match.constant.GameConstant.QUAD_MAX_OBJECT_SIZE;
+
 import com.google.flatbuffers.FlatBufferBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +13,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -60,6 +64,7 @@ import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
 import survival2d.match.entity.player.PlayerImpl;
 import survival2d.match.entity.quadtree.QuadTree;
+import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
 import survival2d.match.entity.weapon.Bullet;
 import survival2d.match.util.MapGenerator;
@@ -71,7 +76,7 @@ import survival2d.util.stream.ByteBufferUtil;
 @Getter
 @Slf4j
 public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Match {
-  @ExcludeFromGson private final long id;
+  @ExcludeFromGson private final int id;
 
   @ExcludeFromGson
   private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
@@ -85,11 +90,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   @ExcludeFromGson private TimerTask gameLoopTask;
   @ExcludeFromGson private long currentTick;
 
-  public MatchImpl(long id) {
+  public MatchImpl(int id) {
     this.id = id;
     objects = new Hashtable<>();
     quadTree =
-        new QuadTree(
+        new QuadTree<>(
             0, 0, GameConfig.getInstance().getMapWidth(), GameConfig.getInstance().getMapHeight());
     init();
   }
@@ -115,7 +120,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     val newPosition =
         new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
     player.setPosition(newPosition);
-    for (val object : objects.values()) {
+    for (val object : getNearBy(newPosition)) {
       if (object instanceof Obstacle) {
         val obstacle = (Obstacle) object;
         if (MathUtil.isIntersect(
@@ -128,7 +133,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   }
 
   @Override
-  public Collection<String> getAllPlayers() {
+  public Collection<String> getAllUsernames() {
     return players.keySet();
   }
 
@@ -154,8 +159,14 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       val unitDirection = direction.normalize();
       val moveBy = unitDirection.scalarMultiply(player.getSpeed());
       player.moveBy(moveBy);
+      if (isCollisionWithObstacle(player)) {
+        val reverse = moveBy.scalarMultiply(-1);
+        player.moveBy(reverse);
+      }
     }
     player.setRotation(rotation);
+    onMapObjectMove(player);
+
     val builder = new FlatBufferBuilder(0);
     val usernameOffset = builder.createString(playerId);
 
@@ -174,7 +185,44 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
+  }
+
+  private Collection<MapObject> getNearBy(Vector2D position) {
+    return quadTree.query(
+        new RectangleBoundary(
+            position.getX() - DOUBLE_MAX_OBJECT_SIZE,
+            position.getY() - DOUBLE_MAX_OBJECT_SIZE,
+            QUAD_MAX_OBJECT_SIZE,
+            QUAD_MAX_OBJECT_SIZE));
+  }
+
+  private Collection<Obstacle> getNearByObstacle(Vector2D position) {
+    return getNearBy(position).stream()
+        .filter(object -> object instanceof Obstacle)
+        .map(object -> (Obstacle) object)
+        .collect(Collectors.toList());
+  }
+
+  private Collection<Player> getNearByPlayer(Vector2D position) {
+    return getNearBy(position).stream()
+        .filter(object -> object instanceof Player)
+        .map(object -> (Player) object)
+        .collect(Collectors.toList());
+  }
+
+  private boolean isCollisionWithObstacle(MapObject mapObject) {
+    return getNearBy(mapObject.getPosition()).stream()
+        .filter(object -> object instanceof Obstacle)
+        .anyMatch(
+            object -> {
+              val obstacle = (Obstacle) object;
+              return MathUtil.isIntersect(
+                  mapObject.getPosition(),
+                  mapObject.getShape(),
+                  obstacle.getPosition(),
+                  obstacle.getShape());
+            });
   }
 
   @Override
@@ -221,6 +269,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   public void createDamage(String playerId, Vector2D position, Shape shape, double damage) {
     val player = players.get(playerId);
     log.warn("match is not present");
+
     val builder = new FlatBufferBuilder(0);
     val usernameOffset = builder.createString(playerId);
 
@@ -238,129 +287,124 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
+
     makeDamage(playerId, position, shape, damage);
   }
 
   @Override
   public void makeDamage(String playerId, Vector2D position, Shape shape, double damage) {
     val currentPlayer = players.get(playerId);
-    for (val player : players.values()) {
-      // Cùng team thì không tính damage
-      if (player.getTeam() == currentPlayer.getTeam()) {
-        continue;
-      }
-      // Chính người chơi đó thì mới không tính damage
-      //      if (Objects.equals(player.getPlayerId(), playerId)) {
-      //        continue;
-      //      }
-      if (player.isDestroyed()) {
-        continue;
-      }
-      if (MathUtil.isIntersect(player.getPosition(), player.getShape(), position, shape)) {
-        val isHeadshot =
-            MathUtil.isIntersect(player.getPosition(), player.getHead(), position, shape);
-        val damageMultiple = isHeadshot ? GameConstant.HEADSHOT_DAMAGE : GameConstant.BODY_DAMAGE;
-        val totalDamage = damage * damageMultiple;
-        val reduceDamage =
-            isHeadshot
-                ? player.getHelmetType().getReduceDamage()
-                : player.getVestType().getReduceDamage();
-        val finalDamage = totalDamage - reduceDamage;
-        player.reduceHp(finalDamage);
-        {
-          val builder = new FlatBufferBuilder(0);
-          val usernameOffset = builder.createString(player.getPlayerId());
+    for (val object : getNearBy(position)) {
+      if (object instanceof Player) {
+        val player = (Player) object;
+        // Cùng team thì không tính damage
+        if (player.getTeam() == currentPlayer.getTeam()) continue;
+        // Chính người chơi đó thì mới không tính damage
+        // if (Objects.equals(player.getPlayerId(), playerId)) continue;
+        if (player.isDestroyed()) continue;
+        if (MathUtil.isIntersect(player.getPosition(), player.getShape(), position, shape)) {
+          val isHeadshot =
+              MathUtil.isIntersect(player.getPosition(), player.getHead(), position, shape);
+          val damageMultiple = isHeadshot ? GameConstant.HEADSHOT_DAMAGE : GameConstant.BODY_DAMAGE;
+          val totalDamage = damage * damageMultiple;
+          val reduceDamage =
+              isHeadshot
+                  ? player.getHelmetType().getReduceDamage()
+                  : player.getVestType().getReduceDamage();
+          val finalDamage = totalDamage - reduceDamage;
+          player.reduceHp(finalDamage);
+          {
+            val builder = new FlatBufferBuilder(0);
+            val usernameOffset = builder.createString(player.getPlayerId());
 
-          survival2d.flatbuffers.PlayerTakeDamageResponse.startPlayerTakeDamageResponse(builder);
-          survival2d.flatbuffers.PlayerTakeDamageResponse.addUsername(builder, usernameOffset);
-          survival2d.flatbuffers.PlayerTakeDamageResponse.addRemainHp(builder, player.getHp());
-          val responseOffset =
-              survival2d.flatbuffers.PlayerTakeDamageResponse.endPlayerTakeDamageResponse(builder);
+            survival2d.flatbuffers.PlayerTakeDamageResponse.startPlayerTakeDamageResponse(builder);
+            survival2d.flatbuffers.PlayerTakeDamageResponse.addUsername(builder, usernameOffset);
+            survival2d.flatbuffers.PlayerTakeDamageResponse.addRemainHp(builder, player.getHp());
+            val responseOffset =
+                survival2d.flatbuffers.PlayerTakeDamageResponse.endPlayerTakeDamageResponse(
+                    builder);
 
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.PlayerTakeDamageResponse);
-          Packet.addData(builder, responseOffset);
-          val packetOffset = Packet.endPacket(builder);
-          builder.finish(packetOffset);
+            Packet.startPacket(builder);
+            Packet.addDataType(builder, PacketData.PlayerTakeDamageResponse);
+            Packet.addData(builder, responseOffset);
+            val packetOffset = Packet.endPacket(builder);
+            builder.finish(packetOffset);
 
-          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          EzyFoxUtil.stream(bytes, getAllPlayers());
+            val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+            EzyFoxUtil.stream(bytes, getAllUsernames());
+          }
+          if (player.isDestroyed()) {
+            val builder = new FlatBufferBuilder(0);
+            val usernameOffset = builder.createString(playerId);
+
+            survival2d.flatbuffers.PlayerDeadResponse.startPlayerDeadResponse(builder);
+            survival2d.flatbuffers.PlayerDeadResponse.addUsername(builder, usernameOffset);
+            val responseOffset =
+                survival2d.flatbuffers.PlayerDeadResponse.endPlayerDeadResponse(builder);
+
+            Packet.startPacket(builder);
+            Packet.addDataType(builder, PacketData.PlayerDeadResponse);
+            Packet.addData(builder, responseOffset);
+            val packetOffset = Packet.endPacket(builder);
+            builder.finish(packetOffset);
+
+            val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+            EzyFoxUtil.stream(bytes, getAllUsernames());
+            checkEndGame();
+          }
         }
-        if (player.isDestroyed()) {
-          val builder = new FlatBufferBuilder(0);
-          val usernameOffset = builder.createString(playerId);
-
-          survival2d.flatbuffers.PlayerDeadResponse.startPlayerDeadResponse(builder);
-          survival2d.flatbuffers.PlayerDeadResponse.addUsername(builder, usernameOffset);
-          val responseOffset =
-              survival2d.flatbuffers.PlayerDeadResponse.endPlayerDeadResponse(builder);
-
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.PlayerDeadResponse);
-          Packet.addData(builder, responseOffset);
-          val packetOffset = Packet.endPacket(builder);
-          builder.finish(packetOffset);
-
-          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          EzyFoxUtil.stream(bytes, getAllPlayers());
-          checkEndGame();
+      } else if (object instanceof Obstacle) {
+        val obstacle = (Obstacle) object;
+        if (!(obstacle instanceof Destroyable)) {
+          continue;
         }
-      }
-    }
-    for (val object : objects.values()) {
-      if (!(object instanceof Obstacle)) {
-        continue;
-      }
-      val obstacle = (Obstacle) object;
-      if (!(obstacle instanceof Destroyable)) {
-        continue;
-      }
-      val destroyable = (Destroyable) obstacle;
-      if (destroyable.isDestroyed()) {
-        continue;
-      }
-      val hasHp = (HasHp) obstacle;
-      if (MathUtil.isIntersect(obstacle.getPosition(), obstacle.getShape(), position, shape)) {
-        hasHp.reduceHp(damage);
-        log.info(
-            "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, hasHp.getHp());
-        {
-          val builder = new FlatBufferBuilder(0);
-
-          val responseOffset =
-              survival2d.flatbuffers.ObstacleTakeDamageResponse.createObstacleTakeDamageResponse(
-                  builder, obstacle.getId(), hasHp.getHp());
-
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.ObstacleTakeDamageResponse);
-          Packet.addData(builder, responseOffset);
-          val packetOffset = Packet.endPacket(builder);
-          builder.finish(packetOffset);
-
-          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          EzyFoxUtil.stream(bytes, getAllPlayers());
-        }
+        val destroyable = (Destroyable) obstacle;
         if (destroyable.isDestroyed()) {
-          log.info("Obstacle {} destroyed", obstacle.getId());
-          val builder = new FlatBufferBuilder(0);
+          continue;
+        }
+        val hasHp = (HasHp) obstacle;
+        if (MathUtil.isIntersect(obstacle.getPosition(), obstacle.getShape(), position, shape)) {
+          hasHp.reduceHp(damage);
+          log.info(
+              "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, hasHp.getHp());
+          {
+            val builder = new FlatBufferBuilder(0);
 
-          val responseOffset =
-              survival2d.flatbuffers.ObstacleDestroyResponse.createObstacleDestroyResponse(
-                  builder, obstacle.getId());
+            val responseOffset =
+                survival2d.flatbuffers.ObstacleTakeDamageResponse.createObstacleTakeDamageResponse(
+                    builder, obstacle.getId(), hasHp.getHp());
 
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.ObstacleDestroyResponse);
-          Packet.addData(builder, responseOffset);
-          val packetOffset = Packet.endPacket(builder);
-          builder.finish(packetOffset);
+            Packet.startPacket(builder);
+            Packet.addDataType(builder, PacketData.ObstacleTakeDamageResponse);
+            Packet.addData(builder, responseOffset);
+            val packetOffset = Packet.endPacket(builder);
+            builder.finish(packetOffset);
 
-          val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          EzyFoxUtil.stream(bytes, getAllPlayers());
-          if (obstacle instanceof Containable) {
-            val containable = (Containable) obstacle;
-            for (val item : containable.getItems()) {
-              createItemOnMap(item, obstacle.getPosition());
+            val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+            EzyFoxUtil.stream(bytes, getAllUsernames());
+          }
+          if (destroyable.isDestroyed()) {
+            log.info("Obstacle {} destroyed", obstacle.getId());
+            val builder = new FlatBufferBuilder(0);
+
+            val responseOffset =
+                survival2d.flatbuffers.ObstacleDestroyResponse.createObstacleDestroyResponse(
+                    builder, obstacle.getId());
+
+            Packet.startPacket(builder);
+            Packet.addDataType(builder, PacketData.ObstacleDestroyResponse);
+            Packet.addData(builder, responseOffset);
+            val packetOffset = Packet.endPacket(builder);
+            builder.finish(packetOffset);
+
+            val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+            EzyFoxUtil.stream(bytes, getAllUsernames());
+            if (obstacle instanceof Containable) {
+              val containable = (Containable) obstacle;
+              for (val item : containable.getItems()) {
+                createItemOnMap(item, obstacle.getPosition());
+              }
             }
           }
         }
@@ -392,7 +436,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       builder.finish(packetOffset);
 
       val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-      EzyFoxUtil.stream(bytes, getAllPlayers());
+      EzyFoxUtil.stream(bytes, getAllUsernames());
       stop();
     }
   }
@@ -402,6 +446,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       String playerId, Vector2D position, Vector2D direction, BulletType type) {
     val bullet = new Bullet(playerId, position, direction, type);
     addMapObject(bullet);
+
     val builder = new FlatBufferBuilder(0);
     val usernameOffset = builder.createString(playerId);
 
@@ -427,7 +472,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 
   @Override
@@ -439,7 +484,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   private byte[] getMatchInfoPacket() {
     val builder = new FlatBufferBuilder(0);
 
-    final int responseOffset = putResponseData(builder);
+    final int responseOffset = putMatchInfoData(builder);
 
     Packet.startPacket(builder);
     Packet.addDataType(builder, PacketData.MatchInfoResponse);
@@ -450,7 +495,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     return ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
   }
 
-  public int putResponseData(FlatBufferBuilder builder) {
+  public int putMatchInfoData(FlatBufferBuilder builder) {
     int[] playerOffsets = new int[players.size()];
     val players = this.players.values().toArray(new Player[0]);
     for (int i = 0; i < players.length; i++) {
@@ -467,7 +512,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     }
 
     int[] mapObjectOffsets = new int[objects.size()];
-    val mapObjects = this.objects.values().toArray(new MapObject[0]);
+    val mapObjects = objects.values().toArray(new MapObject[0]);
     for (int i = 0; i < mapObjects.length; i++) {
       val object = mapObjects[i];
       var objectDataOffset = 0;
@@ -538,7 +583,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   @Override
   public void responseMatchInfo() {
     val bytes = getMatchInfoPacket();
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 
   public void onPlayerSwitchWeapon(String playerId, int weaponId) {
@@ -562,7 +607,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 
   public void init() {
@@ -604,33 +649,9 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   }
 
   public void stop() {
+    gameLoopTask.cancel();
     timer.cancel();
-    //    EzyFoxUtil.getInstance().getMatchingService().destroyMatch(this.getId());
-  }
-
-  public boolean randomPositionForObstacle(Obstacle obstacle) {
-    val newPosition =
-        new Vector2D(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
-    obstacle.setPosition(newPosition);
-    for (val player : players.values()) {
-      if (MathUtil.isIntersect(
-          player.getPosition(), player.getShape(), newPosition, obstacle.getShape())) {
-        return false;
-      }
-    }
-    for (val object : objects.values()) {
-      if (object instanceof Obstacle) {
-        val otherObstacle = (Obstacle) object;
-        if (MathUtil.isIntersect(
-            otherObstacle.getPosition(),
-            otherObstacle.getShape(),
-            newPosition,
-            obstacle.getShape())) {
-          return false;
-        }
-      }
-    }
-    return true;
+    EzyFoxUtil.getMatchingService().destroyMatch(id);
   }
 
   private void initObstacles() {
@@ -658,6 +679,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
           {
             val container = new Container();
             container.setPosition(position);
+            // TODO: random items
             container.setItems(
                 Arrays.asList(
                     new GunItem(GunType.NORMAL, 10),
@@ -701,12 +723,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
-  }
-
-  public void end() {
-    gameLoopTask.cancel();
-    timer.cancel();
+    EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 
   public void update() {
@@ -732,7 +749,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       builder.finish(packetOffset);
 
       val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-      EzyFoxUtil.stream(bytes, getAllPlayers());
+      EzyFoxUtil.stream(bytes, getAllUsernames());
     }
     if (nextSafeZone >= safeZones.size()) {
       return;
@@ -754,7 +771,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 
   private void updateMapObjects() {
@@ -762,49 +779,50 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       if (mapObject instanceof Bullet) {
         val bullet = (Bullet) mapObject;
         bullet.move();
+        onMapObjectMove(bullet);
+
         log.info("bullet position {}", bullet.getPosition());
         String ownerId = bullet.getOwnerId();
         val owner = players.get(ownerId);
-        for (val player : players.values()) {
-          log.info("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());
-          log.info("player's hp {}, player is dead {}", player.getHp(), player.isDestroyed());
-          if (player.getTeam() == owner.getTeam() || player.isDestroyed()) {
-            continue;
-          }
-          log.info("player position {}", player.getPosition());
-          if (MathUtil.isIntersect(
-              player.getPosition(), player.getShape(), bullet.getPosition(), bullet.getShape())) {
-            log.info("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
-            makeDamage(
-                ownerId,
-                bullet.getPosition(),
-                new Circle(bullet.getType().getDamageRadius()),
-                bullet.getType().getDamage());
-            bullet.setDestroyed(true);
-          }
-        }
-        for (val otherObject : objects.values()) {
-          if (otherObject == mapObject) {
-            continue; // Chính nó
-          }
-          if (otherObject instanceof Destroyable) {
-            val destroyable = (Destroyable) otherObject;
-            if (destroyable.isDestroyed()) {
+        for (val object : getNearBy(bullet.getPosition())) {
+          if (object instanceof Player) {
+            val player = (Player) object;
+            log.info("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());
+            log.info("player's hp {}, player is dead {}", player.getHp(), player.isDestroyed());
+            if (player.getTeam() == owner.getTeam() || player.isDestroyed()) {
               continue;
             }
-          }
-          if (MathUtil.isIntersect(
-              otherObject.getPosition(),
-              otherObject.getShape(),
-              bullet.getPosition(),
-              bullet.getShape())) {
-            log.info("object {} is hit by bullet {}", otherObject.getId(), bullet.getId());
-            makeDamage(
-                ownerId,
-                bullet.getPosition(),
-                new Circle(bullet.getType().getDamageRadius()),
-                bullet.getType().getDamageRadius());
-            bullet.setDestroyed(true);
+            log.info("player position {}", player.getPosition());
+            if (MathUtil.isIntersect(
+                player.getPosition(), player.getShape(), bullet.getPosition(), bullet.getShape())) {
+              log.info("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
+              makeDamage(
+                  ownerId,
+                  bullet.getPosition(),
+                  new Circle(bullet.getType().getDamageRadius()),
+                  bullet.getType().getDamage());
+              bullet.setDestroyed(true);
+            }
+          } else {
+            if (object == mapObject) {
+              continue; // Chính nó
+            }
+            if (object instanceof Destroyable) {
+              val destroyable = (Destroyable) object;
+              if (destroyable.isDestroyed()) {
+                continue;
+              }
+            }
+            if (MathUtil.isIntersect(
+                object.getPosition(), object.getShape(), bullet.getPosition(), bullet.getShape())) {
+              log.info("object {} is hit by bullet {}", object.getId(), bullet.getId());
+              makeDamage(
+                  ownerId,
+                  bullet.getPosition(),
+                  new Circle(bullet.getType().getDamageRadius()),
+                  bullet.getType().getDamageRadius());
+              bullet.setDestroyed(true);
+            }
           }
         }
 
@@ -911,12 +929,12 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 
   private void onPlayerTakeItem(String playerId) {
     val player = players.get(playerId);
-    for (val object : objects.values()) {
+    for (val object : getNearBy(player.getPosition())) {
       if (!(object instanceof ItemOnMap)) {
         continue;
       }
@@ -940,7 +958,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         builder.finish(packetOffset);
 
         val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-        EzyFoxUtil.stream(bytes, getAllPlayers());
+        EzyFoxUtil.stream(bytes, getAllUsernames());
       }
     }
   }
@@ -955,12 +973,12 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
             builder, 1000, 100); // FIXME
 
     Packet.startPacket(builder);
-    Packet.addDataType(builder, PacketData.PlayerDeadResponse);
+    Packet.addDataType(builder, PacketData.PlayerReloadWeaponResponse);
     Packet.addData(builder, responseOffset);
     val packetOffset = Packet.endPacket(builder);
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllPlayers());
+    EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 }

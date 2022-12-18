@@ -10,7 +10,7 @@ public interface Match {
 
   void addPlayer(int teamId, String playerId);
 
-  Collection<String> getAllPlayers();
+  Collection<String> getAllUsernames();
 
   void onReceivePlayerAction(String playerId, PlayerAction action);
 

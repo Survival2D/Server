@@ -154,7 +154,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         {
           val builder = new FlatBufferBuilder(0);
 
-          final int responseOffset = SamplePingData.match.putResponseData(builder);
+          final int responseOffset = SamplePingData.match.putMatchInfoData(builder);
 
           Packet.startPacket(builder);
           Packet.addDataType(builder, PacketData.PingByMatchInfoResponse);

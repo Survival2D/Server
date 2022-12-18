@@ -18,7 +18,7 @@ public class Position {
   int y;
 
   public Position(Position position) {
-    this.x = position.x;
-    this.y = position.y;
+    x = position.x;
+    y = position.y;
   }
 }

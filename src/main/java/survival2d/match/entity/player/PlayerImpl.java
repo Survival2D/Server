@@ -17,6 +17,7 @@ import survival2d.match.entity.config.BackPackType;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.config.HelmetType;
+import survival2d.match.entity.config.ItemType;
 import survival2d.match.entity.config.VestType;
 import survival2d.match.entity.item.BackPackItem;
 import survival2d.match.entity.item.BulletItem;
@@ -46,6 +47,7 @@ public class PlayerImpl extends BaseMapObject implements Player {
   @ExcludeFromGson HelmetType helmetType = HelmetType.LEVEL_0;
   @ExcludeFromGson VestType vestType = VestType.LEVEL_0;
   @ExcludeFromGson Map<BulletType, Integer> bullets; // Map bullet to quantity
+  @ExcludeFromGson Map<ItemType, Integer> items; // Chỉ map những item 1 loại
   @ExcludeFromGson int currentWeaponIndex;
   int team;
   @ExcludeFromGson Circle head = new Circle(10);
@@ -54,10 +56,10 @@ public class PlayerImpl extends BaseMapObject implements Player {
     super(new Circle(30));
     this.playerId = playerId;
     this.team = team;
-    this.weapons.add(new Hand());
+    weapons.add(new Hand());
     Gun gun = new Gun(GunType.NORMAL);
     gun.reload(100);
-    this.weapons.add(gun);
+    weapons.add(gun);
   }
 
   @Override
@@ -147,11 +149,29 @@ public class PlayerImpl extends BaseMapObject implements Player {
   }
 
   private void takeMedKit() {
-    heal(GameConfig.getInstance().getMedKitHeal());
+    items.merge(ItemType.MEDKIT, 1, Integer::sum);
   }
 
   private void takeBandage() {
+    items.merge(ItemType.BANDAGE, 1, Integer::sum);
+  }
+
+  private boolean useMedKit() {
+    if (items.get(ItemType.MEDKIT) == null || items.get(ItemType.MEDKIT) <= 0) {
+      return false;
+    }
+    items.put(ItemType.MEDKIT, items.get(ItemType.MEDKIT) - 1);
+    heal(GameConfig.getInstance().getMedKitHeal());
+    return true;
+  }
+
+  private boolean useBandage() {
+    if (items.get(ItemType.BANDAGE) == null || items.get(ItemType.BANDAGE) <= 0) {
+      return false;
+    }
+    items.put(ItemType.BANDAGE, items.get(ItemType.BANDAGE) - 1);
     heal(GameConfig.getInstance().getBandageHeal());
+    return true;
   }
 
   private void heal(double amount) {

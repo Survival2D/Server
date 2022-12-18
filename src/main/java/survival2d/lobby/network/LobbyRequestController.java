@@ -111,7 +111,7 @@ public class LobbyRequestController extends EzyLoggable {
     }
     val matchId = optMatchId.get();
     val match = matchingService.getMatchById(matchId).get();
-    val allPlayers = match.getAllPlayers();
+    val allPlayers = match.getAllUsernames();
     responseFactory
         .newObjectResponse()
         .command(LobbyCommand.FIND_MATCH)

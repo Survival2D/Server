@@ -16,7 +16,7 @@ public class Gun extends Weapon {
   public int reload(int numBullet) {
     int numBulletCanLoad = type.getBulletCapacity() - remainBullets;
     int numBulletToLoad = Math.min(numBulletCanLoad, numBullet);
-    this.remainBullets += numBulletToLoad;
+    remainBullets += numBulletToLoad;
     return numBullet - numBulletToLoad;
   }
 
