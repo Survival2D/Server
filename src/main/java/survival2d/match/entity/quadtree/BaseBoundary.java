@@ -2,6 +2,7 @@ package survival2d.match.entity.quadtree;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Dot;
 import survival2d.match.entity.base.Shape;
@@ -9,6 +10,7 @@ import survival2d.util.math.MathUtil;
 
 @Getter
 @Setter
+@ToString
 public abstract class BaseBoundary {
   Vector2D position;
   Shape shape;

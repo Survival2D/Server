@@ -8,7 +8,7 @@ import com.google.flatbuffers.FlatBufferBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -173,14 +173,23 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     player.setRotation(rotation);
     onMapObjectMove(player);
     val newPosition = player.getPosition();
-    val newMapObjects = new LinkedList<MapObject>();
+    val newMapObjects = new HashSet<MapObject>();
     if (!VisionUtil.isSameVisionX(oldPosition, newPosition)) {
-      newMapObjects.addAll(quadTree.query(VisionUtil.getBoundaryXAxis(newPosition)));
+      val boundary = VisionUtil.getBoundaryXAxis(oldPosition, newPosition);
+      val query = quadTree.query(boundary);
+      log.warn("BoundaryX {}", boundary);
+      log.warn("QueryX {}", query);
+      newMapObjects.addAll(query);
     }
-    if (VisionUtil.isSameVisionY(oldPosition, newPosition)) {
-      newMapObjects.addAll(quadTree.query(VisionUtil.getBoundaryYAxis(newPosition)));
+    if (!VisionUtil.isSameVisionY(oldPosition, newPosition)) {
+      val boundary = VisionUtil.getBoundaryYAxis(oldPosition, newPosition);
+      val query = quadTree.query(boundary);
+      log.warn("BoundaryY {}", boundary);
+      log.warn("QueryY {}", query);
+      newMapObjects.addAll(query);
     }
     if (!newMapObjects.isEmpty()) {
+      log.warn("Map objects {}", newMapObjects.stream().map(object -> object.getClass().getSimpleName()).collect(Collectors.joining(",")));
       val data = getMatchInfoData(newMapObjects);
       EzyFoxUtil.stream(data, playerId);
     }

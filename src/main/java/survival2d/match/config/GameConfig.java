@@ -25,6 +25,12 @@ public class GameConfig implements PostProcessable {
   private double medKitHeal;
   private double playerViewWidth;
   private double playerViewHeight;
+  private double playerViewWidthPlus1;
+  private double playerViewHeightPlus1;
+  private double playerViewWidthPlus2;
+  private double playerViewHeightPlus2;
+  private double halfPlayerViewWidth;
+  private double halfPlayerViewHeight;
 
   public static void load() {
     InstanceHolder.instance =
@@ -42,6 +48,13 @@ public class GameConfig implements PostProcessable {
     defaultSafeZoneRadius = mapWidth;
     ticksPerSafeZone = minutePerSafeZone * 60 * GameConstant.TICK_PER_SECOND;
     medKitHeal = defaultPlayerHp;
+
+    halfPlayerViewWidth = playerViewWidth / 2;
+    halfPlayerViewHeight = playerViewHeight / 2;
+    playerViewWidthPlus1 = playerViewWidth + 1;
+    playerViewHeightPlus1 = playerViewHeight + 1;
+    playerViewWidthPlus2 = playerViewWidth + 2;
+    playerViewHeightPlus2 = playerViewHeight + 2;
   }
 
   private static class InstanceHolder {
