@@ -190,6 +190,7 @@ public class PlayerImpl extends BaseMapObject implements Player {
     hp = Math.min(hp + amount, GameConfig.getInstance().getDefaultPlayerHp());
   }
 
+  @Override
   public RectangleBoundary getPlayerView() {
     val width = GameConfig.getInstance().getPlayerViewWidth();
     val height = GameConfig.getInstance().getPlayerViewHeight();

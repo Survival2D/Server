@@ -8,6 +8,7 @@ import com.google.flatbuffers.FlatBufferBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -64,6 +65,7 @@ import survival2d.match.entity.obstacle.Tree;
 import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
 import survival2d.match.entity.player.PlayerImpl;
+import survival2d.match.entity.quadtree.BaseBoundary;
 import survival2d.match.entity.quadtree.QuadTree;
 import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
@@ -73,6 +75,7 @@ import survival2d.util.ezyfox.EzyFoxUtil;
 import survival2d.util.math.MathUtil;
 import survival2d.util.serialize.ExcludeFromGson;
 import survival2d.util.stream.ByteBufferUtil;
+import survival2d.util.vision.VisionUtil;
 
 @Getter
 @Slf4j
@@ -156,6 +159,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       log.error("player {} is null", playerId);
       return;
     }
+    val oldPosition = player.getPosition();
     if (!MathUtil.isZero(direction)) {
       val unitDirection = direction.normalize();
       val moveBy = unitDirection.scalarMultiply(player.getSpeed());
@@ -168,6 +172,18 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     }
     player.setRotation(rotation);
     onMapObjectMove(player);
+    val newPosition = player.getPosition();
+    val newMapObjects = new LinkedList<MapObject>();
+    if (!VisionUtil.isSameVisionX(oldPosition, newPosition)) {
+      newMapObjects.addAll(quadTree.query(VisionUtil.getBoundaryXAxis(newPosition)));
+    }
+    if (VisionUtil.isSameVisionY(oldPosition, newPosition)) {
+      newMapObjects.addAll(quadTree.query(VisionUtil.getBoundaryYAxis(newPosition)));
+    }
+    if (!newMapObjects.isEmpty()) {
+      val data = getMatchInfoData(newMapObjects);
+      EzyFoxUtil.stream(data, playerId);
+    }
 
     val builder = new FlatBufferBuilder(0);
     val usernameOffset = builder.createString(playerId);
@@ -503,14 +519,22 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   @Override
   public void responseMatchInfo(String username) {
-    final byte[] bytes = getMatchInfoPacket();
-    EzyFoxUtil.stream(bytes, username);
+    //    final byte[] bytes = getMatchInfoData(objects.values());
+    val player = players.get(username);
+    val data = getMatchInfoInBoundary(player.getPlayerView());
+    EzyFoxUtil.stream(data, username);
   }
 
-  private byte[] getMatchInfoPacket() {
-    val builder = new FlatBufferBuilder(0);
+  private byte[] getMatchInfoInBoundary(BaseBoundary boundary) {
+    val objects = quadTree.query(boundary);
+    return getMatchInfoData(objects);
+  }
 
-    final int responseOffset = putMatchInfoData(builder);
+  private byte[] getMatchInfoData(Collection<MapObject> matchMapObjects) {
+    val builder = new FlatBufferBuilder(0);
+    builder.clear();
+
+    final int responseOffset = putMatchInfoData(builder, matchMapObjects);
 
     Packet.startPacket(builder);
     Packet.addDataType(builder, PacketData.MatchInfoResponse);
@@ -522,8 +546,17 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   }
 
   public int putMatchInfoData(FlatBufferBuilder builder) {
-    int[] playerOffsets = new int[players.size()];
-    val players = this.players.values().toArray(new Player[0]);
+    return putMatchInfoData(builder, objects.values());
+  }
+
+  public int putMatchInfoData(FlatBufferBuilder builder, Collection<MapObject> matchMapObjects) {
+    val matchPlayers = // players.values();
+        matchMapObjects.stream()
+            .filter(o -> o instanceof Player)
+            .map(player -> (Player) player)
+            .collect(Collectors.toList());
+    int[] playerOffsets = new int[matchPlayers.size()];
+    val players = matchPlayers.toArray(new Player[0]);
     for (int i = 0; i < players.length; i++) {
       val player = players[i];
       val usernameOffset = builder.createString(player.getPlayerId());
@@ -538,8 +571,8 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     }
 
     val mapObjects =
-        objects.values().stream()
-            .filter(mapObject -> !(mapObject instanceof Player))
+        matchMapObjects.stream()
+            .filter(mapObject -> mapObject instanceof Obstacle || mapObject instanceof Item)
             .toArray(MapObject[]::new);
     int[] mapObjectOffsets = new int[mapObjects.length];
     for (int i = 0; i < mapObjects.length; i++) {
@@ -552,39 +585,45 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         survival2d.flatbuffers.BulletItem.startBulletItem(builder);
         survival2d.flatbuffers.BulletItem.addType(
             builder, (byte) bulletItem.getBulletType().ordinal());
-        val bulletItemOffset = survival2d.flatbuffers.BulletItem.endBulletItem(builder);
-        survival2d.flatbuffers.MapObject.addData(builder, bulletItemOffset);
+        objectDataOffset = survival2d.flatbuffers.BulletItem.endBulletItem(builder);
+        //        val bulletItemOffset = survival2d.flatbuffers.BulletItem.endBulletItem(builder);
+        //        survival2d.flatbuffers.MapObject.addData(builder, bulletItemOffset);
       } else if (object instanceof GunItem) {
         objectDataType = MapObjectData.GunItem;
         val gunItem = (GunItem) object;
         survival2d.flatbuffers.GunItem.startGunItem(builder);
         survival2d.flatbuffers.GunItem.addType(builder, (byte) gunItem.getGunType().ordinal());
-        val gunItemOffset = survival2d.flatbuffers.GunItem.endGunItem(builder);
-        survival2d.flatbuffers.MapObject.addData(builder, gunItemOffset);
+        objectDataOffset = survival2d.flatbuffers.GunItem.endGunItem(builder);
+        //        val gunItemOffset = survival2d.flatbuffers.GunItem.endGunItem(builder);
+        //        survival2d.flatbuffers.MapObject.addData(builder, gunItemOffset);
       } else if (object instanceof Tree) {
         objectDataType = MapObjectData.Tree;
         val tree = (Tree) object;
         survival2d.flatbuffers.Tree.startTree(builder);
-        val treeOffset = survival2d.flatbuffers.Tree.endTree(builder);
-        survival2d.flatbuffers.MapObject.addData(builder, treeOffset);
+        objectDataOffset = survival2d.flatbuffers.Tree.endTree(builder);
+        //        val treeOffset = survival2d.flatbuffers.Tree.endTree(builder);
+        //        survival2d.flatbuffers.MapObject.addData(builder, treeOffset);
       } else if (object instanceof Container) {
         objectDataType = MapObjectData.Container;
         val container = (Container) object;
         survival2d.flatbuffers.Container.startContainer(builder);
-        val containerOffset = survival2d.flatbuffers.Container.endContainer(builder);
-        survival2d.flatbuffers.MapObject.addData(builder, containerOffset);
+        objectDataOffset = survival2d.flatbuffers.Container.endContainer(builder);
+        //        val containerOffset = survival2d.flatbuffers.Container.endContainer(builder);
+        //        survival2d.flatbuffers.MapObject.addData(builder, containerOffset);
       } else if (object instanceof Stone) {
         objectDataType = MapObjectData.Stone;
         val stone = (Stone) object;
         survival2d.flatbuffers.Stone.startStone(builder);
-        val stoneOffset = survival2d.flatbuffers.Stone.endStone(builder);
-        survival2d.flatbuffers.MapObject.addData(builder, stoneOffset);
+        objectDataOffset = survival2d.flatbuffers.Stone.endStone(builder);
+        //        val stoneOffset = survival2d.flatbuffers.Stone.endStone(builder);
+        //        survival2d.flatbuffers.MapObject.addData(builder, stoneOffset);
       } else if (object instanceof Wall) {
         objectDataType = MapObjectData.Wall;
         val wall = (Wall) object;
         survival2d.flatbuffers.Wall.startWall(builder);
-        val wallOffset = survival2d.flatbuffers.Wall.endWall(builder);
-        survival2d.flatbuffers.MapObject.addData(builder, wallOffset);
+        objectDataOffset = survival2d.flatbuffers.Wall.endWall(builder);
+        //        val wallOffset = survival2d.flatbuffers.Wall.endWall(builder);
+        //        survival2d.flatbuffers.MapObject.addData(builder, wallOffset);
       }
       survival2d.flatbuffers.MapObject.startMapObject(builder);
       survival2d.flatbuffers.MapObject.addId(builder, object.getId());
@@ -611,7 +650,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   @Override
   public void responseMatchInfo() {
-    val bytes = getMatchInfoPacket();
+    val bytes = getMatchInfoData(objects.values());
     EzyFoxUtil.stream(bytes, getAllUsernames());
   }
 
