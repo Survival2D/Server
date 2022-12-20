@@ -70,7 +70,10 @@ import survival2d.match.entity.quadtree.QuadTree;
 import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
 import survival2d.match.entity.weapon.Bullet;
+import survival2d.match.util.AStar;
+import survival2d.match.util.AStar.Point;
 import survival2d.match.util.MapGenerator;
+import survival2d.match.util.TileObject;
 import survival2d.util.ezyfox.EzyFoxUtil;
 import survival2d.util.math.MathUtil;
 import survival2d.util.serialize.ExcludeFromGson;
@@ -89,10 +92,13 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   private final Map<String, Player> players = new ConcurrentHashMap<>();
   @ExcludeFromGson private final Timer timer = new Timer();
   @ExcludeFromGson private final List<Pair<Circle, Vector2D>> safeZones = new ArrayList<>();
+  @ExcludeFromGson private final List<Vector2D> spawnPoints = new ArrayList<>();
   @ExcludeFromGson int nextSafeZone;
   @ExcludeFromGson private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   @ExcludeFromGson private long currentTick;
+  @ExcludeFromGson private AStar aStar;
+  @ExcludeFromGson private int[][] grid;
 
   public MatchImpl(int id) {
     this.id = id;
@@ -105,14 +111,19 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   @Override
   public void addPlayer(int teamId, String playerId) {
-    PlayerImpl value = new PlayerImpl(playerId, teamId);
-    players.putIfAbsent(playerId, value);
-    int tryCount = 0;
-    while (!randomPositionForPlayer(playerId)) {
-      tryCount++;
-      if (tryCount > 100) {
-        log.error("Can't find position for player {}", playerId);
-        break;
+    val player = new PlayerImpl(playerId, teamId);
+    players.putIfAbsent(playerId, player);
+    if (!spawnPoints.isEmpty()) {
+      val spawnPoint = spawnPoints.remove(0);
+      player.setPosition(spawnPoint);
+    } else {
+      int tryCount = 0;
+      while (!randomPositionForPlayer(playerId)) {
+        tryCount++;
+        if (tryCount > 100) {
+          log.error("Can't find position for player {}", playerId);
+          break;
+        }
       }
     }
     playerRequests.put(playerId, new ConcurrentHashMap<>());
@@ -122,7 +133,13 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   public boolean randomPositionForPlayer(String playerId) {
     val player = players.get(playerId);
     val newPosition =
-        new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
+        new Vector2D(
+            RandomUtils.nextDouble(
+                PlayerImpl.BODY_RADIUS,
+                GameConfig.getInstance().getMapWidth() - PlayerImpl.BODY_RADIUS),
+            RandomUtils.nextDouble(
+                PlayerImpl.BODY_RADIUS,
+                GameConfig.getInstance().getMapHeight() - PlayerImpl.BODY_RADIUS));
     player.setPosition(newPosition);
     for (val object : getNearBy(newPosition)) {
       if (object instanceof Obstacle) {
@@ -189,7 +206,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       newMapObjects.addAll(query);
     }
     if (!newMapObjects.isEmpty()) {
-      log.warn("Map objects {}", newMapObjects.stream().map(object -> object.getClass().getSimpleName()).collect(Collectors.joining(",")));
+      log.warn(
+          "Map objects {}",
+          newMapObjects.stream()
+              .map(object -> object.getClass().getSimpleName())
+              .collect(Collectors.joining(",")));
       val data = getMatchInfoData(newMapObjects);
       EzyFoxUtil.stream(data, playerId);
     }
@@ -310,6 +331,32 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   private void removeMapObject(MapObject mapObject) {
     objects.remove(mapObject.getId());
     quadTree.remove(mapObject);
+    if (mapObject instanceof Obstacle) {
+      // Xoá vật cản khỏi grid của A*
+      val x = (int) (mapObject.getPosition().getX() / MapGenerator.TILE_SIZE);
+      val y = (int) (mapObject.getPosition().getY() / MapGenerator.TILE_SIZE);
+      if (mapObject instanceof Tree) {
+        grid[x][y] = TileObject.EMPTY.ordinal();
+      } else if (mapObject instanceof Container) {
+        for (int i = x; i < x + TileObject.BOX.getWidth(); i++) {
+          for (int j = y; j < y + TileObject.BOX.getHeight(); j++) {
+            grid[i][j] = TileObject.EMPTY.ordinal();
+          }
+        }
+      }
+    }
+  }
+
+  private List<Vector2D> getPathFromTo(Vector2D from, Vector2D to) {
+    val fromX = (int) (from.getX() / MapGenerator.TILE_SIZE);
+    val fromY = (int) (from.getY() / MapGenerator.TILE_SIZE);
+    val toX = (int) (to.getX() / MapGenerator.TILE_SIZE);
+    val toY = (int) (to.getY() / MapGenerator.TILE_SIZE);
+    return aStar.aStarSearch(new Point(fromX, fromY), new Point(toX, toY)).stream().map(point -> {
+      val x = point.getX() * MapGenerator.TILE_SIZE + MapGenerator.TILE_SIZE / 2;
+      val y = point.getY() * MapGenerator.TILE_SIZE + MapGenerator.TILE_SIZE / 2;
+      return new Vector2D(x, y);
+    }).collect(Collectors.toList());
   }
 
   public void onMapObjectMove(MapObject object) {
@@ -442,6 +489,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
             val responseOffset =
                 survival2d.flatbuffers.ObstacleDestroyResponse.createObstacleDestroyResponse(
                     builder, obstacle.getId());
+            removeMapObject(obstacle);
 
             Packet.startPacket(builder);
             Packet.addDataType(builder, PacketData.ObstacleDestroyResponse);
@@ -733,10 +781,26 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   private void initObstacles() {
     val generateResult = MapGenerator.generateMap();
-    for (val obstacle : generateResult.getMapObjects()) {
+    grid = generateResult.getTiles();
+    aStar = new AStar(MapGenerator.MAP_WIDTH, MapGenerator.MAP_HEIGHT, grid);
+    for (val tileObject : generateResult.getMapObjects()) {
       val position =
-          new Vector2D(obstacle.getPosition().getX() * 100, obstacle.getPosition().getY() * 100);
-      switch (obstacle.getType()) {
+          new Vector2D(
+              tileObject.getPosition().getX() * MapGenerator.TILE_SIZE,
+              tileObject.getPosition().getY() * MapGenerator.TILE_SIZE);
+      switch (tileObject.getType()) {
+        case PLAYER:
+          {
+            spawnPoints.add(position.add(TileObject.PLAYER.getCenterOffset()));
+            break;
+          }
+        case ITEM:
+          {
+            // TODO
+            //            val item = new Item(position);
+            //            objects.put(item.getId(), item);
+            break;
+          }
         case WALL:
           {
             val wall = new Wall();
@@ -747,8 +811,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         case TREE:
           {
             val tree = new Tree();
-            // TODO: căn chỉnh lại vị trí cây do hình tròn
-            tree.setPosition(position);
+            tree.setPosition(position.add(TileObject.TREE.getCenterOffset()));
             addMapObject(tree);
             break;
           }
@@ -772,7 +835,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         case ROCK:
           {
             val stone = new Stone();
-            stone.setPosition(position);
+            stone.setPosition(position.add(TileObject.ROCK.getCenterOffset()));
             addMapObject(stone);
             break;
           }

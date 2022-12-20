@@ -9,6 +9,6 @@ import lombok.ToString;
 @ToString
 public class Tile {
 
-  Obstacle type;
+  TileObject type;
   Position position;
 }

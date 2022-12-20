@@ -22,13 +22,7 @@ public class MapGenerator {
   public static final int MIN_DOOR = 3;
   public static final int MAX_DOOR = 7;
   public static final int DONT_GEN_BORDER = 2;
-
-  public static final int TYPE_NONE = -1;
-  public static final int TYPE_EMPTY = 0;
-  public static final int TYPE_WALL = 1;
-  public static final int TYPE_TREE = 2;
-  public static final int TYPE_BOX = 3;
-  public static final int TYPE_ROCK = 4;
+  public static final int TILE_SIZE = 100;
 
   private List<Rectangle> rects;
   private List<Tile> mapObjects;
@@ -42,14 +36,14 @@ public class MapGenerator {
     return generator.generate();
   }
 
-  private boolean isValidPosition(int posX, int posY, Obstacle obstacle) {
-    for (var i = 0; i < obstacle.width; i++) {
-      for (var j = 0; j < obstacle.height; j++) {
+  private boolean isValidPosition(int posX, int posY, TileObject tileObject) {
+    for (var i = 0; i < tileObject.width; i++) {
+      for (var j = 0; j < tileObject.height; j++) {
         val newPosX = posX + i;
         val newPosY = posY + j;
         if (newPosX < 0 || newPosY < 0 || newPosX >= MAP_WIDTH || newPosY >= MAP_HEIGHT)
           return false;
-        if (map[newPosX][newPosY] != TYPE_EMPTY) return false;
+        if (map[newPosX][newPosY] != TileObject.EMPTY.ordinal()) return false;
       }
     }
     return true;
@@ -61,15 +55,15 @@ public class MapGenerator {
     mapWalls = Lists.newArrayList();
     map = new int[MAP_WIDTH][MAP_HEIGHT];
     generateWalls(0, 0, MAP_WIDTH, MAP_HEIGHT, MAX_DEPT);
+    fillMap(mapWalls, TileObject.WALL);
     removeIsolatedWall();
-    fillMap(mapWalls, Obstacle.WALL);
 
     for (val pos : mapWalls) {
-      mapObjects.add(new Tile(Obstacle.WALL, pos));
+      mapObjects.add(new Tile(TileObject.WALL, pos));
     }
 
     generateOtherObjects();
-    return MapGeneratorResult.builder().mapObjects(mapObjects).build();
+    return MapGeneratorResult.builder().mapObjects(mapObjects).tiles(map).build();
   }
 
   private void generateWalls(int offsetX, int offsetY, int width, int height, int depth) {
@@ -153,30 +147,24 @@ public class MapGenerator {
 
   private void removeIsolatedWall() {
     val acceptedWalls = new LinkedList<Position>();
-    val isolatedMap = new int[MAP_WIDTH][MAP_HEIGHT];
-    for (int i = 0; i < MAP_WIDTH; i++) {
-      for (int j = 0; j < MAP_HEIGHT; j++) {
-        isolatedMap[i][j] = TYPE_NONE;
-      }
-    }
-    for (val wall : mapWalls) {
-      isolatedMap[wall.x][wall.y] = TYPE_WALL;
-    }
     for (val wall : mapWalls) {
       var flag = false;
       for (val neighbour : Position._4_NEIGHBOURS) {
         val newX = wall.x + neighbour.x;
         val newY = wall.y + neighbour.y;
-        if (Math.min(newX, newY) >= 0
+        if (newX >= 0
+            && newY >= 0
             && newX < MAP_WIDTH
             && newY < MAP_HEIGHT
-            && isolatedMap[newX][newY] != TYPE_WALL) {
+            && map[newX][newY] == TileObject.WALL.ordinal()) {
           flag = true;
           break;
         }
       }
       if (flag) {
         acceptedWalls.add(wall);
+      } else {
+        map[wall.x][wall.y] = TileObject.EMPTY.ordinal();
       }
     }
     mapWalls = acceptedWalls;
@@ -208,20 +196,22 @@ public class MapGenerator {
       // Duyệt tất cả tile trong rect theo thứ tự random
       val cells = new LinkedList<Position>();
       for (var i = DONT_GEN_BORDER; i < rectHeight - DONT_GEN_BORDER; i++) {
-
         for (var j = DONT_GEN_BORDER; j < rectWidth - DONT_GEN_BORDER; j++) {
           cells.add(new Position(offsetX + i, offsetY + j));
         }
       }
       Collections.shuffle(cells);
+      val first = cells.removeFirst();
+      fillMap(first.x, first.y, TileObject.PLAYER);
+      mapObjects.add(new Tile(TileObject.PLAYER, first));
 
       for (val position : cells) {
 
         // choose random object, if cannot put object at (posX, posY), remove random object from
         // list then repeat
-        Obstacle spawnObject = null;
+        TileObject spawnObject = null;
 
-        val listObjects = Obstacle.getListObstacles();
+        val listObjects = TileObject.getListObstacles();
         //                if str(TYPE_EMPTY) in listObjects:
         //      listObjects.remove(str(TYPE_EMPTY))
         //      if str(TYPE_WALL) in listObjects:
@@ -232,7 +222,7 @@ public class MapGenerator {
           weights.add(0);
           for (val object : listObjects) weights.add(weights.getLast() + object.weight);
 
-          Obstacle randomObject = null;
+          TileObject randomObject = null;
           val randWeight = ThreadLocalRandom.current().nextInt(weights.getLast());
           for (var i = 1; i < weights.size(); i++) {
             if (weights.get(i - 1) <= randWeight && randWeight < weights.get(i)) {
@@ -262,19 +252,19 @@ public class MapGenerator {
     }
   }
 
-  private void fillMap(int posX, int posY, Obstacle obstacle) {
-    for (var i = 0; i < obstacle.width; i++) {
-      for (var j = 0; j < obstacle.height; j++) {
+  private void fillMap(int posX, int posY, TileObject tileObject) {
+    for (var i = 0; i < tileObject.width; i++) {
+      for (var j = 0; j < tileObject.height; j++) {
         val newPosX = posX + i;
         val newPosY = posY + j;
-        map[newPosX][newPosY] = obstacle.ordinal();
+        map[newPosX][newPosY] = tileObject.ordinal();
       }
     }
   }
 
-  private void fillMap(List<Position> positions, Obstacle obstacle) {
+  private void fillMap(List<Position> positions, TileObject tileObject) {
     for (val position : positions) {
-      fillMap(position.x, position.y, obstacle);
+      fillMap(position.x, position.y, tileObject);
     }
   }
 }
