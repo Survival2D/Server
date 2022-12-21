@@ -11,8 +11,12 @@ import java.util.ArrayList;
 
 public class FindEnemiesNode extends BTSequenceNode {
     FindEnemiesNode(Bot controller) {
+        super();
+
         BotBehaviorNode move = new MoveToDangerousAreaNode();
+        move.setController(controller);
         BotBehaviorNode enemiesAround = new EnemiesAroundNode();
+        enemiesAround.setController(controller);
 
         ArrayList<BTNode> children = new ArrayList<>();
         children.add(move);
