@@ -10,22 +10,18 @@ import survival2d.ai.btree.branch.BTSequenceNode;
 
 import java.util.ArrayList;
 
-public class ItemReadyNode extends BTSequenceNode {
-
-    public ItemReadyNode(Bot controller) {
+public class ReadyToCounterNode extends BTSequenceNode {
+    ReadyToCounterNode(Bot controller) {
         super();
 
         BotBehaviorNode haveGun = new HaveGunNode();
         haveGun.setController(controller);
         BotBehaviorNode haveBullet = new HaveEnoughBulletNode();
         haveBullet.setController(controller);
-        BotBehaviorNode haveArmor = new HaveArmorNode();
-        haveArmor.setController(controller);
 
         ArrayList<BTNode> children = new ArrayList<>();
         children.add(haveGun);
         children.add(haveBullet);
-        children.add(haveArmor);
 
         this.setChildren(children);
     }

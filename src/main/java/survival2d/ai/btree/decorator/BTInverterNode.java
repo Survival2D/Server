@@ -4,7 +4,7 @@ import survival2d.ai.btree.BTNode;
 
 public class BTInverterNode extends BTNode {
 
-    BTInverterNode(BTNode child) {
+    public BTInverterNode(BTNode child) {
         this.children.clear();
         this.children.add(child);
     }

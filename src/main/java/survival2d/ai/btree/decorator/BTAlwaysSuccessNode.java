@@ -4,7 +4,7 @@ import survival2d.ai.btree.BTNode;
 
 public class BTAlwaysSuccessNode extends BTNode {
 
-    BTAlwaysSuccessNode(BTNode child) {
+    public BTAlwaysSuccessNode(BTNode child) {
         this.children.clear();
         this.children.add(child);
     }
