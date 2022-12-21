@@ -52,5 +52,7 @@ public interface Player extends MapObject, Movable, HasHp {
 
   int getNumItem(int itemId);
 
+  int getNumBullet();
+
   BaseBoundary getPlayerView();
 }

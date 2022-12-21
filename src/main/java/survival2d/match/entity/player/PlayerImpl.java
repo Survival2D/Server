@@ -186,6 +186,11 @@ public class PlayerImpl extends BaseMapObject implements Player {
     return items.getOrDefault(ItemType.parse(itemId), 0);
   }
 
+  @Override
+  public int getNumBullet() {
+    return bullets.get(BulletType.NORMAL);
+  }
+
   private void heal(double amount) {
     hp = Math.min(hp + amount, GameConfig.getInstance().getDefaultPlayerHp());
   }

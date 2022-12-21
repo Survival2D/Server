@@ -2,7 +2,7 @@ package survival2d.ai.bot.branch;
 
 import survival2d.ai.bot.Bot;
 import survival2d.ai.bot.BotBehaviorNode;
-import survival2d.ai.bot.leaf.HaveEnoughHPNode;
+import survival2d.ai.bot.leaf.FireNode;
 import survival2d.ai.bot.leaf.MoveWhileAttackingNode;
 import survival2d.ai.btree.BTNode;
 import survival2d.ai.btree.branch.BTSequenceNode;
@@ -17,12 +17,12 @@ public class AttackNode extends BTSequenceNode {
         BotBehaviorNode moveWhileAttacking = new MoveWhileAttackingNode();
         moveWhileAttacking.setController(controller);
         BTNode alwaysSuccess = new BTAlwaysSuccessNode(moveWhileAttacking);
-        BotBehaviorNode haveEnoughHP = new HaveEnoughHPNode();
-        haveEnoughHP.setController(controller);
+        BotBehaviorNode fire = new FireNode();
+        fire.setController(controller);
 
         ArrayList<BTNode> children = new ArrayList<>();
         children.add(alwaysSuccess);
-        children.add(haveEnoughHP);
+        children.add(fire);
 
         this.setChildren(children);
     }

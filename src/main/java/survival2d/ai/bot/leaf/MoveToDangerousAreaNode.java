@@ -5,6 +5,8 @@ import survival2d.ai.bot.BotBehaviorNode;
 public class MoveToDangerousAreaNode extends BotBehaviorNode {
     @Override
     public void processNode() {
-        //TODO: hành động di chuyển đến nơi dễ có địch
+        this.controller.commandMoveToCenter();
+        //TODO: update value
+        success();
     }
 }

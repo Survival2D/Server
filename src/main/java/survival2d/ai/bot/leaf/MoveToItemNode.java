@@ -5,6 +5,6 @@ import survival2d.ai.bot.BotBehaviorNode;
 public class MoveToItemNode extends BotBehaviorNode {
     @Override
     public void processNode() {
-        //TODO: di chuyển đến item
+        success();
     }
 }

@@ -1162,4 +1162,8 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       EzyFoxUtil.stream(bytes, getAllUsernames());
     }
   }
+
+  public Player getPlayerInfo(String username) {
+    return players.get(username);
+  }
 }

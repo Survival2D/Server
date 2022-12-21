@@ -5,6 +5,7 @@ import survival2d.ai.bot.BotBehaviorNode;
 public class MoveAroundNode extends BotBehaviorNode {
     @Override
     public void processNode() {
-        //TODO: hành động di chuyển tự do
+        this.controller.commandMoveRandom();
+        success();
     }
 }

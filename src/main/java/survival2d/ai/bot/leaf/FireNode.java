@@ -5,6 +5,7 @@ import survival2d.ai.bot.BotBehaviorNode;
 public class FireNode extends BotBehaviorNode {
     @Override
     public void processNode() {
-        //TODO: hành động bắn
+        this.controller.commandFireEnemy();
+        success();
     }
 }

@@ -5,7 +5,10 @@ import survival2d.ai.bot.BotBehaviorNode;
 public class HaveEnoughBulletNode extends BotBehaviorNode {
     @Override
     public void processNode() {
-        double percent = this.getConfidencePercent();
-        //TODO: check đủ đạn để chiến đấu không (tính dựa trên phần trăm tự tin của bot)
+        double percent = this.controller.getConfidencePercent();
+        int numBullet = this.controller.getPlayerInfo().getNumBullet();
+        int numBulletsNeed = (int) (1 - percent) * 100;
+        if (numBullet > numBulletsNeed) success();
+        else fail();
     }
 }

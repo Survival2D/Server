@@ -5,6 +5,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.action.PlayerAction;
 import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.BulletType;
+import survival2d.match.entity.player.Player;
 
 public interface Match {
 
@@ -27,4 +28,6 @@ public interface Match {
   void responseMatchInfo(String username);
 
   void responseMatchInfo();
+
+  Player getPlayerInfo(String username);
 }
