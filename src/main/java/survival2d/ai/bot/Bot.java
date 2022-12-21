@@ -29,6 +29,10 @@ public class Bot {
         this.confidencePercent = confidencePercent;
     }
 
+    public double getConfidencePercent() {
+        return this.confidencePercent;
+    }
+
     public void processBot(double dt) {
         deltaTimeTick += dt;
         if (deltaTimeTick >= TICK_DELTA_TIME) {
