@@ -3,6 +3,7 @@ package survival2d.ai.bot;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.ai.btree.BTNode;
 import survival2d.ai.btree.BehaviorTree;
+import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.MapObject;
@@ -48,6 +49,8 @@ public class Bot {
         this.match = match;
         controlId = id;
         this.player = match.getPlayerInfo(controlId);
+
+        this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
     }
 
     public void setConfidencePercent(double confidencePercent) {
@@ -206,8 +209,17 @@ public class Bot {
         }
         else {
             Vector2D nextPosition = this.path.get(0);
-            Vector2D moveVector = nextPosition.subtract(this.player.getPosition());
-            this.match.onPlayerMove(controlId, moveVector, this.player.getRotation());
+            if (nextPosition.distance(this.player.getPosition()) <= GameConfig.getInstance().getDefaultPlayerSpeed()) {
+                this.path.remove(0);
+            }
+            if (this.path.isEmpty()) {
+                this.commandStopMove();
+            }
+            else {
+                nextPosition = this.path.get(0);
+                Vector2D moveVector = nextPosition.subtract(this.player.getPosition());
+                this.match.onPlayerMove(controlId, moveVector, this.player.getRotation());
+            }
         }
     }
 
