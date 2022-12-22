@@ -13,6 +13,7 @@ import survival2d.flatbuffers.PacketData;
 import survival2d.flatbuffers.PlayerAttackRequest;
 import survival2d.flatbuffers.PlayerChangeWeaponRequest;
 import survival2d.flatbuffers.PlayerMoveRequest;
+import survival2d.flatbuffers.SetAutoPlayRequest;
 import survival2d.flatbuffers.UseHealItemRequest;
 import survival2d.match.action.PlayerAttack;
 import survival2d.match.action.PlayerChangeWeapon;
@@ -125,6 +126,20 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         match.onReceivePlayerAction(username, new PlayerUseHealItem(request.type()));
         break;
       }
+      case PacketData.SetAutoPlayRequest:
+        {
+          val optMatch = EzyFoxUtil.getMatchingService().getMatchOfPlayer(username);
+          if (!optMatch.isPresent()) {
+            log.warn("match is not present");
+            return;
+          }
+          val request = new SetAutoPlayRequest();
+          packet.data(request);
+
+          val match = optMatch.get();
+          match.setPlayerAutoPlay(username, request.enable());
+          break;
+        }
       case PacketData.PingRequest:
         {
           val builder = new FlatBufferBuilder(0);

@@ -419,6 +419,19 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         .collect(Collectors.toList());
   }
 
+  @Override
+  public void setPlayerAutoPlay(String username, boolean enable) {
+    val player = players.get(username);
+    val bot = bots.computeIfAbsent(username, (k)-> {
+      Bot b = new Bot();
+      b.setMatch(this, username);
+      b.setConfidencePercent(1.0);
+      bots.putIfAbsent(username, b);
+      return b;
+    });
+    bot.setEnabled(enable);
+  }
+
   public void onMapObjectMove(MapObject object) {
     quadTree.update(object);
   }
@@ -808,7 +821,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     }
     initSafeZones();
     initObstacles();
-    initBots();
+//    initBots();
   }
 
   private void initBots() {
@@ -939,6 +952,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   private void updateBots() {
     for (Bot bot : bots.values()) {
+      if (bot.isDisabled()) continue;
       bot.processBot();
     }
   }

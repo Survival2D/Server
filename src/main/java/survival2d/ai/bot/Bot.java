@@ -1,5 +1,9 @@
 package survival2d.ai.bot;
 
+import java.util.Collection;
+import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.ai.btree.BTNode;
 import survival2d.ai.btree.BehaviorTree;
@@ -13,9 +17,8 @@ import survival2d.match.entity.obstacle.Container;
 import survival2d.match.entity.player.Player;
 import survival2d.util.math.MathUtil;
 
-import java.util.Collection;
-import java.util.List;
-
+@Getter
+@Setter
 public class Bot {
     static final double NUM_TICK_CHANGE_STATUS = 60;
 
@@ -35,6 +38,7 @@ public class Bot {
     private List<Vector2D> path = null;
 
     private BotBehaviorNode runningNode = null;
+    private boolean isEnabled = true;
 
     public Bot() {
         BTNode botBehavior = new BotBehavior(this);
@@ -258,5 +262,9 @@ public class Bot {
 
     public boolean isMoving() {
         return this.destPos != null;
+    }
+
+    public boolean isDisabled() {
+        return !isEnabled;
     }
 }
