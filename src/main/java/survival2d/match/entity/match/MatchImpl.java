@@ -793,6 +793,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     for (val player : players.values()) {
       responseMatchInfo(player.getPlayerId());
     }
+    sendNewSafeZoneInfo();
   }
 
   public void onPlayerSwitchWeapon(String playerId, int weaponId) {
