@@ -94,7 +94,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   @ExcludeFromGson private final List<Vector2D> spawnPoints = new ArrayList<>();
   private final Map<String, Bot> bots = new ConcurrentHashMap<>();
   private final int NUM_BOTS = 1;
-  @ExcludeFromGson int nextSafeZone;
+  @ExcludeFromGson int currentSafeZone;
   @ExcludeFromGson private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   @ExcludeFromGson private long currentTick;
@@ -422,13 +422,16 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   @Override
   public void setPlayerAutoPlay(String username, boolean enable) {
     val player = players.get(username);
-    val bot = bots.computeIfAbsent(username, (k)-> {
-      Bot b = new Bot();
-      b.setMatch(this, username);
-      b.setConfidencePercent(1.0);
-      bots.putIfAbsent(username, b);
-      return b;
-    });
+    val bot =
+        bots.computeIfAbsent(
+            username,
+            (k) -> {
+              Bot b = new Bot();
+              b.setMatch(this, username);
+              b.setConfidencePercent(1.0);
+              bots.putIfAbsent(username, b);
+              return b;
+            });
     bot.setEnabled(enable);
   }
 
@@ -484,27 +487,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                   ? player.getHelmetType().getReduceDamage()
                   : player.getVestType().getReduceDamage();
           val finalDamage = totalDamage - reduceDamage;
-          player.reduceHp(finalDamage);
-          {
-            val builder = new FlatBufferBuilder(0);
-            val usernameOffset = builder.createString(player.getPlayerId());
-
-            survival2d.flatbuffers.PlayerTakeDamageResponse.startPlayerTakeDamageResponse(builder);
-            survival2d.flatbuffers.PlayerTakeDamageResponse.addUsername(builder, usernameOffset);
-            survival2d.flatbuffers.PlayerTakeDamageResponse.addRemainHp(builder, player.getHp());
-            val responseOffset =
-                survival2d.flatbuffers.PlayerTakeDamageResponse.endPlayerTakeDamageResponse(
-                    builder);
-
-            Packet.startPacket(builder);
-            Packet.addDataType(builder, PacketData.PlayerTakeDamageResponse);
-            Packet.addData(builder, responseOffset);
-            val packetOffset = Packet.endPacket(builder);
-            builder.finish(packetOffset);
-
-            val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-            EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(player.getPosition()));
-          }
+          onPlayerTakeDamage(player.getPlayerId(), finalDamage);
           if (player.isDestroyed()) {
             val builder = new FlatBufferBuilder(0);
             val usernameOffset = builder.createString(player.getPlayerId());
@@ -581,6 +564,31 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
           }
         }
       }
+    }
+  }
+
+  private void onPlayerTakeDamage(String playerId, double damage) {
+    val player = players.get(playerId);
+    player.reduceHp(damage);
+    {
+      val builder = new FlatBufferBuilder(0);
+      val usernameOffset = builder.createString(player.getPlayerId());
+
+      survival2d.flatbuffers.PlayerTakeDamageResponse.startPlayerTakeDamageResponse(builder);
+      survival2d.flatbuffers.PlayerTakeDamageResponse.addUsername(builder, usernameOffset);
+      survival2d.flatbuffers.PlayerTakeDamageResponse.addRemainHp(builder, player.getHp());
+      val responseOffset =
+          survival2d.flatbuffers.PlayerTakeDamageResponse.endPlayerTakeDamageResponse(
+              builder);
+
+      Packet.startPacket(builder);
+      Packet.addDataType(builder, PacketData.PlayerTakeDamageResponse);
+      Packet.addData(builder, responseOffset);
+      val packetOffset = Packet.endPacket(builder);
+      builder.finish(packetOffset);
+
+      val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+      EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(player.getPosition()));
     }
   }
 
@@ -780,8 +788,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   @Override
   public void responseMatchInfo() {
-    val bytes = getMatchInfoData(objects.values());
-    EzyFoxUtil.stream(bytes, getAllUsernames());
+    //    val bytes = getMatchInfoData(objects.values());
+    //    EzyFoxUtil.stream(bytes, getAllUsernames());
+    for (val player : players.values()) {
+      responseMatchInfo(player.getPlayerId());
+    }
   }
 
   public void onPlayerSwitchWeapon(String playerId, int weaponId) {
@@ -821,7 +832,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     }
     initSafeZones();
     initObstacles();
-//    initBots();
+    //    initBots();
   }
 
   private void initBots() {
@@ -855,7 +866,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                   previousSafeZone.getRight().getY() + deltaRadius);
       safeZones.add(new ImmutablePair<>(new Circle(radius), newPosition));
     }
-    nextSafeZone = 1;
+    currentSafeZone = -1;
   }
 
   public void stop() {
@@ -958,13 +969,26 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   }
 
   private void updateSafeZone() {
+    if (currentTick % GameConstant.TICK_PER_SECOND == 0) {
+      // Mỗi giây gây damage một lần
+      safeZoneDealDamage();
+    }
     if (currentTick % GameConfig.getInstance().getTicksPerSafeZone() != 0) return;
-    nextSafeZone++;
+    currentSafeZone++;
     {
+      val safeZoneInfo = safeZones.get(currentSafeZone);
+      val safeZonePosition = safeZoneInfo.getRight();
+      val safeZoneRadius = safeZoneInfo.getLeft().getRadius();
       val builder = new FlatBufferBuilder(0);
 
-      survival2d.flatbuffers.SafeZoneMove.startSafeZoneMove(builder);
-      val responseOffset = survival2d.flatbuffers.SafeZoneMove.endSafeZoneMove(builder);
+      survival2d.flatbuffers.SafeZoneMoveResponse.startSafeZoneMoveResponse(builder);
+      val safeZonePositionOffset =
+          survival2d.flatbuffers.Vec2.createVec2(
+              builder, safeZonePosition.getX(), safeZonePosition.getY());
+      survival2d.flatbuffers.SafeZoneMoveResponse.addSafeZone(builder, safeZonePositionOffset);
+      survival2d.flatbuffers.SafeZoneMoveResponse.addRadius(builder, safeZoneRadius);
+      val responseOffset =
+          survival2d.flatbuffers.SafeZoneMoveResponse.endSafeZoneMoveResponse(builder);
 
       Packet.startPacket(builder);
       Packet.addDataType(builder, PacketData.SafeZoneMoveResponse);
@@ -975,17 +999,36 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
       EzyFoxUtil.stream(bytes, getAllUsernames());
     }
-    if (nextSafeZone >= safeZones.size()) {
+    if (currentSafeZone >= safeZones.size() - 1) {
       return;
     }
-    val safeZone = safeZones.get(nextSafeZone);
+    sendNewSafeZoneInfo();
+  }
+
+  private void safeZoneDealDamage() {
+    for (var i = 0; i <= currentSafeZone; i++) {
+      val safeZoneInfo = safeZones.get(i);
+      val safeZonePosition = safeZoneInfo.getRight();
+      val safeZoneShape = safeZoneInfo.getLeft();
+      for (val player : players.values()) {
+        if (player.isDestroyed()) continue;
+        if (MathUtil.isIntersect(safeZonePosition, safeZoneShape, player.getPosition(), Dot.DOT))
+          continue;
+        onPlayerTakeDamage(player.getPlayerId(), GameConstant.SAFE_ZONE_DAMAGE);
+      }
+    }
+  }
+
+  private void sendNewSafeZoneInfo() {
+    val safeZoneInfo = safeZones.get(currentSafeZone + 1);
+    val safeZonePosition = safeZoneInfo.getRight();
+    val safeZoneRadius = safeZoneInfo.getLeft().getRadius();
     val builder = new FlatBufferBuilder(0);
 
     survival2d.flatbuffers.NewSafeZoneResponse.startNewSafeZoneResponse(builder);
-    val safeZoneOffset =
-        survival2d.flatbuffers.Vec2.createVec2(
-            builder, safeZone.getRight().getX(), safeZone.getRight().getY());
+    val safeZoneOffset = Vec2.createVec2(builder, safeZonePosition.getX(), safeZonePosition.getY());
     survival2d.flatbuffers.NewSafeZoneResponse.addSafeZone(builder, safeZoneOffset);
+    survival2d.flatbuffers.NewSafeZoneResponse.addRadius(builder, safeZoneRadius);
     val responseOffset = survival2d.flatbuffers.NewSafeZoneResponse.endNewSafeZoneResponse(builder);
 
     Packet.startPacket(builder);
