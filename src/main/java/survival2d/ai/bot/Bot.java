@@ -20,11 +20,11 @@ import survival2d.util.math.MathUtil;
 @Getter
 @Setter
 public class Bot {
-    static final double NUM_TICK_CHANGE_STATUS = 60;
+    static final double NUM_TICK_CHANGE_STATUS = 1;
 
     BehaviorTree behaviorTree;
 
-    private double deltaTick;
+    private long curTick;
     private double confidencePercent;
     private String controlId;
 
@@ -40,11 +40,14 @@ public class Bot {
     private BotBehaviorNode runningNode = null;
     private boolean isEnabled = true;
 
+    private long lastTickAttack = -1;
+
     public Bot() {
         BTNode botBehavior = new BotBehavior(this);
         behaviorTree = new BehaviorTree(botBehavior);
 
-        deltaTick = 0;
+        curTick = 0;
+        lastTickAttack = 0;
         confidencePercent = 1.0;
         controlId = "";
     }
@@ -53,8 +56,6 @@ public class Bot {
         this.match = match;
         controlId = id;
         this.player = match.getPlayerInfo(controlId);
-
-        this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
     }
 
     public void setConfidencePercent(double confidencePercent) {
@@ -68,15 +69,9 @@ public class Bot {
     public void processBot() {
         if (this.player == null || this.player.isDestroyed()) return;
 
-        deltaTick += 1;
-        if (deltaTick >= NUM_TICK_CHANGE_STATUS) {
-            deltaTick = 0;
+        curTick += 1;
+        if (curTick % NUM_TICK_CHANGE_STATUS == 0) {
             this.behaviorTree.processTree();
-        }
-        else {
-            if (this.runningNode != null) {
-                this.runningNode.processNode();
-            }
         }
     }
 
@@ -116,8 +111,16 @@ public class Bot {
             return false;
         }
 
+        this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
+
+        if (curTick - lastTickAttack < 10) {
+            return false;
+        }
+
         Vector2D attackDirection = destPos.subtract(this.player.getPosition());
         this.match.onPlayerAttack(controlId, attackDirection);
+
+        lastTickAttack = curTick;
 
         System.out.println(controlId + "fire enemy");
 
@@ -150,8 +153,16 @@ public class Bot {
             return false;
         }
 
+        this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
+
+        if (curTick - lastTickAttack < 10) {
+            return false;
+        }
+
         Vector2D attackDirection = destPos.subtract(this.player.getPosition());
         this.match.onPlayerAttack(controlId, attackDirection);
+
+        lastTickAttack = curTick;
 
         System.out.println(controlId + "break crate");
 
@@ -246,6 +257,7 @@ public class Bot {
     }
 
     public void commandMoveToCenter() {
+        if (destPos != null) return;
         destPos = new Vector2D(GameConfig.getInstance().getMapWidth()/2, GameConfig.getInstance().getMapHeight()/2);
         this.commandMove();
 
