@@ -17,9 +17,11 @@ public final class NewSafeZoneResponse extends Table {
 
   public survival2d.flatbuffers.Vec2 safeZone() { return safeZone(new survival2d.flatbuffers.Vec2()); }
   public survival2d.flatbuffers.Vec2 safeZone(survival2d.flatbuffers.Vec2 obj) { int o = __offset(4); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public double radius() { int o = __offset(6); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
 
-  public static void startNewSafeZoneResponse(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void startNewSafeZoneResponse(FlatBufferBuilder builder) { builder.startTable(2); }
   public static void addSafeZone(FlatBufferBuilder builder, int safeZoneOffset) { builder.addStruct(0, safeZoneOffset, 0); }
+  public static void addRadius(FlatBufferBuilder builder, double radius) { builder.addDouble(1, radius, 0.0); }
   public static int endNewSafeZoneResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

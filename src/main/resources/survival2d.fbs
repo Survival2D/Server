@@ -283,9 +283,12 @@ table PlayerTakeItemResponse {
 
 table NewSafeZoneResponse {
   safeZone: Vec2;
+  radius: double;
 }
 
 table SafeZoneMoveResponse {
+  safeZone: Vec2;
+  radius: double;
 }
 
 table PingRequest {}
@@ -321,6 +324,10 @@ table UseHealItemResponse {
   remainItem: int;
 }
 
+table SetAutoPlayRequest {
+  enable: bool;
+}
+
 union PacketData {
   MatchInfoRequest,
   MatchInfoResponse,
@@ -353,6 +360,7 @@ union PacketData {
   PingByMatchInfoResponse,
   UseHealItemRequest,
   UseHealItemResponse,
+  SetAutoPlayRequest,
 }
 
 table Packet {

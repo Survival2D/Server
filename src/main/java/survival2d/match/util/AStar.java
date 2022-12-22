@@ -98,7 +98,22 @@ public class AStar {
     return path;
   }
 
+  Point suggestDest(Point dest) {
+    if (isValid(dest) && isUnBlocked(dest)) {
+      return dest;
+    }
+    for (Point p : Point.FOUR_NEIGHBOURS) {
+      Point newDest = dest.add(p);
+      if (isValid(newDest) && isUnBlocked(newDest)) {
+        return newDest;
+      }
+    }
+    return dest;
+  }
+
   public List<Point> aStarSearch(Point src, Point dest) {
+    dest = suggestDest(dest);
+
     if (!isValid(src)) {
       log.warn("Source is invalid");
       return Collections.emptyList();
