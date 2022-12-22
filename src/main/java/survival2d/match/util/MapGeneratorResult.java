@@ -15,7 +15,8 @@ public class MapGeneratorResult {
   public void printTiles() {
     for (int[] row : tiles) {
       for (int x : row) {
-        System.out.print(x);
+        if (x == TileObject.EMPTY.ordinal()) System.out.print("-");
+        else System.out.print(x);
       }
       System.out.println();
     }
