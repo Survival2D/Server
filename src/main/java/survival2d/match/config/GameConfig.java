@@ -23,6 +23,7 @@ public class GameConfig implements PostProcessable {
   private double defaultPlayerSpeed;
   private double bandageHeal;
   private double medKitHeal;
+  private int numMaxItemInContainer;
   private double playerViewWidth;
   private double playerViewHeight;
   private double playerViewWidthPlus1;
