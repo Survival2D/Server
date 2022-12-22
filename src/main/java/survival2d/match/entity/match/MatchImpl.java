@@ -159,7 +159,14 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     return players.keySet();
   }
 
+  // Thường dùng cho obstacle, để gửi thông tin cho user có vùng nhìn ở đây
   public Collection<String> getUsernamesCanSeeAt(Vector2D position) {
+    val result = new HashSet<String>();
+    getNearByPlayer(position).forEach(p -> result.add(p.getPlayerId()));
+    return result;
+  }
+
+  public Collection<String> getUsernamesCanSeeAtAndCheckUnderTree(Vector2D position) {
     val result = new HashSet<String>();
     val nearBy = getNearBy(position);
     val nearByTrees =
@@ -267,7 +274,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(player.getPosition()));
+    EzyFoxUtil.stream(bytes, getUsernamesCanSeeAtAndCheckUnderTree(player.getPosition()));
   }
 
   private Collection<MapObject> getNearBy(Vector2D position) {
@@ -360,10 +367,13 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
               .add(
                   player
                       .getAttackDirection()
-                      .scalarMultiply(((Circle) player.getShape()).getRadius())),
+                      .scalarMultiply(PlayerImpl.BODY_RADIUS + 10)),
           DAMAGE_SHAPE,
           5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
+      if (!player.getGun().isReadyToShoot()) {
+        return;
+      }
       createBullet(
           playerId,
           player
@@ -1271,10 +1281,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     val player = players.get(playerId);
     player.reloadWeapon();
     val builder = new FlatBufferBuilder(0);
+    val gun = player.getGun();
 
     val responseOffset =
         survival2d.flatbuffers.PlayerReloadWeaponResponse.createPlayerReloadWeaponResponse(
-            builder, 1000, 100); // FIXME
+            builder, gun.getRemainBullets(), player.getNumBullet());
 
     Packet.startPacket(builder);
     Packet.addDataType(builder, PacketData.PlayerReloadWeaponResponse);

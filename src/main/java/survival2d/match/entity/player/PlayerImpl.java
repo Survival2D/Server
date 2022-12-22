@@ -63,7 +63,7 @@ public class PlayerImpl extends BaseMapObject implements Player {
     this.team = team;
     weapons.add(new Hand());
     Gun gun = new Gun(GunType.NORMAL);
-    gun.reload(100);
+//    gun.reload(100);
     weapons.add(gun);
   }
 
@@ -96,7 +96,10 @@ public class PlayerImpl extends BaseMapObject implements Player {
     }
     val weapon = optWeapon.get();
     if (weapon instanceof Gun) {
-      ((Gun) weapon).reload(100);
+      val gun = (Gun) weapon;
+      val gunType = gun.getType();
+      val bulletType = gunType.getBulletType();
+      gun.reload(bullets.getOrDefault(bulletType, 0));
     }
   }
 
@@ -202,5 +205,10 @@ public class PlayerImpl extends BaseMapObject implements Player {
     val height = GameConfig.getInstance().getPlayerViewHeight();
     return new RectangleBoundary(
         position.getX() - width / 2, position.getY() - height / 2, width, height);
+  }
+
+  @Override
+  public Gun getGun() {
+    return (Gun) weapons.get(1);
   }
 }

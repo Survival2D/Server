@@ -10,9 +10,9 @@ import static survival2d.match.entity.config.ItemType.WEAPON;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.config.BulletType;
@@ -20,15 +20,24 @@ import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.config.ItemType;
 
 public class ItemFactory {
-  private static final ItemType[] itemsToRandom =
-      ArrayUtils.toArray(WEAPON, BULLET, BACKPACK, HELMET, VEST, BANDAGE, MEDKIT);
+  private static final TreeMap<Integer, ItemType> itemsToRandom = new TreeMap<>();
+
+  static {
+    itemsToRandom.put(20, WEAPON);
+    itemsToRandom.put(itemsToRandom.lastKey() + 100, BULLET);
+    itemsToRandom.put(itemsToRandom.lastKey() + 10, BACKPACK);
+    itemsToRandom.put(itemsToRandom.lastKey() + 10, HELMET);
+    itemsToRandom.put(itemsToRandom.lastKey() + 10, VEST);
+    itemsToRandom.put(itemsToRandom.lastKey() + 20, BANDAGE);
+    itemsToRandom.put(itemsToRandom.lastKey() + 20, MEDKIT);
+  }
 
   public static Item create(ItemType itemType) {
     switch (itemType) {
       case WEAPON:
         return new GunItem(GunType.NORMAL, 10);
       case BULLET:
-        return new BulletItem(BulletType.NORMAL, 10);
+        return new BulletItem(BulletType.NORMAL, 30);
       case BACKPACK:
         return new BackPackItem();
       case HELMET:
@@ -44,7 +53,10 @@ public class ItemFactory {
   }
 
   public static Item randomItem() {
-    val itemType = itemsToRandom[ThreadLocalRandom.current().nextInt(itemsToRandom.length)];
+    val itemType =
+        itemsToRandom
+            .ceilingEntry(ThreadLocalRandom.current().nextInt(itemsToRandom.lastKey()))
+            .getValue();
     return create(itemType);
   }
 

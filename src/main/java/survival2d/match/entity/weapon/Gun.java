@@ -11,13 +11,18 @@ public class Gun extends Weapon {
   private final WeaponType weaponType = WeaponType.GUN;
 
   private final GunType type;
-  private int remainBullets;
+  private int remainBullets = 10;
 
   public int reload(int numBullet) {
     int numBulletCanLoad = type.getBulletCapacity() - remainBullets;
     int numBulletToLoad = Math.min(numBulletCanLoad, numBullet);
     remainBullets += numBulletToLoad;
     return numBullet - numBulletToLoad;
+  }
+
+  public boolean isReadyToShoot() {
+    return true;//FIXME
+//    return remainBullets > 0;
   }
 
   //  public void shoot(Vector2D rawPosition, Vector2D direction) {

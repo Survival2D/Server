@@ -10,6 +10,7 @@ import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.HelmetType;
 import survival2d.match.entity.config.VestType;
 import survival2d.match.entity.quadtree.BaseBoundary;
+import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Weapon;
 
 public interface Player extends MapObject, Movable, HasHp {
@@ -55,4 +56,6 @@ public interface Player extends MapObject, Movable, HasHp {
   int getNumBullet();
 
   BaseBoundary getPlayerView();
+
+  Gun getGun(); //FIXME: trick here
 }
