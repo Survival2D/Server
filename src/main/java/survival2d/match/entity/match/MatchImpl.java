@@ -559,8 +559,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       survival2d.flatbuffers.PlayerTakeDamageResponse.addUsername(builder, usernameOffset);
       survival2d.flatbuffers.PlayerTakeDamageResponse.addRemainHp(builder, player.getHp());
       val responseOffset =
-          survival2d.flatbuffers.PlayerTakeDamageResponse.endPlayerTakeDamageResponse(
-              builder);
+          survival2d.flatbuffers.PlayerTakeDamageResponse.endPlayerTakeDamageResponse(builder);
 
       Packet.startPacket(builder);
       Packet.addDataType(builder, PacketData.PlayerTakeDamageResponse);
@@ -577,8 +576,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
       survival2d.flatbuffers.PlayerDeadResponse.startPlayerDeadResponse(builder);
       survival2d.flatbuffers.PlayerDeadResponse.addUsername(builder, usernameOffset);
-      val responseOffset =
-          survival2d.flatbuffers.PlayerDeadResponse.endPlayerDeadResponse(builder);
+      val responseOffset = survival2d.flatbuffers.PlayerDeadResponse.endPlayerDeadResponse(builder);
 
       Packet.startPacket(builder);
       Packet.addDataType(builder, PacketData.PlayerDeadResponse);
@@ -717,6 +715,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       val object = mapObjects[i];
       var objectDataOffset = 0;
       byte objectDataType = 0;
+
       if (object instanceof BulletItem) {
         objectDataType = MapObjectData.BulletItem;
         val bulletItem = (BulletItem) object;
@@ -734,6 +733,33 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         objectDataOffset = survival2d.flatbuffers.GunItem.endGunItem(builder);
         //        val gunItemOffset = survival2d.flatbuffers.GunItem.endGunItem(builder);
         //        survival2d.flatbuffers.MapObject.addData(builder, gunItemOffset);
+      } else if (object instanceof HelmetItem) {
+        objectDataType = MapObjectData.HelmetItem;
+        val helmetItem = (HelmetItem) object;
+        objectDataOffset =
+            survival2d.flatbuffers.HelmetItem.createHelmetItem(
+                builder, (byte) helmetItem.getHelmetType().ordinal());
+      } else if (object instanceof VestItem) {
+        objectDataType = MapObjectData.VestItem;
+        val vestItem = (VestItem) object;
+        objectDataOffset =
+            survival2d.flatbuffers.VestItem.createVestItem(
+                builder, (byte) vestItem.getVestType().ordinal());
+      } else if (object instanceof MedKitItem) {
+        objectDataType = MapObjectData.MedKitItem;
+        val medKitItem = (MedKitItem) object;
+        survival2d.flatbuffers.MedKitItem.startMedKitItem(builder);
+        objectDataOffset = survival2d.flatbuffers.MedKitItem.endMedKitItem(builder);
+      } else if (object instanceof BandageItem) {
+        objectDataType = MapObjectData.BandageItem;
+        val bandageItem = (BandageItem) object;
+        survival2d.flatbuffers.BandageItem.startBandageItem(builder);
+        objectDataOffset = survival2d.flatbuffers.BandageItem.endBandageItem(builder);
+      } else if (object instanceof BackPackItem) {
+        val backPackItem = (BackPackItem) object;
+        objectDataType = MapObjectData.BackPackItem;
+        survival2d.flatbuffers.BackPackItem.startBackPackItem(builder);
+        objectDataOffset = survival2d.flatbuffers.BackPackItem.endBackPackItem(builder);
       } else if (object instanceof Tree) {
         objectDataType = MapObjectData.Tree;
         val tree = (Tree) object;
