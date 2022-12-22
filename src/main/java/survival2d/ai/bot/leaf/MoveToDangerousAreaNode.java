@@ -6,7 +6,7 @@ public class MoveToDangerousAreaNode extends BotBehaviorNode {
     @Override
     public void processNode() {
         this.controller.commandMoveToCenter();
-        //TODO: update value
-        success();
+        if (this.controller.isMoving()) running();
+        else success();
     }
 }

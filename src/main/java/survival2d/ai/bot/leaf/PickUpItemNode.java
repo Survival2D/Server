@@ -6,7 +6,7 @@ public class PickUpItemNode extends BotBehaviorNode {
     @Override
     public void processNode() {
         this.controller.commandTakeItem();
-        //TODO: update value
-        running();
+        if (this.controller.isMoving()) running();
+        else success();
     }
 }

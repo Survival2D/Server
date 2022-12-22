@@ -6,7 +6,7 @@ public class MoveToPositionNode extends BotBehaviorNode {
     @Override
     public void processNode() {
         this.controller.commandMoveToSafePosition();
-        //TODO: update value
-        running();
+        if (this.controller.isMoving()) running();
+        else success();
     }
 }

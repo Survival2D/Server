@@ -3,8 +3,16 @@ package survival2d.ai.bot;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.ai.btree.BTNode;
 import survival2d.ai.btree.BehaviorTree;
+import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.config.GameConfig;
+import survival2d.match.entity.item.ItemOnMap;
 import survival2d.match.entity.match.Match;
+import survival2d.match.entity.obstacle.Container;
 import survival2d.match.entity.player.Player;
+import survival2d.util.math.MathUtil;
+
+import java.util.Collection;
+import java.util.List;
 
 public class Bot {
     static final double TICK_DELTA_TIME = 1.0;
@@ -21,7 +29,8 @@ public class Bot {
     private String targetPlayer = "";
     private int targetCreateId = -1;
     private int targetItemId = -1;
-    private Vector2D destPos = new Vector2D(0, 0);
+    private Vector2D destPos = null;
+    private List<Vector2D> path = null;
 
     public Bot() {
         BTNode botBehavior = new BotBehavior(this);
@@ -62,79 +71,134 @@ public class Bot {
     }
 
     public boolean getNearbyEnemy() {
-        //TODO: tìm địch gần nhất để tới phá lấy item, return id địch
         targetPlayer = "";
-        return false;
+        Collection<Player> players = this.match.getNearByPlayer(this.player.getPosition());
+        for (Player player : players) {
+            if (!player.getPlayerId().equals(controlId)) {
+                targetPlayer = player.getPlayerId();
+                destPos = player.getPosition();
+                break;
+            }
+        }
+        return !targetPlayer.equals("");
     }
 
     public Vector2D getEnemyPosition(String username) {
-        //TODO: lấy vị trí dich by id
-        return null;
+        return destPos;
     }
 
     public void commandFireEnemy() {
-        Vector2D pos = this.getEnemyPosition(targetPlayer);
-        this.commandMoveTo(pos);
-        //TODO: bắn địch thủ (đã có target)
+        destPos = this.getEnemyPosition(targetPlayer);
+        this.commandMove();
+
+        Vector2D attackDirection = destPos.subtract(this.player.getPosition());
+        this.match.onPlayerAttack(controlId, attackDirection);
     }
 
     public boolean getNearbyCrate() {
-        //TODO: tìm thùng gần nhất để tới phá lấy item, return id thùng
         targetCreateId = -1;
+        Collection<Container> crates = this.match.getNearByContainer(this.player.getPosition());
+        for (Container crate : crates) {
+            targetCreateId = crate.getId();
+            destPos = crate.getPosition();
+            return true;
+        }
         return false;
     }
 
     public Vector2D getCratePosition(int id) {
-        //TODO: lấy vị trí thùng by id
-        return null;
+        return destPos;
     }
 
     public void commandBreakCrate() {
-        Vector2D pos = this.getCratePosition(targetCreateId);
-        this.commandMoveTo(pos);
-        //TODO: bắn thùng (đã có target)
+        destPos = this.getCratePosition(targetCreateId);
+        this.commandMove();
+
+        Vector2D attackDirection = destPos.subtract(this.player.getPosition());
+        this.match.onPlayerAttack(controlId, attackDirection);
     }
 
     public boolean getNearbyItem() {
-        //TODO: tìm item gần nhất, return id item
         targetItemId = -1;
+        Collection<ItemOnMap> items = this.match.getNearByItem(this.player.getPosition());
+        for (ItemOnMap item : items) {
+            targetItemId = item.getId();
+            destPos = item.getPosition();
+            return true;
+        }
         return false;
     }
 
     public Vector2D getItemPosition(int id) {
-        //TODO: lấy vị trí item by id
-        return null;
+        return destPos;
     }
 
     public void commandTakeItem() {
-        Vector2D pos = this.getCratePosition(targetItemId);
-        this.commandMoveTo(pos);
-        //TODO: nhặt item (đã có target)
+        destPos = this.getItemPosition(targetItemId);
+        this.commandMove();
+
+        Collection<ItemOnMap> items = this.match.getNearByItem(this.player.getPosition());
+        for (ItemOnMap item : items) {
+            if (MathUtil.isIntersect(item.getPosition(), item.getShape(), this.player.getPosition(), this.player.getShape())) {
+                this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
+                this.commandStopMove();
+                break;
+            }
+        }
     }
 
-    public void commandMoveTo(Vector2D destPosition) {
-        //TODO: ra lệnh di chuyển tới vị trí đích
-    }
-
-    public void commandStopMove() {
-        //TODO: ra lệnh dừng di chuyển
-    }
-
-    public boolean findSafePosition() {
-        //TODO: tìm vị trí an toàn
-        destPos = new Vector2D(0, 0);
+    public boolean commandTakeNearbyItem() {
+        Collection<ItemOnMap> items = this.match.getNearByItem(this.player.getPosition());
+        for (ItemOnMap item : items) {
+            if (MathUtil.isIntersect(item.getPosition(), item.getShape(), this.player.getPosition(), this.player.getShape())) {
+                this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
+                return true;
+            }
+        }
         return false;
     }
 
+    public void commandMove() {
+        if (destPos == null) return;
+
+        if (this.path == null) {
+            this.path = this.match.getPathFromTo(this.player.getPosition(), destPos);
+        }
+
+        if (this.path.isEmpty()) {
+            this.commandStopMove();
+        }
+        else {
+            Vector2D nextPosition = this.path.get(0);
+            Vector2D moveVector = nextPosition.subtract(this.player.getPosition());
+            this.match.onPlayerMove(controlId, moveVector, this.player.getRotation());
+        }
+    }
+
+    private void commandStopMove() {
+        destPos = null;
+        this.path = null;
+    }
+
+    public boolean findSafePosition() {
+        destPos = new Vector2D(GameConfig.getInstance().getMapWidth()/2, GameConfig.getInstance().getMapHeight()/2);
+        return true;
+    }
+
     public void commandMoveToSafePosition() {
-        this.commandMoveTo(destPos);
+        this.commandMove();
     }
 
     public void commandMoveToCenter() {
-
+        destPos = new Vector2D(GameConfig.getInstance().getMapWidth()/2, GameConfig.getInstance().getMapHeight()/2);
+        this.commandMove();
     }
 
     public void commandMoveRandom() {
 
+    }
+
+    public boolean isMoving() {
+        return this.destPos != null;
     }
 }

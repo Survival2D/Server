@@ -252,7 +252,21 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         .collect(Collectors.toList());
   }
 
-  private Collection<Player> getNearByPlayer(Vector2D position) {
+  public Collection<Container> getNearByContainer(Vector2D position) {
+    return getNearBy(position).stream()
+            .filter(object -> object instanceof Container)
+            .map(object -> (Container) object)
+            .collect(Collectors.toList());
+  }
+
+  public Collection<ItemOnMap> getNearByItem(Vector2D position) {
+    return getNearBy(position).stream()
+            .filter(object -> object instanceof ItemOnMap)
+            .map(object -> (ItemOnMap) object)
+            .collect(Collectors.toList());
+  }
+
+  public Collection<Player> getNearByPlayer(Vector2D position) {
     return getNearBy(position).stream()
         .filter(object -> object instanceof Player)
         .map(object -> (Player) object)
@@ -347,7 +361,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     }
   }
 
-  private List<Vector2D> getPathFromTo(Vector2D from, Vector2D to) {
+  public List<Vector2D> getPathFromTo(Vector2D from, Vector2D to) {
     val fromX = (int) (from.getX() / MapGenerator.TILE_SIZE);
     val fromY = (int) (from.getY() / MapGenerator.TILE_SIZE);
     val toX = (int) (to.getX() / MapGenerator.TILE_SIZE);

@@ -6,7 +6,6 @@ public class AttackCrateNode extends BotBehaviorNode {
     @Override
     public void processNode() {
         this.controller.commandBreakCrate();
-        //TODO: update value
         success();
     }
 }
