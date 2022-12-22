@@ -104,6 +104,10 @@ public class Bot {
             return false;
         }
         destPos = destEnemy.getPosition();
+
+        double rotation = this.calculateRotation(this.player.getPosition(), destPos);
+        this.player.setRotation(rotation);
+
         this.commandMove();
 
         if (!this.isMoving()) {
@@ -146,6 +150,10 @@ public class Bot {
             return false;
         }
         destPos = destCrate.getPosition();
+
+        double rotation = this.calculateRotation(this.player.getPosition(), destPos);
+        this.player.setRotation(rotation);
+
         this.commandMove();
 
         if (!this.isMoving()) {
@@ -278,5 +286,18 @@ public class Bot {
 
     public boolean isDisabled() {
         return !isEnabled;
+    }
+
+    private double calculateRotation(Vector2D originPos, Vector2D destPos) {
+        double dx = destPos.getX() - originPos.getX();
+        double dy = destPos.getY() - originPos.getY();
+        if (dx == 0) {
+            if (dy >= 0) return Math.PI/2;
+            else return -Math.PI/2;
+        }
+        double angle = Math.atan(dy/dx);
+        if (dx < 0) angle = Math.PI + angle;
+        if (angle > Math.PI) angle = angle - 2 * Math.PI;
+        return angle;
     }
 }
