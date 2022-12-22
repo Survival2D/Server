@@ -181,7 +181,7 @@ public class MapGenerator {
   }
 
   private void generateOtherObjects() {
-    val coverageRate = 0.1;
+    val coverageRate = 0.5;
 
     for (var rect : rects) {
 

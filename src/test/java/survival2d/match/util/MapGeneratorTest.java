@@ -7,8 +7,10 @@ class MapGeneratorTest {
   @Test
   public void testGenerateMap() {
     val result = MapGenerator.generateMap();
-//    System.out.println(result.mapObjects);
+    //    System.out.println(result.mapObjects);
     result.printWalls();
+    System.out.println(
+        "====================================================================================================");
     result.printTiles();
   }
 }

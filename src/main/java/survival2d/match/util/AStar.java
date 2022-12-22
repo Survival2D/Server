@@ -23,7 +23,7 @@ import lombok.var;
 @Slf4j
 public class AStar {
   protected int[][] grid; // Base
-  @Setter protected boolean allowDiagonals = true; // Setting - Có thể đi chéo không
+  @Setter protected boolean allowDiagonals = false; // Setting - Có thể đi chéo không
   int row; // Base
   int col; // Base
   Cell[][] cells; // Base - Lưu cell ở đây để dùng lại, tránh khởi tạo lại
@@ -45,7 +45,9 @@ public class AStar {
   }
 
   protected boolean isUnBlocked(Point p) {
-    return grid[p.x][p.y] == 1;
+    return grid[p.x][p.y] == TileObject.EMPTY.ordinal()
+        || grid[p.x][p.y] == TileObject.PLAYER.ordinal()
+        || grid[p.x][p.y] == TileObject.ITEM.ordinal();
   }
 
   private boolean isDestination(Point p, Point dest) {
@@ -59,7 +61,7 @@ public class AStar {
             + (p.getY() - dest.getY()) * (p.getY() - dest.getY()));
   }
 
-  protected double calculateGValue(Cell parent, Cell cell) {
+  protected double calculateGValue(Cell cell) {
     return cell.g + 1;
   }
 
@@ -139,36 +141,14 @@ public class AStar {
       val cell = open.remove();
       closed.add(cell);
 
-      val lastDirX = cell.x - cell.getParent().x;
-      val lastDirY = cell.y - cell.getParent().y;
-      val nextCellFollowDir = getCellAtPoint(new Point(cell.x + lastDirX, cell.y + lastDirY));
-      if (nextCellFollowDir != null) {
-        if (isDestination(nextCellFollowDir, dest)) {
-          nextCellFollowDir.setParent(cell);
-          return getPath(dest);
-        } else if (!closed.contains(nextCellFollowDir) && isUnBlocked(nextCellFollowDir)) {
-          double gNew = calculateGValue(cell, nextCellFollowDir);
-          double hNew = calculateHValue(nextCellFollowDir, dest);
-          double fNew = gNew + hNew;
-          if (nextCellFollowDir.getF() > fNew) {
-            nextCellFollowDir.g = gNew;
-            nextCellFollowDir.h = hNew;
-            open.add(nextCellFollowDir);
-            nextCellFollowDir.setParent(cell);
-          }
-        }
-      }
-
       val neighbours = getNeighbours(cell);
 
       for (val neighbour : neighbours) {
-        if (neighbour.equals(nextCellFollowDir)) continue;
-
         if (isDestination(neighbour, dest)) {
           neighbour.setParent(cell);
           return getPath(dest);
         } else if (!closed.contains(neighbour) && isUnBlocked(neighbour)) {
-          double gNew = calculateGValue(cell, neighbour);
+          double gNew = calculateGValue(cell);
           double hNew = calculateHValue(neighbour, dest);
           double fNew = gNew + hNew;
           if (neighbour.getF() > fNew) {

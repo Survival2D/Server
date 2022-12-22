@@ -11,7 +11,7 @@ import lombok.val;
 
 @Getter
 public class QuadTree<T extends Node> {
-  private static final int CAPACITY = 10; // Sức chứa của mỗi quadtree
+  private static final int CAPACITY = 4; // Sức chứa của mỗi quadtree
   RectangleBoundary boundary;
   boolean partitioned = false;
   Map<Integer, T> nodes = new ConcurrentHashMap<>();
@@ -22,6 +22,10 @@ public class QuadTree<T extends Node> {
 
   public QuadTree(double x, double y, double width, double height) {
     boundary = new RectangleBoundary(x, y, width, height);
+  }
+
+  public QuadTree(RectangleBoundary boundary) {
+    this.boundary = boundary;
   }
 
   public void add(T node) {
