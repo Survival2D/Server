@@ -439,7 +439,6 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
               Bot b = new Bot();
               b.setMatch(this, username);
               b.setConfidencePercent(1.0);
-              bots.putIfAbsent(username, b);
               return b;
             });
     bot.setEnabled(enable);
