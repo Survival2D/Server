@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class Bot {
-    static final double NUM_TICK_CHANGE_STATUS = 1;
+    static final double NUM_TICK_CHANGE_STATUS = 60;
 
     BehaviorTree behaviorTree;
 
@@ -32,6 +32,8 @@ public class Bot {
     private Player destEnemy = null;
     private int destItemId = -1;
     private List<Vector2D> path = null;
+
+    private BotBehaviorNode runningNode = null;
 
     public Bot() {
         BTNode botBehavior = new BotBehavior(this);
@@ -52,12 +54,22 @@ public class Bot {
         this.confidencePercent = confidencePercent;
     }
 
+    public void setRunningNode(BotBehaviorNode runningNode) {
+        this.runningNode = runningNode;
+    }
+
     public void processBot() {
         if (this.player == null || this.player.isDestroyed()) return;
+
         deltaTick += 1;
         if (deltaTick >= NUM_TICK_CHANGE_STATUS) {
             deltaTick = 0;
             this.behaviorTree.processTree();
+        }
+        else {
+            if (this.runningNode != null) {
+                this.runningNode.processNode();
+            }
         }
     }
 
