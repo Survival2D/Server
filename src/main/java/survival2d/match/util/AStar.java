@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -108,6 +109,14 @@ public class AStar {
         return newDest;
       }
     }
+    for (int i = 0; i < 100; i++) {
+      val randomPoint =
+          new Point(
+              ThreadLocalRandom.current().nextInt(row), ThreadLocalRandom.current().nextInt(col));
+      if (isValid(randomPoint) && isUnBlocked(randomPoint)) {
+        return randomPoint;
+      }
+    }
     return dest;
   }
 
@@ -177,7 +186,6 @@ public class AStar {
     }
 
     log.warn("Failed to find the Destination Cell\n");
-    getPath(dest);
     return Collections.emptyList();
   }
 

@@ -65,6 +65,7 @@ import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
 import survival2d.match.entity.player.PlayerImpl;
 import survival2d.match.entity.quadtree.BaseBoundary;
+import survival2d.match.entity.quadtree.CircleBoundary;
 import survival2d.match.entity.quadtree.QuadTree;
 import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
@@ -168,7 +169,12 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   public Collection<String> getUsernamesCanSeeAtAndCheckUnderTree(Vector2D position) {
     val result = new HashSet<String>();
-    val nearBy = getNearBy(position);
+    val width = 2600;
+    val height = 1400;
+    val boundary =
+        new RectangleBoundary(
+            position.getX() - width / 2, position.getY() - height / 2, width, height);
+    val nearBy = quadTree.query(boundary);
     val nearByTrees =
         nearBy.stream()
             .filter(o -> o instanceof Tree)
@@ -178,7 +184,10 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                     MathUtil.isIntersect(position, Dot.DOT, tree.getPosition(), tree.getFoliage()))
             .collect(Collectors.toList());
     if (nearByTrees.isEmpty()) {
-      getNearByPlayer(position).forEach(p -> result.add(p.getPlayerId()));
+      nearBy.stream()
+          .filter(object -> object instanceof Player)
+          .map(object -> (Player) object)
+          .forEach(p -> result.add(p.getPlayerId()));
     } else {
       nearBy.stream()
           .filter(o -> o instanceof Player)
@@ -246,6 +255,14 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       log.warn("QueryY {}", query);
       newMapObjects.addAll(query);
     }
+    newMapObjects.removeIf(
+        (o) -> {
+          if (o instanceof Player) {
+            val enemy = (Player) o;
+            return !getUsernamesCanSeeAtAndCheckUnderTree(enemy.getPosition()).contains(playerId);
+          }
+          return false;
+        });
     if (!newMapObjects.isEmpty()) {
       log.warn(
           "Map objects {}",
@@ -274,7 +291,10 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getUsernamesCanSeeAtAndCheckUnderTree(player.getPosition()));
+    val userReceivePackets = new HashSet<String>();
+    userReceivePackets.addAll(getUsernamesCanSeeAtAndCheckUnderTree(oldPosition));
+    userReceivePackets.addAll(getUsernamesCanSeeAtAndCheckUnderTree(player.getPosition()));
+    EzyFoxUtil.stream(bytes, userReceivePackets);
   }
 
   private Collection<MapObject> getNearBy(Vector2D position) {
@@ -293,13 +313,6 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         new RectangleBoundary(
             position.getX() - width / 2, position.getY() - height / 2, width, height);
     return quadTree.query(boundary);
-  }
-
-  private Collection<Obstacle> getNearByObstacle(Vector2D position) {
-    return getNearBy(position).stream()
-        .filter(object -> object instanceof Obstacle)
-        .map(object -> (Obstacle) object)
-        .collect(Collectors.toList());
   }
 
   public Collection<Container> getNearByContainer(Vector2D position) {
@@ -364,10 +377,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
           playerId,
           player
               .getPosition()
-              .add(
-                  player
-                      .getAttackDirection()
-                      .scalarMultiply(PlayerImpl.BODY_RADIUS + 10)),
+              .add(player.getAttackDirection().scalarMultiply(PlayerImpl.BODY_RADIUS + 10)),
           DAMAGE_SHAPE,
           5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
@@ -382,8 +392,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                   player
                       .getAttackDirection()
                       .scalarMultiply(
-                          ((Circle) player.getShape()).getRadius()
-                              + GameConstant.INITIAL_BULLET_DISTANCE)),
+                          PlayerImpl.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
           direction,
           BulletType.NORMAL);
     }
@@ -663,10 +672,13 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   }
 
   @Override
-  public void responseMatchInfo(String username) {
+  public void responseMatchInfoOnStart(String username) {
     //    final byte[] bytes = getMatchInfoData(objects.values());
     val player = players.get(username);
-    val data = getMatchInfoData(objects.values());
+    val objects = new HashSet<MapObject>();
+    objects.addAll(quadTree.query(player.getPlayerView()));
+    objects.addAll(players.values());
+    val data = getMatchInfoData(objects);
     EzyFoxUtil.stream(data, username);
   }
 
@@ -822,11 +834,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   }
 
   @Override
-  public void responseMatchInfo() {
+  public void responseMatchInfoOnStart() {
     //    val bytes = getMatchInfoData(objects.values());
     //    EzyFoxUtil.stream(bytes, getAllUsernames());
     for (val player : players.values()) {
-      responseMatchInfo(player.getPlayerId());
+      responseMatchInfoOnStart(player.getPlayerId());
     }
     sendNewSafeZoneInfo();
   }
@@ -1087,7 +1099,9 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         log.info("bullet position {}", bullet.getPosition());
         String ownerId = bullet.getOwnerId();
         val owner = players.get(ownerId);
-        for (val object : getNearBy(bullet.getPosition())) {
+        val bulletPosition = bullet.getPosition();
+        val boundary = new CircleBoundary(bulletPosition.getX(), bulletPosition.getY(), 1000);
+        for (val object : quadTree.query(boundary)) {
           if (object instanceof Player) {
             val player = (Player) object;
             log.info("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());

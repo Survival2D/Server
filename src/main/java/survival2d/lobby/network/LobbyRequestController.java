@@ -118,7 +118,7 @@ public class LobbyRequestController extends EzyLoggable {
         .data(FindMatchResponse.builder().result(ResponseError.SUCCESS).matchId(matchId).build())
         .usernames(allPlayers)
         .execute();
-    match.responseMatchInfo();
+    match.responseMatchInfoOnStart();
     //    responseFactory
     //        .newObjectResponse()
     //        .command(MatchCommand.MATCH_INFO)

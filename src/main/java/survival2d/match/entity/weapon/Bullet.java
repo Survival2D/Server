@@ -37,7 +37,7 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
 
   public void move() {
     moveBy(direction.scalarMultiply(type.getSpeed()));
-    //    log.info("position: {}", position);
+        log.info("position: {}", position);
   }
 
   public boolean isOutOfBound() {

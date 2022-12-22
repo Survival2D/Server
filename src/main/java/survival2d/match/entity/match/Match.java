@@ -29,9 +29,9 @@ public interface Match {
 
   void createBullet(String playerId, Vector2D position, Vector2D direction, BulletType type);
 
-  void responseMatchInfo(String username);
+  void responseMatchInfoOnStart(String username);
 
-  void responseMatchInfo();
+  void responseMatchInfoOnStart();
 
   // for bots
 

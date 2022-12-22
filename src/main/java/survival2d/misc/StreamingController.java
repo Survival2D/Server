@@ -43,7 +43,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
             return;
           }
           val match = optMatch.get();
-          match.responseMatchInfo(username);
+          match.responseMatchInfoOnStart(username);
           break;
         }
       case PacketData.PlayerMoveRequest:

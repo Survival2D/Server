@@ -23,7 +23,7 @@ public class ItemFactory {
   private static final TreeMap<Integer, ItemType> itemsToRandom = new TreeMap<>();
 
   static {
-    itemsToRandom.put(20, WEAPON);
+    itemsToRandom.put(50, WEAPON);
     itemsToRandom.put(itemsToRandom.lastKey() + 100, BULLET);
     itemsToRandom.put(itemsToRandom.lastKey() + 10, BACKPACK);
     itemsToRandom.put(itemsToRandom.lastKey() + 10, HELMET);
