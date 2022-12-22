@@ -94,16 +94,14 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   @ExcludeFromGson private final Timer timer = new Timer();
   @ExcludeFromGson private final List<Pair<Circle, Vector2D>> safeZones = new ArrayList<>();
   @ExcludeFromGson private final List<Vector2D> spawnPoints = new ArrayList<>();
+  private final Map<String, Bot> bots = new ConcurrentHashMap<>();
+  private final int NUM_BOTS = 1;
   @ExcludeFromGson int nextSafeZone;
   @ExcludeFromGson private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
   @ExcludeFromGson private long currentTick;
   @ExcludeFromGson private AStar aStar;
   @ExcludeFromGson private int[][] grid;
-
-  private final Map<String, Bot> bots = new ConcurrentHashMap<>();
-
-  private final int NUM_BOTS = 1;
 
   public MatchImpl(int id) {
     this.id = id;
@@ -250,6 +248,15 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
             QUAD_MAX_OBJECT_SIZE));
   }
 
+  private Collection<MapObject> getNearByInVision(Vector2D position) {
+    val width = GameConfig.getInstance().getPlayerViewWidth();
+    val height = GameConfig.getInstance().getPlayerViewHeight();
+    val boundary =
+        new RectangleBoundary(
+            position.getX() - width / 2, position.getY() - height / 2, width, height);
+    return quadTree.query(boundary);
+  }
+
   private Collection<Obstacle> getNearByObstacle(Vector2D position) {
     return getNearBy(position).stream()
         .filter(object -> object instanceof Obstacle)
@@ -258,21 +265,21 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   }
 
   public Collection<Container> getNearByContainer(Vector2D position) {
-    return getNearBy(position).stream()
-            .filter(object -> object instanceof Container)
-            .map(object -> (Container) object)
-            .collect(Collectors.toList());
+    return getNearByInVision(position).stream()
+        .filter(object -> object instanceof Container)
+        .map(object -> (Container) object)
+        .collect(Collectors.toList());
   }
 
   public Collection<ItemOnMap> getNearByItem(Vector2D position) {
-    return getNearBy(position).stream()
-            .filter(object -> object instanceof ItemOnMap)
-            .map(object -> (ItemOnMap) object)
-            .collect(Collectors.toList());
+    return getNearByInVision(position).stream()
+        .filter(object -> object instanceof ItemOnMap)
+        .map(object -> (ItemOnMap) object)
+        .collect(Collectors.toList());
   }
 
   public Collection<Player> getNearByPlayer(Vector2D position) {
-    return getNearBy(position).stream()
+    return getNearByInVision(position).stream()
         .filter(object -> object instanceof Player)
         .map(object -> (Player) object)
         .collect(Collectors.toList());
@@ -371,11 +378,14 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     val fromY = (int) (from.getY() / MapGenerator.TILE_SIZE);
     val toX = (int) (to.getX() / MapGenerator.TILE_SIZE);
     val toY = (int) (to.getY() / MapGenerator.TILE_SIZE);
-    return aStar.aStarSearch(new Point(fromX, fromY), new Point(toX, toY)).stream().map(point -> {
-      val x = point.getX() * MapGenerator.TILE_SIZE + MapGenerator.TILE_SIZE / 2;
-      val y = point.getY() * MapGenerator.TILE_SIZE + MapGenerator.TILE_SIZE / 2;
-      return new Vector2D(x, y);
-    }).collect(Collectors.toList());
+    return aStar.aStarSearch(new Point(fromX, fromY), new Point(toX, toY)).stream()
+        .map(
+            point -> {
+              val x = point.getX() * MapGenerator.TILE_SIZE + MapGenerator.TILE_SIZE / 2;
+              val y = point.getY() * MapGenerator.TILE_SIZE + MapGenerator.TILE_SIZE / 2;
+              return new Vector2D(x, y);
+            })
+        .collect(Collectors.toList());
   }
 
   public void onMapObjectMove(MapObject object) {
