@@ -488,25 +488,6 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                   : player.getVestType().getReduceDamage();
           val finalDamage = totalDamage - reduceDamage;
           onPlayerTakeDamage(player.getPlayerId(), finalDamage);
-          if (player.isDestroyed()) {
-            val builder = new FlatBufferBuilder(0);
-            val usernameOffset = builder.createString(player.getPlayerId());
-
-            survival2d.flatbuffers.PlayerDeadResponse.startPlayerDeadResponse(builder);
-            survival2d.flatbuffers.PlayerDeadResponse.addUsername(builder, usernameOffset);
-            val responseOffset =
-                survival2d.flatbuffers.PlayerDeadResponse.endPlayerDeadResponse(builder);
-
-            Packet.startPacket(builder);
-            Packet.addDataType(builder, PacketData.PlayerDeadResponse);
-            Packet.addData(builder, responseOffset);
-            val packetOffset = Packet.endPacket(builder);
-            builder.finish(packetOffset);
-
-            val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-            EzyFoxUtil.stream(bytes, getAllUsernames());
-            checkEndGame();
-          }
         }
       } else if (object instanceof Obstacle) {
         val obstacle = (Obstacle) object;
@@ -589,6 +570,25 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
       val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
       EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(player.getPosition()));
+    }
+    if (player.isDestroyed()) {
+      val builder = new FlatBufferBuilder(0);
+      val usernameOffset = builder.createString(player.getPlayerId());
+
+      survival2d.flatbuffers.PlayerDeadResponse.startPlayerDeadResponse(builder);
+      survival2d.flatbuffers.PlayerDeadResponse.addUsername(builder, usernameOffset);
+      val responseOffset =
+          survival2d.flatbuffers.PlayerDeadResponse.endPlayerDeadResponse(builder);
+
+      Packet.startPacket(builder);
+      Packet.addDataType(builder, PacketData.PlayerDeadResponse);
+      Packet.addData(builder, responseOffset);
+      val packetOffset = Packet.endPacket(builder);
+      builder.finish(packetOffset);
+
+      val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
+      EzyFoxUtil.stream(bytes, getAllUsernames());
+      checkEndGame();
     }
   }
 
