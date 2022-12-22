@@ -2,10 +2,12 @@ package survival2d.ai.btree.decorator;
 
 import survival2d.ai.btree.BTNode;
 
+import java.util.ArrayList;
+
 public class BTInverterNode extends BTNode {
 
     public BTInverterNode(BTNode child) {
-        this.children.clear();
+        this.children = new ArrayList<>();
         this.children.add(child);
     }
 

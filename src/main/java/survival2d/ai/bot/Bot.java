@@ -5,6 +5,7 @@ import survival2d.ai.btree.BTNode;
 import survival2d.ai.btree.BehaviorTree;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.match.config.GameConfig;
+import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.item.ItemOnMap;
 import survival2d.match.entity.match.Match;
 import survival2d.match.entity.obstacle.Container;
@@ -15,38 +16,35 @@ import java.util.Collection;
 import java.util.List;
 
 public class Bot {
-    static final double TICK_DELTA_TIME = 1.0;
+    static final double NUM_TICK_CHANGE_STATUS = 1;
 
     BehaviorTree behaviorTree;
 
-    private double deltaTimeTick;
+    private double deltaTick;
     private double confidencePercent;
     private String controlId;
 
     private Match match;
-    private Player player;
+    private Player player = null;
 
-    private String targetPlayer = "";
-    private int targetCreateId = -1;
-    private int targetItemId = -1;
     private Vector2D destPos = null;
+    private Container destCrate = null;
+    private Player destEnemy = null;
+    private int destItemId = -1;
     private List<Vector2D> path = null;
 
     public Bot() {
         BTNode botBehavior = new BotBehavior(this);
         behaviorTree = new BehaviorTree(botBehavior);
 
-        deltaTimeTick = 0.0;
+        deltaTick = 0;
         confidencePercent = 1.0;
         controlId = "";
     }
 
-    public void setControlId(String id) {
-        controlId = id;
-    }
-
-    public void setMatch(Match match) {
+    public void setMatch(Match match, String id) {
         this.match = match;
+        controlId = id;
         this.player = match.getPlayerInfo(controlId);
     }
 
@@ -54,10 +52,11 @@ public class Bot {
         this.confidencePercent = confidencePercent;
     }
 
-    public void processBot(double dt) {
-        deltaTimeTick += dt;
-        if (deltaTimeTick >= TICK_DELTA_TIME) {
-            deltaTimeTick = 0.0;
+    public void processBot() {
+        if (this.player == null || this.player.isDestroyed()) return;
+        deltaTick += 1;
+        if (deltaTick >= NUM_TICK_CHANGE_STATUS) {
+            deltaTick = 0;
             this.behaviorTree.processTree();
         }
     }
@@ -71,79 +70,103 @@ public class Bot {
     }
 
     public boolean getNearbyEnemy() {
-        targetPlayer = "";
+        if (destEnemy != null && !destEnemy.isDestroyed()) return true;
+        destEnemy = null;
         Collection<Player> players = this.match.getNearByPlayer(this.player.getPosition());
         for (Player player : players) {
             if (!player.getPlayerId().equals(controlId)) {
-                targetPlayer = player.getPlayerId();
                 destPos = player.getPosition();
-                break;
+                destEnemy = player;
+                return true;
             }
         }
-        return !targetPlayer.equals("");
+        return false;
     }
 
-    public Vector2D getEnemyPosition(String username) {
-        return destPos;
-    }
-
-    public void commandFireEnemy() {
-        destPos = this.getEnemyPosition(targetPlayer);
+    public boolean commandFireEnemy() {
+        if (destEnemy.isDestroyed()) {
+            destEnemy = null;
+            this.commandStopMove();
+            return false;
+        }
+        destPos = destEnemy.getPosition();
         this.commandMove();
+
+        if (!this.isMoving()) {
+            destEnemy = null;
+            return false;
+        }
 
         Vector2D attackDirection = destPos.subtract(this.player.getPosition());
         this.match.onPlayerAttack(controlId, attackDirection);
+
+        System.out.println(controlId + "fire enemy");
+
+        return true;
     }
 
     public boolean getNearbyCrate() {
-        targetCreateId = -1;
+        if (destCrate != null && !destCrate.isDestroyed()) return true;
+        destCrate = null;
         Collection<Container> crates = this.match.getNearByContainer(this.player.getPosition());
         for (Container crate : crates) {
-            targetCreateId = crate.getId();
             destPos = crate.getPosition();
+            destCrate = crate;
             return true;
         }
         return false;
     }
 
-    public Vector2D getCratePosition(int id) {
-        return destPos;
-    }
-
-    public void commandBreakCrate() {
-        destPos = this.getCratePosition(targetCreateId);
+    public boolean commandBreakCrate() {
+        if (destCrate.isDestroyed()) {
+            destCrate = null;
+            this.commandStopMove();
+            return false;
+        }
+        destPos = destCrate.getPosition();
         this.commandMove();
+
+        if (!this.isMoving()) {
+            destCrate = null;
+            return false;
+        }
 
         Vector2D attackDirection = destPos.subtract(this.player.getPosition());
         this.match.onPlayerAttack(controlId, attackDirection);
+
+        System.out.println(controlId + "break crate");
+
+        return true;
     }
 
     public boolean getNearbyItem() {
-        targetItemId = -1;
+        if (this.match.getObjectsById(destItemId) != null) return true;
+        destItemId = -1;
         Collection<ItemOnMap> items = this.match.getNearByItem(this.player.getPosition());
         for (ItemOnMap item : items) {
-            targetItemId = item.getId();
             destPos = item.getPosition();
+            destItemId = item.getId();
             return true;
         }
         return false;
     }
 
-    public Vector2D getItemPosition(int id) {
-        return destPos;
-    }
-
     public void commandTakeItem() {
-        destPos = this.getItemPosition(targetItemId);
+        MapObject item = this.match.getObjectsById(destItemId);
+        if (item == null) {
+            this.commandStopMove();
+            return;
+        }
+
+        System.out.println(controlId + "taking item");
+
+        destPos = item.getPosition();
         this.commandMove();
 
-        Collection<ItemOnMap> items = this.match.getNearByItem(this.player.getPosition());
-        for (ItemOnMap item : items) {
-            if (MathUtil.isIntersect(item.getPosition(), item.getShape(), this.player.getPosition(), this.player.getShape())) {
-                this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
-                this.commandStopMove();
-                break;
-            }
+        if (MathUtil.isIntersect(item.getPosition(), item.getShape(), this.player.getPosition(), this.player.getShape())) {
+            this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
+            this.commandStopMove();
+            System.out.println(controlId + "taken item");
         }
     }
 
@@ -152,6 +175,7 @@ public class Bot {
         for (ItemOnMap item : items) {
             if (MathUtil.isIntersect(item.getPosition(), item.getShape(), this.player.getPosition(), this.player.getShape())) {
                 this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
+                System.out.println(controlId + "taken a nearby item");
                 return true;
             }
         }
@@ -178,6 +202,8 @@ public class Bot {
     private void commandStopMove() {
         destPos = null;
         this.path = null;
+
+        System.out.println(controlId + "stop move");
     }
 
     public boolean findSafePosition() {
@@ -187,15 +213,23 @@ public class Bot {
 
     public void commandMoveToSafePosition() {
         this.commandMove();
+
+        System.out.println(controlId + "move to safe position");
     }
 
     public void commandMoveToCenter() {
         destPos = new Vector2D(GameConfig.getInstance().getMapWidth()/2, GameConfig.getInstance().getMapHeight()/2);
         this.commandMove();
+
+        System.out.println(controlId + "move to center");
     }
 
     public void commandMoveRandom() {
+        Vector2D dest = new Vector2D(GameConfig.getInstance().getMapWidth()/2, GameConfig.getInstance().getMapHeight()/2);
+        Vector2D moveVector = dest.subtract(this.player.getPosition());
+        this.match.onPlayerMove(controlId, moveVector, this.player.getRotation());
 
+        System.out.println(controlId + "move random");
     }
 
     public boolean isMoving() {

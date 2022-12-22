@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.action.PlayerAction;
+import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.item.ItemOnMap;
@@ -37,6 +38,8 @@ public interface Match {
   // for bots
 
   Player getPlayerInfo(String username);
+
+  MapObject getObjectsById(int id);
 
   Collection<Player> getNearByPlayer(Vector2D position);
 

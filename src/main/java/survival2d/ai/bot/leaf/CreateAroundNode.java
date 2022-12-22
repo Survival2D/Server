@@ -6,7 +6,7 @@ public class CreateAroundNode extends BotBehaviorNode {
     @Override
     public void processNode() {
         boolean bool = this.controller.getNearbyCrate();
-        if (bool) fail();
-        else success();
+        if (bool) success();
+        else fail();
     }
 }

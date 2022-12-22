@@ -188,6 +188,7 @@ public class PlayerImpl extends BaseMapObject implements Player {
 
   @Override
   public int getNumBullet() {
+    if (bullets.isEmpty()) return 0;
     return bullets.get(BulletType.NORMAL);
   }
 

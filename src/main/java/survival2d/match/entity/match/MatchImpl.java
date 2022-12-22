@@ -23,6 +23,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import survival2d.ai.bot.Bot;
 import survival2d.common.CommonConfig;
 import survival2d.flatbuffers.MapObjectData;
 import survival2d.flatbuffers.MatchInfoResponse;
@@ -99,6 +100,10 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   @ExcludeFromGson private long currentTick;
   @ExcludeFromGson private AStar aStar;
   @ExcludeFromGson private int[][] grid;
+
+  private final Map<String, Bot> bots = new ConcurrentHashMap<>();
+
+  private final int NUM_BOTS = 1;
 
   public MatchImpl(int id) {
     this.id = id;
@@ -592,7 +597,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
   public void responseMatchInfo(String username) {
     //    final byte[] bytes = getMatchInfoData(objects.values());
     val player = players.get(username);
-    val data = getMatchInfoInBoundary(player.getPlayerView());
+    val data = getMatchInfoData(objects.values());
     EzyFoxUtil.stream(data, username);
   }
 
@@ -762,6 +767,18 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     }
     initSafeZones();
     initObstacles();
+    initBots();
+  }
+
+  private void initBots() {
+    for (int i = 0; i < NUM_BOTS; i++) {
+      this.addPlayer(-1 - i, "bot_" + i);
+
+      Bot bot = new Bot();
+      bot.setMatch(this, "bot_" + i);
+      bot.setConfidencePercent(1.0);
+      bots.putIfAbsent("bot_" + i, bot);
+    }
   }
 
   private void initSafeZones() {
@@ -885,6 +902,13 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     updateSafeZone();
     updatePlayers();
     updateMapObjects();
+    updateBots();
+  }
+
+  private void updateBots() {
+    for (Bot bot : bots.values()) {
+      bot.processBot();
+    }
   }
 
   private void updateSafeZone() {
@@ -1179,5 +1203,9 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   public Player getPlayerInfo(String username) {
     return players.get(username);
+  }
+
+  public MapObject getObjectsById(int id) {
+    return objects.get(id);
   }
 }
