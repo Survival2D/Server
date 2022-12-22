@@ -1,6 +1,7 @@
 {
   "mapWidth": 10000,
   "mapHeight": 10000,
+  "numMaxItemInContainer": 5,
   "safeZonesRadius": [
     250,
     150,

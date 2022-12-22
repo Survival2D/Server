@@ -6,7 +6,6 @@ import static survival2d.match.constant.GameConstant.QUAD_MAX_OBJECT_SIZE;
 
 import com.google.flatbuffers.FlatBufferBuilder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -42,20 +41,19 @@ import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Circle;
 import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
+import survival2d.match.entity.base.Dot;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.AttachType;
 import survival2d.match.entity.config.BulletType;
-import survival2d.match.entity.config.GunType;
-import survival2d.match.entity.config.HelmetType;
-import survival2d.match.entity.config.VestType;
 import survival2d.match.entity.item.BackPackItem;
 import survival2d.match.entity.item.BandageItem;
 import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.GunItem;
 import survival2d.match.entity.item.HelmetItem;
+import survival2d.match.entity.item.ItemFactory;
 import survival2d.match.entity.item.ItemOnMap;
 import survival2d.match.entity.item.MedKitItem;
 import survival2d.match.entity.item.VestItem;
@@ -161,6 +159,39 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     return players.keySet();
   }
 
+  public Collection<String> getUsernamesCanSeeAt(Vector2D position) {
+    val result = new HashSet<String>();
+    val nearBy = getNearBy(position);
+    val nearByTrees =
+        nearBy.stream()
+            .filter(o -> o instanceof Tree)
+            .map(o -> (Tree) o)
+            .filter(
+                tree ->
+                    MathUtil.isIntersect(position, Dot.DOT, tree.getPosition(), tree.getFoliage()))
+            .collect(Collectors.toList());
+    if (nearByTrees.isEmpty()) {
+      getNearByPlayer(position).forEach(p -> result.add(p.getPlayerId()));
+    } else {
+      nearBy.stream()
+          .filter(o -> o instanceof Player)
+          .map(o -> (Player) o)
+          .filter(
+              player ->
+                  nearByTrees.stream()
+                      .allMatch(
+                          tree ->
+                              MathUtil.isIntersect(
+                                  player.getPosition(),
+                                  player.getShape(),
+                                  tree.getPosition(),
+                                  tree.getFoliage())))
+          .map(Player::getPlayerId)
+          .forEach(result::add);
+    }
+    return result;
+  }
+
   @Override
   public void onReceivePlayerAction(String playerId, PlayerAction action) {
     val player = players.get(playerId);
@@ -236,7 +267,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllUsernames());
+    EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(player.getPosition()));
   }
 
   private Collection<MapObject> getNearBy(Vector2D position) {
@@ -414,7 +445,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllUsernames());
+    EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(position));
 
     makeDamage(playerId, position, shape, damage);
   }
@@ -459,7 +490,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
             builder.finish(packetOffset);
 
             val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-            EzyFoxUtil.stream(bytes, getAllUsernames());
+            EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(player.getPosition()));
           }
           if (player.isDestroyed()) {
             val builder = new FlatBufferBuilder(0);
@@ -509,7 +540,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
             builder.finish(packetOffset);
 
             val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-            EzyFoxUtil.stream(bytes, getAllUsernames());
+            EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(obstacle.getPosition()));
           }
           if (destroyable.isDestroyed()) {
             log.info("Obstacle {} destroyed", obstacle.getId());
@@ -527,7 +558,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
             builder.finish(packetOffset);
 
             val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-            EzyFoxUtil.stream(bytes, getAllUsernames());
+            EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(obstacle.getPosition()));
             if (obstacle instanceof Containable) {
               val containable = (Containable) obstacle;
               for (val item : containable.getItems()) {
@@ -837,9 +868,9 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
           }
         case ITEM:
           {
-            // TODO
-            //            val item = new Item(position);
-            //            objects.put(item.getId(), item);
+            val item =
+                ItemOnMap.builder().item(ItemFactory.randomItem()).position(position).build();
+            addMapObject(item);
             break;
           }
         case WALL:
@@ -860,16 +891,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
           {
             val container = new Container();
             container.setPosition(position);
-            // TODO: random items
-            container.setItems(
-                Arrays.asList(
-                    new GunItem(GunType.NORMAL, 10),
-                    new BulletItem(BulletType.NORMAL, 10),
-                    new VestItem(VestType.LEVEL_1),
-                    new HelmetItem(HelmetType.LEVEL_1),
-                    new BackPackItem(),
-                    new MedKitItem(),
-                    new BandageItem()));
+            container.setItems(ItemFactory.randomItems());
             addMapObject(container);
             break;
           }
@@ -1127,7 +1149,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     builder.finish(packetOffset);
 
     val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    EzyFoxUtil.stream(bytes, getAllUsernames());
+    EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(position));
   }
 
   private void onPlayerTakeItem(String playerId) {
@@ -1156,7 +1178,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         builder.finish(packetOffset);
 
         val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-        EzyFoxUtil.stream(bytes, getAllUsernames());
+        EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(itemOnMap.getPosition()));
       }
     }
   }
@@ -1207,7 +1229,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
       builder.finish(packetOffset);
 
       val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-      EzyFoxUtil.stream(bytes, getAllUsernames());
+      EzyFoxUtil.stream(bytes, getUsernamesCanSeeAt(player.getPosition()));
     }
   }
 
