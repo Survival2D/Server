@@ -65,7 +65,6 @@ import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
 import survival2d.match.entity.player.PlayerImpl;
 import survival2d.match.entity.quadtree.BaseBoundary;
-import survival2d.match.entity.quadtree.CircleBoundary;
 import survival2d.match.entity.quadtree.QuadTree;
 import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
@@ -169,12 +168,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
 
   public Collection<String> getUsernamesCanSeeAtAndCheckUnderTree(Vector2D position) {
     val result = new HashSet<String>();
-    val width = 2600;
-    val height = 1400;
-    val boundary =
-        new RectangleBoundary(
-            position.getX() - width / 2, position.getY() - height / 2, width, height);
-    val nearBy = quadTree.query(boundary);
+    val nearBy = getNearByInVision(position);
     val nearByTrees =
         nearBy.stream()
             .filter(o -> o instanceof Tree)
@@ -183,28 +177,21 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                 tree ->
                     MathUtil.isIntersect(position, Dot.DOT, tree.getPosition(), tree.getFoliage()))
             .collect(Collectors.toList());
-    if (nearByTrees.isEmpty()) {
-      nearBy.stream()
-          .filter(object -> object instanceof Player)
-          .map(object -> (Player) object)
-          .forEach(p -> result.add(p.getPlayerId()));
-    } else {
-      nearBy.stream()
-          .filter(o -> o instanceof Player)
-          .map(o -> (Player) o)
-          .filter(
-              player ->
-                  nearByTrees.stream()
-                      .allMatch(
-                          tree ->
-                              MathUtil.isIntersect(
-                                  player.getPosition(),
-                                  player.getShape(),
-                                  tree.getPosition(),
-                                  tree.getFoliage())))
-          .map(Player::getPlayerId)
-          .forEach(result::add);
-    }
+    nearBy.stream()
+        .filter(o -> o instanceof Player)
+        .map(o -> (Player) o)
+        .filter(
+            player ->
+                nearByTrees.stream()
+                    .allMatch(
+                        tree ->
+                            MathUtil.isIntersect(
+                                player.getPosition(),
+                                player.getShape(),
+                                tree.getPosition(),
+                                tree.getFoliage())))
+        .map(Player::getPlayerId)
+        .forEach(result::add);
     return result;
   }
 
@@ -244,15 +231,15 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
     if (!VisionUtil.isSameVisionX(oldPosition, newPosition)) {
       val boundary = VisionUtil.getBoundaryXAxis(oldPosition, newPosition);
       val query = quadTree.query(boundary);
-      log.warn("BoundaryX {}", boundary);
-      log.warn("QueryX {}", query);
+      //      log.warn("BoundaryX {}", boundary);
+      //      log.warn("QueryX {}", query);
       newMapObjects.addAll(query);
     }
     if (!VisionUtil.isSameVisionY(oldPosition, newPosition)) {
       val boundary = VisionUtil.getBoundaryYAxis(oldPosition, newPosition);
       val query = quadTree.query(boundary);
-      log.warn("BoundaryY {}", boundary);
-      log.warn("QueryY {}", query);
+      //      log.warn("BoundaryY {}", boundary);
+      //      log.warn("QueryY {}", query);
       newMapObjects.addAll(query);
     }
     newMapObjects.removeIf(
@@ -264,11 +251,11 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
           return false;
         });
     if (!newMapObjects.isEmpty()) {
-      log.warn(
-          "Map objects {}",
-          newMapObjects.stream()
-              .map(object -> object.getClass().getSimpleName())
-              .collect(Collectors.joining(",")));
+      //      log.warn(
+      //          "Map objects {}",
+      //          newMapObjects.stream()
+      //              .map(object -> object.getClass().getSimpleName())
+      //              .collect(Collectors.joining(",")));
       val data = getMatchInfoData(newMapObjects);
       EzyFoxUtil.stream(data, playerId);
     }
@@ -379,7 +366,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
               .getPosition()
               .add(player.getAttackDirection().scalarMultiply(PlayerImpl.BODY_RADIUS + 10)),
           DAMAGE_SHAPE,
-          5);
+          3);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
       if (!player.getGun().isReadyToShoot()) {
         return;
@@ -1096,23 +1083,22 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         bullet.move();
         onMapObjectMove(bullet);
 
-        log.info("bullet position {}", bullet.getPosition());
         String ownerId = bullet.getOwnerId();
         val owner = players.get(ownerId);
         val bulletPosition = bullet.getPosition();
-        val boundary = new CircleBoundary(bulletPosition.getX(), bulletPosition.getY(), 1000);
-        for (val object : quadTree.query(boundary)) {
+        log.info("bullet position {}", bulletPosition);
+        for (val object : getNearBy(bulletPosition)) {
           if (object instanceof Player) {
             val player = (Player) object;
-            log.info("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());
-            log.info("player's hp {}, player is dead {}", player.getHp(), player.isDestroyed());
+            log.warn("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());
+            log.warn("player's hp {}, player is dead {}", player.getHp(), player.isDestroyed());
             if (player.getTeam() == owner.getTeam() || player.isDestroyed()) {
               continue;
             }
-            log.info("player position {}", player.getPosition());
+            log.warn("player position {}", player.getPosition());
             if (MathUtil.isIntersect(
                 player.getPosition(), player.getShape(), bullet.getPosition(), bullet.getShape())) {
-              log.info("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
+              log.warn("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
               makeDamage(
                   ownerId,
                   bullet.getPosition(),

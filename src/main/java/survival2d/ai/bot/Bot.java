@@ -117,12 +117,12 @@ public class Bot {
 
         this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
 
-        if (curTick - lastTickAttack < 10) {
+        if (curTick - lastTickAttack < 30) {
             return false;
         }
 
         Vector2D attackDirection = destPos.subtract(this.player.getPosition());
-        this.match.onPlayerAttack(controlId, attackDirection);
+        this.match.onPlayerAttack(controlId, attackDirection.normalize());
 
         lastTickAttack = curTick;
 
@@ -168,7 +168,7 @@ public class Bot {
         }
 
         Vector2D attackDirection = destPos.subtract(this.player.getPosition());
-        this.match.onPlayerAttack(controlId, attackDirection);
+        this.match.onPlayerAttack(controlId, attackDirection.normalize());
 
         lastTickAttack = curTick;
 
