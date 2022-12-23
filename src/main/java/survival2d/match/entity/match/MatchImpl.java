@@ -187,12 +187,25 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
                         tree ->
                             MathUtil.isIntersect(
                                 player.getPosition(),
-                                player.getShape(),
+                                Dot.DOT,
                                 tree.getPosition(),
                                 tree.getFoliage())))
         .map(Player::getPlayerId)
         .forEach(result::add);
     return result;
+  }
+
+  public boolean isUnderTree(Vector2D position) {
+    val nearBy = getNearByInVision(position);
+    val nearByTrees =
+        nearBy.stream()
+            .filter(o -> o instanceof Tree)
+            .map(o -> (Tree) o)
+            .filter(
+                tree ->
+                    MathUtil.isIntersect(position, Dot.DOT, tree.getPosition(), tree.getFoliage()))
+            .collect(Collectors.toList());
+    return !nearByTrees.isEmpty();
   }
 
   @Override
@@ -246,7 +259,7 @@ public class MatchImpl extends SpatialPartitionGeneric<MapObject> implements Mat
         (o) -> {
           if (o instanceof Player) {
             val enemy = (Player) o;
-            return !getUsernamesCanSeeAtAndCheckUnderTree(enemy.getPosition()).contains(playerId);
+            return isUnderTree(enemy.getPosition());
           }
           return false;
         });
