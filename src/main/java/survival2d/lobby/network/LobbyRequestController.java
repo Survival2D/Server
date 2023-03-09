@@ -27,10 +27,15 @@ import survival2d.service.entity.LobbyTeam;
 @EzyRequestController
 @Slf4j
 public class LobbyRequestController extends EzyLoggable {
-  @EzyAutoBind private EzyResponseFactory responseFactory;
-  @EzyAutoBind private LobbyTeamService lobbyTeamService;
-  @EzyAutoBind private FindMatchService findMatchService;
-  @EzyAutoBind private MatchingService matchingService;
+
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  private LobbyTeamService lobbyTeamService;
+  @EzyAutoBind
+  private FindMatchService findMatchService;
+  @EzyAutoBind
+  private MatchingService matchingService;
 
   @EzyDoHandle(LobbyCommand.GET_USER_INFO)
   public void getUserInfo(EzyUser user) {
@@ -111,14 +116,14 @@ public class LobbyRequestController extends EzyLoggable {
     }
     val matchId = optMatchId.get();
     val match = matchingService.getMatchById(matchId).get();
-    val allPlayers = match.getAllUsernames();
+    val allPlayers = match.getAllPlayers();
     responseFactory
         .newObjectResponse()
         .command(LobbyCommand.FIND_MATCH)
         .data(FindMatchResponse.builder().result(ResponseError.SUCCESS).matchId(matchId).build())
         .usernames(allPlayers)
         .execute();
-    match.responseMatchInfoOnStart();
+    match.responseMatchInfo();
     //    responseFactory
     //        .newObjectResponse()
     //        .command(MatchCommand.MATCH_INFO)

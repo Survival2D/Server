@@ -10,6 +10,7 @@ import java.io.IOException;
 import lombok.Getter;
 
 public class PostProcessingEnabler implements TypeAdapterFactory {
+
   @Getter(lazy = true)
   private static final PostProcessingEnabler instance = new PostProcessingEnabler();
 

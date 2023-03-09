@@ -28,5 +28,7 @@ public class GsonHolder {
 
   @Getter(lazy = true)
   private static final Gson enablePostProcess =
-      new GsonBuilder().registerTypeAdapterFactory(PostProcessingEnabler.getInstance()).create();
+      new GsonBuilder()
+          .registerTypeAdapterFactory(PostProcessingEnabler.getInstance())
+          .create();
 }

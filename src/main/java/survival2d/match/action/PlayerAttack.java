@@ -5,4 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PlayerAttack implements PlayerAction {}
+public class PlayerAttack implements PlayerAction {
+
+}

@@ -1,16 +1,12 @@
 package survival2d.match.entity.base;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
+import lombok.Value;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Value
 @ToString
 public class Circle implements Shape {
-  // Không chứa Position do đã nằm trong MapObject rồi
+  //Không chứa Position do đã nằm trong MapObject rồi
 
-  final double radius;
+  double radius;
 }

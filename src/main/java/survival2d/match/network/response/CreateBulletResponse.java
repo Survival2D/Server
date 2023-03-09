@@ -7,7 +7,7 @@ import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;
-import survival2d.match.entity.weapon.Bullet;
+import survival2d.match.entity.Bullet;
 import survival2d.util.serialize.GsonHolder;
 
 @Data
@@ -17,8 +17,9 @@ public class CreateBulletResponse {
   private Bullet bullet;
 
   @EzyWriterImpl
-  public static class CreateBulletResponseResponseWriter
-      implements EzyWriter<CreateBulletResponse, EzyHashMap> {
+  public static class CreateBulletResponseResponseWriter implements
+      EzyWriter<CreateBulletResponse, EzyHashMap> {
+
     @Override
     public EzyHashMap write(EzyMarshaller ezyMarshaller, CreateBulletResponse response) {
       val data = "{map: " + GsonHolder.getNormalGson().toJson(response) + "}";

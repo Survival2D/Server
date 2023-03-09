@@ -19,6 +19,7 @@ public class PacketUtil {
   @EzyReaderImpl
   @Slf4j
   public static class Vector2DReader implements EzyReader<Object, Vector2D> {
+
     @Override
     public Vector2D read(EzyUnmarshaller ezyUnmarshaller, Object o) {
       return GsonHolder.getNormalGson().fromJson(o.toString(), Vector2D.class);

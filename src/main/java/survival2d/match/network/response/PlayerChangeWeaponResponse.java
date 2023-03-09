@@ -7,7 +7,7 @@ import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;
-import survival2d.match.entity.weapon.Weapon;
+import survival2d.match.entity.Weapon;
 import survival2d.util.serialize.GsonHolder;
 
 @Data

@@ -1,6 +1,6 @@
 database:
   mongo:
-    uri: mongodb://root:123456@127.0.0.1:27017/survival2d
+    uri: mongodb+srv://survival2d:Survival2D@survival2d.jiaib0e.mongodb.net/?retryWrites=true&w=majority
     database: survival2d
     collection:
       naming:
@@ -8,7 +8,6 @@ database:
         ignored_suffix: Entity
 server:
   enableAuth: false
-  testPing: false
 game:
   room:
     max_players: 4

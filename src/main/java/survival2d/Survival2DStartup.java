@@ -42,7 +42,8 @@ public class Survival2DStartup {
   public static final String NODE_NAME = "survival2d";
   public static final String PACKAGE_NAME =
       "survival2d"; // ServerStartup.class.getPackage().getName();
-  @Getter private static EzyServerContext serverContext;
+  @Getter
+  private static EzyServerContext serverContext;
 
   public static void main(String[] args) throws Exception {
     log.trace("Start config server");
@@ -71,11 +72,11 @@ public class Survival2DStartup {
             .name(APP_NAME)
             .entryLoader(Survival2dAppEntryLoader.class)
             .build();
-    EzySimpleUserManagementSetting userManagementSetting =
-        new EzyUserManagementSettingBuilder()
-            .allowGuestLogin(true)
-            .userMaxIdleTimeInSecond(15)
-            .build();
+//    EzySimpleUserManagementSetting userManagementSetting =
+//        new EzyUserManagementSettingBuilder()
+//            .allowGuestLogin(true)
+//            .userMaxIdleTimeInSecond(15)
+//            .build();
     EzySimpleStreamingSetting streamingSetting = new EzySimpleStreamingSetting();
     streamingSetting.setEnable(true);
     EzySimpleZoneSetting zoneSetting =
@@ -83,18 +84,18 @@ public class Survival2DStartup {
             .name(ZONE_NAME)
             .addEventController(EzyEventType.STREAMING, StreamingController.class)
             .plugin(pluginSetting)
-            .application(appSetting)
-            .userManagement(userManagementSetting)
+//            .application(appSetting)
+//            .userManagement(userManagementSetting)
             .streaming(streamingSetting)
             .build();
-    EzySimpleMaxRequestPerSecond maxRequestPerSecond =
-        new EzyMaxRequestPerSecondBuilder()
-            .value(300) // 60 tick mỗi giây, có thể có nhiều action trong 1 tick
-            .build();
-    EzySimpleSessionManagementSetting sessionManagementSetting =
-        new EzySessionManagementSettingBuilder()
-            .sessionMaxRequestPerSecond(maxRequestPerSecond)
-            .build();
+//    EzySimpleMaxRequestPerSecond maxRequestPerSecond =
+//        new EzyMaxRequestPerSecondBuilder()
+//            .value(300) // 60 tick mỗi giây, có thể có nhiều action trong 1 tick
+//            .build();
+//    EzySimpleSessionManagementSetting sessionManagementSetting =
+//        new EzySessionManagementSettingBuilder()
+//            .sessionMaxRequestPerSecond(maxRequestPerSecond)
+//            .build();
 
     //    EzySimpleUdpSetting udpSetting =
     //        new EzyUdpSettingBuilder()
@@ -113,7 +114,7 @@ public class Survival2DStartup {
             .nodeName(NODE_NAME)
             .zone(zoneSetting)
             .websocket(webSocketSetting)
-            .sessionManagement(sessionManagementSetting)
+//            .sessionManagement(sessionManagementSetting)
             .streaming(streamingSetting)
             //            .socket(socketSetting)
             //            .addEventController(EzyEventType.STREAMING, StreamingController.class)
@@ -128,15 +129,15 @@ public class Survival2DStartup {
 
   public static class Survival2dAppEntry extends EzySimpleAppEntry {
 
-    //    @Override
-    //    protected String[] getScanableBeanPackages() {
-    //      return new String[] {PACKAGE_NAME};
-    //    }
+    @Override
+    protected String[] getScanableBeanPackages() {
+      return new String[]{PACKAGE_NAME};
+    }
 
-    //    @Override
-    //    protected String[] getScanableBindingPackages() {
-    //      return new String[] {PACKAGE_NAME};
-    //    }
+    @Override
+    protected String[] getScanableBindingPackages() {
+      return new String[]{PACKAGE_NAME};
+    }
 
     @Override
     protected void setupBeanContext(EzyAppContext context, EzyBeanContextBuilder builder) {
@@ -156,12 +157,12 @@ public class Survival2DStartup {
 
     @Override
     protected String[] getScanableBeanPackages() {
-      return new String[] {PACKAGE_NAME};
+      return new String[]{PACKAGE_NAME};
     }
 
     @Override
     protected String[] getScanableBindingPackages() {
-      return new String[] {PACKAGE_NAME};
+      return new String[]{PACKAGE_NAME};
     }
 
     @Override

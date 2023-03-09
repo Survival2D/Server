@@ -4,6 +4,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 
 public class ExcludeAnnotationFromGsonStrategy implements ExclusionStrategy {
+
   public static ExcludeAnnotationFromGsonStrategy getInstance() {
     return InstanceHolder.instance;
   }
@@ -19,6 +20,7 @@ public class ExcludeAnnotationFromGsonStrategy implements ExclusionStrategy {
   }
 
   private static class InstanceHolder {
+
     private static final ExcludeAnnotationFromGsonStrategy instance =
         new ExcludeAnnotationFromGsonStrategy();
   }

@@ -9,18 +9,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import survival2d.match.entity.match.Match;
-import survival2d.match.entity.match.MatchImpl;
+import survival2d.match.entity.Match;
+import survival2d.match.entity.MatchImpl;
 import survival2d.service.LobbyTeamService;
 import survival2d.service.MatchingService;
 
 @EzySingleton("matchingService")
 @Slf4j
 public class MatchingServiceImpl implements MatchingService {
+
   private final AtomicInteger currentMatchId = new AtomicInteger();
   private final Map<Integer, Match> matchIdToMatch = new ConcurrentHashMap<>();
   private final Map<String, Integer> playerIdToMatchId = new ConcurrentHashMap<>();
-  @EzyAutoBind LobbyTeamService teamService;
+  @EzyAutoBind
+  LobbyTeamService teamService;
 
   @Override
   public int createMatch(List<Integer> teamIds) {

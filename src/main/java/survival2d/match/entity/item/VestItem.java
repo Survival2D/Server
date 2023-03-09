@@ -1,19 +1,15 @@
 package survival2d.match.entity.item;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import survival2d.match.entity.VestType;
 import survival2d.match.entity.base.Item;
-import survival2d.match.entity.config.ItemType;
-import survival2d.match.entity.config.VestType;
+import survival2d.match.entity.base.ItemType;
 
 @Getter
-@NoArgsConstructor
+@Builder
 public class VestItem implements Item {
 
   final ItemType itemType = ItemType.VEST;
-  VestType vestType = VestType.LEVEL_0;
-
-  public VestItem(VestType vestType) {
-    this.vestType = vestType;
-  }
+  final VestType vestType = VestType.LEVEL_0;
 }

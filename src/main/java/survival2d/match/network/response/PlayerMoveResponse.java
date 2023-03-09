@@ -19,6 +19,7 @@ public class PlayerMoveResponse {
 
   @EzyWriterImpl
   public static class Writer implements EzyWriter<PlayerMoveResponse, EzyHashMap> {
+
     @Override
     public EzyHashMap write(EzyMarshaller ezyMarshaller, PlayerMoveResponse playerMoveResponse) {
       return PacketUtil.toEzyHashMap(playerMoveResponse);

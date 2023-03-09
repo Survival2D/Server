@@ -7,18 +7,20 @@ import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;
-import survival2d.match.entity.item.ItemOnMap;
+import survival2d.match.entity.ItemOnMap;
 import survival2d.util.serialize.GsonHolder;
 
 @Data
 @Builder
 public class PlayerTakeItemResponse {
+
   private String username;
 
   private ItemOnMap item;
 
   @EzyWriterImpl
   public static class ResponseWriter implements EzyWriter<PlayerTakeItemResponse, EzyHashMap> {
+
     @Override
     public EzyHashMap write(EzyMarshaller ezyMarshaller, PlayerTakeItemResponse response) {
       val data = "{map: " + GsonHolder.getNormalGson().toJson(response) + "}";

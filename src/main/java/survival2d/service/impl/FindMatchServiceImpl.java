@@ -17,7 +17,8 @@ import survival2d.service.MatchingService;
 public class FindMatchServiceImpl implements FindMatchService {
 
   private final Set<Integer> matchingTeams = new HashSet<>();
-  @EzyAutoBind MatchingService matchingService;
+  @EzyAutoBind
+  MatchingService matchingService;
 
   @Override
   @Synchronized

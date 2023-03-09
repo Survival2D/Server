@@ -8,13 +8,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import survival2d.match.entity.match.Match;
+import survival2d.match.entity.Match;
 import survival2d.util.serialize.GsonHolder;
 
 @Data
 @Builder
 @Slf4j
 public class PingByMatchInfoResponse {
+
   Match match;
 
   @EzyWriterImpl

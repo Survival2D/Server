@@ -15,6 +15,7 @@ import survival2d.util.serialize.GsonHolder;
 @Builder
 @Slf4j
 public class PingByPlayerMoveResponse {
+
   String username;
   Vector2D position;
   double rotation;

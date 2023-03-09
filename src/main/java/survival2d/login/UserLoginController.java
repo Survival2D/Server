@@ -13,7 +13,7 @@ import com.tvd12.ezyfoxserver.controller.EzyAbstractPluginEventController;
 import com.tvd12.ezyfoxserver.event.EzyUserLoginEvent;
 import com.tvd12.ezyfoxserver.exception.EzyLoginErrorException;
 import org.apache.commons.lang3.RandomStringUtils;
-import survival2d.common.CommonConfig;
+import survival2d.login.config.LoginConfig;
 import survival2d.login.entity.User;
 import survival2d.login.service.UserService;
 
@@ -23,7 +23,8 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
 
   public static final int DEFAULT_RANDOM_USERNAME_LENGTH = 10;
 
-  @EzyAutoBind private UserService userService;
+  @EzyAutoBind
+  private UserService userService;
 
   @Override
   public void handle(EzyPluginContext ctx, EzyUserLoginEvent event) {
@@ -31,7 +32,7 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
     String username = event.getUsername();
     logger.info("{} login in", username);
 
-    if (CommonConfig.isEnableAuth) {
+    if (LoginConfig.isEnableAuth) {
       String password = event.getPassword();
       loginWithAuth(username, password);
     } else {
@@ -51,7 +52,7 @@ public class UserLoginController extends EzyAbstractPluginEventController<EzyUse
     if (EzyStrings.isNoContent(username)) {
       throw new EzyLoginErrorException(EzyLoginError.INVALID_USERNAME);
     }
-    if (CommonConfig.isEnableAuth && EzyStrings.isNoContent(password)) {
+    if (LoginConfig.isEnableAuth && EzyStrings.isNoContent(password)) {
       throw new EzyLoginErrorException(EzyLoginError.INVALID_PASSWORD);
     }
     User user = userService.getUser(username);

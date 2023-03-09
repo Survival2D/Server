@@ -13,5 +13,7 @@ public class GetConfigResponse {
   GameConfig map;
 
   @EzyWriterImpl
-  public static class Writer extends AbstractResponseWriter<GetConfigResponse> {}
+  public static class Writer extends AbstractResponseWriter<GetConfigResponse> {
+
+  }
 }

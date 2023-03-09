@@ -5,4 +5,6 @@ import com.tvd12.ezyfox.database.annotation.EzyRepository;
 import survival2d.login.entity.User;
 
 @EzyRepository("userRepo")
-public interface UserRepo extends EzyMongoRepository<Long, User> {}
+public interface UserRepo extends EzyMongoRepository<Long, User> {
+
+}

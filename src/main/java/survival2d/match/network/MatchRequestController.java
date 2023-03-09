@@ -23,8 +23,10 @@ import survival2d.service.MatchingService;
 @Slf4j
 public class MatchRequestController {
 
-  @EzyAutoBind MatchingService matchingService;
-  @EzyAutoBind private EzyResponseFactory responseFactory;
+  @EzyAutoBind
+  MatchingService matchingService;
+  @EzyAutoBind
+  private EzyResponseFactory responseFactory;
 
   @EzyDoHandle(MatchCommand.MATCH_INFO)
   public void handleMatchInfo(EzyUser user) {
@@ -35,12 +37,8 @@ public class MatchRequestController {
       return;
     }
     val match = optMatch.get();
-    responseFactory
-        .newObjectResponse()
-        .command(MatchCommand.MATCH_INFO)
-        .data(match)
-        .username(playerId)
-        .execute();
+    responseFactory.newObjectResponse().command(MatchCommand.MATCH_INFO).data(match)
+        .username(playerId).execute();
   }
 
   @EzyDoHandle(MatchCommand.PLAYER_MOVE)

@@ -1,17 +1,11 @@
 {
-  "mapWidth": 10000,
-  "mapHeight": 10000,
-  "numMaxItemInContainer": 5,
+  "mapWidth": 1000,
+  "mapHeight": 1000,
   "safeZonesRadius": [
     250,
     150,
     50,
     0
   ],
-  "minutePerSafeZone": 3,
-  "defaultPlayerHp": 100,
-  "defaultPlayerSpeed": 10,
-  "bandageHeal": 10,
-  "playerViewWidth": 2400,
-  "playerViewHeight": 1200
+  "minutePerSafeZone": 3
 }

@@ -1,21 +1,18 @@
 package survival2d.match.entity.item;
 
+import lombok.Builder;
 import lombok.Getter;
+import survival2d.match.entity.WeaponType;
 import survival2d.match.entity.base.Item;
+import survival2d.match.entity.base.ItemType;
 import survival2d.match.entity.config.GunType;
-import survival2d.match.entity.config.ItemType;
-import survival2d.match.entity.config.WeaponType;
 
 @Getter
+@Builder
 public class GunItem implements Item {
 
   final ItemType itemType = ItemType.WEAPON;
   final WeaponType weaponType = WeaponType.GUN;
   GunType gunType;
-  int numBullet;
-
-  public GunItem(GunType gunType, int numBullet) {
-    this.gunType = gunType;
-    this.numBullet = numBullet;
-  }
+  long numBullet;
 }

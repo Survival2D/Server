@@ -12,6 +12,7 @@ import survival2d.misc.util.SamplePingData;
 
 @EzyRequestController
 public class PingController {
+
   @EzyAutoBind("pluginResponseFactory")
   private EzyResponseFactory responseFactory;
 
