@@ -1,50 +1,58 @@
-<configuration>
-  <appender class="ch.qos.logback.core.ConsoleAppender" name="console">
-    <encoder>
-      <pattern>%d [%t] %-5level %logger{36} %msg%n</pattern>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+
+<configuration debug="false">
+  <appender class="ConsoleAppender" name="Console">
+    <encoder class="PatternLayoutEncoder">
+      <pattern>${pattern}</pattern>
     </encoder>
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>INFO</level>
-    </filter>
   </appender>
-  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="info">
-    <encoder>
-      <pattern>%d [%t] %-5level %logger{36} %msg%n</pattern>
+  <appender class="RollingFileAppender" name="Error">
+    <encoder class="PatternLayoutEncoder">
+      <pattern>${pattern}</pattern>
     </encoder>
-    <file>log/info.log</file>
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>INFO</level>
+    <file>logs/error/error.log</file>
+    <filter class="ThresholdFilter">
+      <level>WARN</level>
     </filter>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <fileNamePattern>log/info/info.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-      <maxFileSize>100MB</maxFileSize>
-      <maxHistory>30</maxHistory>
-      <totalSizeCap>1GB</totalSizeCap>
+    <rollingPolicy class="SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>logs/error/error-${date_pattern}-%i.log</fileNamePattern>
+      <maxFileSize>1MB</maxFileSize>
     </rollingPolicy>
   </appender>
-  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="debug">
-    <encoder>
-      <pattern>%d [%t] %-5level %logger{36} %msg%n</pattern>
+  <appender class="RollingFileAppender" name="Info">
+    <encoder class="PatternLayoutEncoder">
+      <pattern>${pattern}</pattern>
     </encoder>
-    <file>log/debug.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <fileNamePattern>log/debug/debug.%d{yyyy-MM-dd-HH-mm}.%i.log</fileNamePattern>
-      <maxFileSize>100MB</maxFileSize>
-      <maxHistory>30</maxHistory>
-      <totalSizeCap>1GB</totalSizeCap>
+    <file>logs/info/info.log</file>
+    <filter class="ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+    <rollingPolicy class="SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>logs/info/info-${date_pattern}-%i.log</fileNamePattern>
+      <maxFileSize>1MB</maxFileSize>
     </rollingPolicy>
   </appender>
 
-  <logger name="survival2d">
-    <appender-ref ref="console"/>
-  </logger>
+  <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
+  <import class="ch.qos.logback.classic.filter.ThresholdFilter"/>
+  <import class="ch.qos.logback.core.rolling.RollingFileAppender"/>
+  <import class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"/>
+  <import class="ch.qos.logback.core.ConsoleAppender"/>
 
-  <logger name="com.tvd12">
-    <appender-ref ref="console"/>
-  </logger>
+  <!--  <logger name="survival2d">-->
+  <!--    <appender-ref ref="Console"/>-->
+  <!--    <appender-ref ref="Info"/>-->
+  <!--  </logger>-->
 
   <root>
-    <appender-ref ref="info"/>
-    <appender-ref ref="debug"/>
+    <appender-ref ref="Console"/>
+    <appender-ref ref="Info"/>
+    <appender-ref ref="Error"/>
   </root>
+
+  <!--  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>-->
+
+  <variable name="pattern" value="%d %-5p [%t] %c - %m%n"/>
+  <variable name="date_pattern" value="%d{MM-dd-yyyy}"/>
 </configuration>

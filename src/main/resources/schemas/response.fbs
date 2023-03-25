@@ -1,0 +1,139 @@
+include "common.fbs";
+
+namespace survival2d.flatbuffers;
+
+table MatchInfoResponse {
+  players: [Player];
+  mapObjects: [MapObject];
+  safeZone: Vec2;
+}
+
+
+table PlayerMoveResponse {
+  username: string;
+  position: Vec2;
+  rotation: double;
+}
+
+
+table PlayerChangeWeaponResponse {
+  username: string;
+  slot: byte;
+}
+
+
+table PlayerAttackResponse {
+  username:string;
+  position:Vec2;
+  slot:byte;
+}
+
+
+table PlayerDropItemResponse {
+}
+
+table CreateBulletOnMapResponse {
+  bullet: Bullet;
+}
+
+table CreateItemOnMapResponse {
+  item: Item;
+  position: Vec2;
+  rawPosition: Vec2;
+}
+
+table StartGameResponse {
+}
+
+table EndGameResponse {
+  winTeam: int;
+}
+
+table PlayerInfoResponse {
+  hp: double;
+  weapon: [Weapon];
+  bullets: [BulletWithQuantity];
+}
+
+table ObstacleDestroyResponse {
+  id: int;
+}
+
+table ObstacleTakeDamageResponse {
+  id: int;
+  remainHp: double;
+}
+
+table PlayerTakeDamageResponse {
+  username: string;
+  remainHp: double;
+}
+
+table PlayerDeadResponse {
+  username: string;
+}
+
+
+
+table PlayerReloadWeaponResponse {
+  remainBulletsInGun: int;
+  remainBullets: int;
+}
+
+
+table PlayerTakeItemResponse {
+  username: string;
+  id: int; // id của map object
+}
+
+table NewSafeZoneResponse {
+  safeZone: Vec2;
+}
+
+table SafeZoneMoveResponse {
+}
+
+
+table PingResponse {}
+
+
+table PingByPlayerMoveResponse {
+  username: string;
+  position: Vec2;
+  rotation: double;
+}
+
+table PingByMatchInfoResponse {
+  players: [Player];
+  mapObjects: [MapObject];
+  safeZone: Vec2;
+}
+
+union ResponseData {
+  MatchInfoResponse,
+  PlayerMoveResponse,
+  PlayerAttackResponse,
+  PlayerInfoResponse,
+  CreateBulletOnMapResponse,
+  CreateItemOnMapResponse,
+  ObstacleTakeDamageResponse,
+  ObstacleDestroyResponse,
+  PlayerTakeDamageResponse,
+  PlayerDeadResponse,
+  PlayerReloadWeaponResponse,
+  PlayerChangeWeaponResponse,
+  PlayerTakeItemResponse,
+  StartGameResponse,
+  EndGameResponse,
+  NewSafeZoneResponse,
+  SafeZoneMoveResponse,
+  PingResponse,
+  PingByPlayerMoveResponse,
+  PingByMatchInfoResponse,
+}
+
+table Response {
+  data: ResponseData;
+}
+
+root_type Response;

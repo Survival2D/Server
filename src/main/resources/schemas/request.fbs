@@ -1,0 +1,59 @@
+include "common.fbs";
+namespace survival2d.flatbuffers;
+
+table MatchInfoRequest {
+}
+
+table PlayerMoveRequest {
+  direction: Vec2;
+  rotation: double;
+}
+
+
+table PlayerChangeWeaponRequest {
+  slot: byte;
+}
+
+table PlayerAttackRequest {
+}
+
+table PlayerDropItemRequest {
+  id: int;
+}
+
+table PlayerReloadWeaponRequest {
+}
+
+table PlayerTakeItemRequest {
+}
+
+
+table PingRequest {}
+
+
+table PingByPlayerMoveRequest {
+  direction: Vec2;
+  rotation: double;
+}
+
+
+table PingByMatchInfoRequest {}
+
+
+union RequestData {
+  MatchInfoRequest,
+  PlayerMoveRequest,
+  PlayerAttackRequest,
+  PlayerReloadWeaponRequest,
+  PlayerChangeWeaponRequest,
+  PlayerTakeItemRequest,
+  PingRequest,
+  PingByPlayerMoveRequest,
+  PingByMatchInfoRequest,
+}
+
+table Request {
+  data: RequestData;
+}
+
+root_type Request;
