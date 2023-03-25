@@ -12,9 +12,10 @@
       <version>2.10.1</version>
     </dependency>
     <dependency>
+      <!--Chưa thể cập nhật fbs cho client nên vẫn dùng bản 1.12.0-->
       <artifactId>flatbuffers-java</artifactId>
       <groupId>com.google.flatbuffers</groupId>
-      <version>23.3.3</version>
+      <version>1.12.0</version>
     </dependency>
     <dependency>
       <artifactId>guava</artifactId>
@@ -25,13 +26,13 @@
       <artifactId>netty-all</artifactId>
       <groupId>io.netty</groupId>
       <scope>compile</scope>
-      <version>4.1.89.Final</version>
+      <version>4.1.90.Final</version>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.9.2</version>
+      <groupId>org.junit.jupiter</groupId>
       <scope>test</scope>
+      <version>5.9.2</version>
     </dependency>
     <dependency>
       <artifactId>lombok</artifactId>
