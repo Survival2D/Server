@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.util.serialize.GsonHolder;
 
 @Data
@@ -17,7 +17,7 @@ import survival2d.util.serialize.GsonHolder;
 public class PingByPlayerMoveResponse {
 
   String username;
-  Vector2D position;
+  Vector2 position;
   double rotation;
 
   @EzyWriterImpl

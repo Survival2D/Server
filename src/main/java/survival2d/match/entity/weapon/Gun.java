@@ -22,7 +22,7 @@ public class Gun extends Weapon {
     return numBullet - numBulletToLoad;
   }
 
-//  public void shoot(Vector2D rawPosition, Vector2D direction) {
+//  public void shoot(Vector2 rawPosition, Vector2 direction) {
 //    Bullet bullet = new Bullet(, rawPosition, direction, BulletType.NORMAL);
 //  }
 }

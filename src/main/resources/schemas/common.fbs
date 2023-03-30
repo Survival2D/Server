@@ -107,3 +107,9 @@ union WeaponUnion {
 table WeaponTable {
   data: WeaponUnion;
 }
+
+enum ErrorEnum: byte {
+  SUCCESS,
+  NOT_FOUND_YET,
+  FAILURE,
+}

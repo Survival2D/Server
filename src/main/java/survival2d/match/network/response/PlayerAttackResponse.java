@@ -6,9 +6,8 @@ import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.match.entity.Weapon;
-import survival2d.util.packet.PacketUtil;
 
 
 @Data
@@ -17,7 +16,7 @@ public class PlayerAttackResponse {
 
   private String username;
   private Weapon weapon;
-  private Vector2D position;
+  private Vector2 position;
 
   @EzyWriterImpl
   public static class Writer implements EzyWriter<PlayerAttackResponse, EzyHashMap> {

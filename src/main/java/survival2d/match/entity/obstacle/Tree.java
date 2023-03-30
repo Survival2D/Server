@@ -1,8 +1,7 @@
 package survival2d.match.entity.obstacle;
 
 import lombok.Data;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import survival2d.match.entity.base.Circle;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.util.serialize.ExcludeFromGson;
@@ -14,7 +13,7 @@ public class Tree implements Destroyable, HasHp, Obstacle {
   int id;
   @ExcludeFromGson
   double hp = 100;
-  Vector2D position;
+  Vector2 position;
   @ExcludeFromGson
   Circle shape;
   ObstacleType type = ObstacleType.TREE;

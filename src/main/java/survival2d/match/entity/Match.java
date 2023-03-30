@@ -1,9 +1,9 @@
 package survival2d.match.entity;
 
+import java.awt.Shape;
 import java.util.Collection;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.match.action.PlayerAction;
-import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.BulletType;
 
 
@@ -15,16 +15,16 @@ public interface Match {
 
   void onReceivePlayerAction(String playerId, PlayerAction action);
 
-  void onPlayerMove(String playerId, Vector2D direction, double rotation);
+  void onPlayerMove(String playerId, Vector2 direction, double rotation);
 
-  void onPlayerAttack(String playerId, Vector2D direction);
+  void onPlayerAttack(String playerId, Vector2 direction);
 
-  void createDamage(String playerId, Vector2D position, Shape shape, double damage);
+  void createDamage(String playerId, Vector2 position, Shape shape, double damage);
 
 
-  void makeDamage(String playerId, Vector2D position, Shape shape, double damage);
+  void makeDamage(String playerId, Vector2 position, Shape shape, double damage);
 
-  void createBullet(String playerId, Vector2D position, Vector2D direction, BulletType type);
+  void createBullet(String playerId, Vector2 position, Vector2 direction, BulletType type);
 
   void responseMatchInfo(String username);
 

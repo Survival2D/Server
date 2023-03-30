@@ -7,9 +7,19 @@
 
   <dependencies>
     <dependency>
+      <artifactId>ashley</artifactId>
+      <groupId>com.badlogicgames.ashley</groupId>
+      <version>1.7.4</version>
+    </dependency>
+    <dependency>
       <artifactId>gson</artifactId>
       <groupId>com.google.code.gson</groupId>
       <version>2.10.1</version>
+    </dependency>
+    <dependency>
+      <artifactId>logback-classic</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <version>1.4.6</version>
     </dependency>
     <dependency>
       <!--Chưa thể cập nhật fbs cho client nên vẫn dùng bản 1.12.0-->

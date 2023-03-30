@@ -18,11 +18,10 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import lombok.var;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.flatbuffers.MapObjectData;
 import survival2d.flatbuffers.MatchInfoResponse;
 import survival2d.flatbuffers.Packet;
@@ -36,13 +35,10 @@ import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
-import survival2d.match.entity.base.Circle;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.MapObject;
-import survival2d.match.entity.base.Rectangle;
-import survival2d.match.entity.base.Shape;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.item.BulletItem;
@@ -70,7 +66,7 @@ public class MatchImpl implements Match {
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
   @ExcludeFromGson private final Timer timer = new Timer();
-  private final List<Pair<Circle, Vector2D>> safeZones = new ArrayList<>();
+  private final List<Pair<Circle, Vector2>> safeZones = new ArrayList<>();
   @ExcludeFromGson int nextSafeZone;
   @ExcludeFromGson private int currentMapObjectId;
   @ExcludeFromGson private TimerTask gameLoopTask;
@@ -99,7 +95,7 @@ public class MatchImpl implements Match {
   public boolean randomPositionForPlayer(String playerId) {
     val player = players.get(playerId);
     val newPosition =
-        new Vector2D(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
+        new Vector2(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
     player.setPosition(newPosition);
     for (val object : objects.values()) {
       if (object instanceof Obstacle) {
@@ -130,7 +126,7 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void onPlayerMove(String playerId, Vector2D direction, double rotation) {
+  public void onPlayerMove(String playerId, Vector2 direction, double rotation) {
     val player = players.get(playerId);
     if (player == null) {
       log.error("player {} is null", playerId);
@@ -163,7 +159,7 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void onPlayerAttack(String playerId, Vector2D direction) {
+  public void onPlayerAttack(String playerId, Vector2 direction) {
     val player = players.get(playerId);
     val currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon.getAttachType() == AttachType.MELEE) {
@@ -196,7 +192,7 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void createDamage(String playerId, Vector2D position, Shape shape, double damage) {
+  public void createDamage(String playerId, Vector2 position, Shape shape, double damage) {
     val player = players.get(playerId);
     log.warn("match is not present");
     val builder = new FlatBufferBuilder(0);
@@ -221,7 +217,7 @@ public class MatchImpl implements Match {
   }
 
   @Override
-  public void makeDamage(String playerId, Vector2D position, Shape shape, double damage) {
+  public void makeDamage(String playerId, Vector2 position, Shape shape, double damage) {
     val currentPlayer = players.get(playerId);
     for (val player : players.values()) {
       if (player.getTeam() == currentPlayer.getTeam()) {
@@ -370,7 +366,7 @@ public class MatchImpl implements Match {
 
   @Override
   public void createBullet(
-      String playerId, Vector2D position, Vector2D direction, BulletType type) {
+      String playerId, Vector2 position, Vector2 direction, BulletType type) {
     val bullet = new Bullet(playerId, position, direction, type);
     addMapObject(bullet);
     val builder = new FlatBufferBuilder(0);
@@ -555,7 +551,7 @@ public class MatchImpl implements Match {
     safeZones.add(
         new ImmutablePair<>(
             new Circle(GameConfig.getInstance().getDefaultSafeZoneRadius()),
-            new Vector2D(
+            new Vector2(
                 GameConfig.getInstance().getDefaultSafeZoneCenterX(),
                 GameConfig.getInstance().getDefaultSafeZoneCenterY())));
     for (val radius : GameConfig.getInstance().getSafeZonesRadius()) {
@@ -564,7 +560,7 @@ public class MatchImpl implements Match {
       safeZones.add(
           new ImmutablePair<>(
               new Circle(radius),
-new Vector2D(0, 0)
+new Vector2(0, 0)
 //              MathUtil.randomPosition(
 //                  previousSafeZone.getRight().getX() - deltaRadius,
 //                  previousSafeZone.getRight().getX() + deltaRadius,
@@ -602,7 +598,7 @@ new Vector2D(0, 0)
 
   public boolean randomPositionForObstacle(Obstacle obstacle) {
     val newPosition =
-        new Vector2D(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
+        new Vector2(RandomUtils.nextDouble(100, 9900), RandomUtils.nextDouble(100, 9900));
     obstacle.setPosition(newPosition);
     for (val player : players.values()) {
       if (MathUtil.isCollision(
@@ -831,9 +827,9 @@ new Vector2D(0, 0)
     }
   }
 
-  private void createItemOnMap(Item item, Vector2D position, Vector2D rawPosition) {
+  private void createItemOnMap(Item item, Vector2 position, Vector2 rawPosition) {
     val randomNeighborPosition =
-        new Vector2D(RandomUtils.nextDouble(0, 20) - 10, RandomUtils.nextDouble(0, 20) - 10);
+        new Vector2(RandomUtils.nextDouble(0, 20) - 10, RandomUtils.nextDouble(0, 20) - 10);
     val itemOnMap =
         ItemOnMap.builder().item(item).position(position.add(randomNeighborPosition)).build();
     addMapObject(itemOnMap);

@@ -8,8 +8,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import survival2d.match.entity.base.Circle;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
@@ -22,15 +21,15 @@ import survival2d.util.serialize.ExcludeFromGson;
 public class PlayerImpl implements Player {
 
   String playerId;
-  Vector2D position =
-      new Vector2D(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
+  Vector2 position =
+      new Vector2(RandomUtils.nextDouble(100, 900), RandomUtils.nextDouble(100, 900));
   double rotation;
   @ExcludeFromGson
   double speed = 10;
   @ExcludeFromGson
   double hp = 100;
   @ExcludeFromGson
-  Vector2D direction;
+  Vector2 direction;
   @ExcludeFromGson
   List<Weapon> weapons = new ArrayList<>();
   @ExcludeFromGson
@@ -55,8 +54,8 @@ public class PlayerImpl implements Player {
   }
 
   @Override
-  public Vector2D getAttackDirection() {
-    return new Vector2D(Math.cos(rotation), Math.sin(rotation));
+  public Vector2 getAttackDirection() {
+    return new Vector2(Math.cos(rotation), Math.sin(rotation));
   }
 
   @Override

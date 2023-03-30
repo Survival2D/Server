@@ -1,19 +1,18 @@
 package survival2d.match.entity;
 
 import java.util.Optional;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.HasShape;
 import survival2d.match.entity.base.Movable;
-import survival2d.match.entity.base.Shape;
 
 public interface Player extends Movable, HasShape, HasHp {
 
   String getPlayerId();
 
-  Vector2D getDirection();
+  Vector2 getDirection();
 
-  Vector2D getAttackDirection();
+  Vector2 getAttackDirection();
 
   double getRotation();
 

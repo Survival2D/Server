@@ -6,15 +6,14 @@ import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import survival2d.util.packet.PacketUtil;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 
 @Data
 @Builder
 public class PlayerMoveResponse {
 
   private String username;
-  private Vector2D position;
+  private Vector2 position;
   private double rotation;
 
   @EzyWriterImpl

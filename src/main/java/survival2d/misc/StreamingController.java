@@ -7,7 +7,7 @@ import com.tvd12.ezyfoxserver.controller.EzyAbstractZoneEventController;
 import com.tvd12.ezyfoxserver.event.EzyStreamingEvent;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
 import survival2d.flatbuffers.Packet;
 import survival2d.flatbuffers.PacketData;
 import survival2d.flatbuffers.PlayerAttackRequest;
@@ -19,7 +19,6 @@ import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.misc.util.SamplePingData;
-import survival2d.util.BeanUtil;
 import survival2d.util.stream.ByteBufferUtil;
 
 @EzySingleton
@@ -55,7 +54,7 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
         match.onReceivePlayerAction(
             username,
             new PlayerMove(
-                new Vector2D(request.direction().x(), request.direction().y()),
+                new Vector2(request.direction().x(), request.direction().y()),
                 request.rotation()));
         break;
       }
