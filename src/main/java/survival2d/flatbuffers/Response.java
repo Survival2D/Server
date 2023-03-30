@@ -15,21 +15,21 @@ public final class Response extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public Response __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public byte dataType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public Table data(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
+  public byte responseType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public Table response(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
 
   public static int createResponse(FlatBufferBuilder builder,
-      byte data_type,
-      int dataOffset) {
+      byte response_type,
+      int responseOffset) {
     builder.startTable(2);
-    Response.addData(builder, dataOffset);
-    Response.addDataType(builder, data_type);
+    Response.addResponse(builder, responseOffset);
+    Response.addResponseType(builder, response_type);
     return Response.endResponse(builder);
   }
 
   public static void startResponse(FlatBufferBuilder builder) { builder.startTable(2); }
-  public static void addDataType(FlatBufferBuilder builder, byte dataType) { builder.addByte(0, dataType, 0); }
-  public static void addData(FlatBufferBuilder builder, int dataOffset) { builder.addOffset(1, dataOffset, 0); }
+  public static void addResponseType(FlatBufferBuilder builder, byte responseType) { builder.addByte(0, responseType, 0); }
+  public static void addResponse(FlatBufferBuilder builder, int responseOffset) { builder.addOffset(1, responseOffset, 0); }
   public static int endResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

@@ -15,21 +15,21 @@ public final class Request extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public Request __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public byte dataType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public Table data(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
+  public byte requestType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public Table request(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
 
   public static int createRequest(FlatBufferBuilder builder,
-      byte data_type,
-      int dataOffset) {
+      byte request_type,
+      int requestOffset) {
     builder.startTable(2);
-    Request.addData(builder, dataOffset);
-    Request.addDataType(builder, data_type);
+    Request.addRequest(builder, requestOffset);
+    Request.addRequestType(builder, request_type);
     return Request.endRequest(builder);
   }
 
   public static void startRequest(FlatBufferBuilder builder) { builder.startTable(2); }
-  public static void addDataType(FlatBufferBuilder builder, byte dataType) { builder.addByte(0, dataType, 0); }
-  public static void addData(FlatBufferBuilder builder, int dataOffset) { builder.addOffset(1, dataOffset, 0); }
+  public static void addRequestType(FlatBufferBuilder builder, byte requestType) { builder.addByte(0, requestType, 0); }
+  public static void addRequest(FlatBufferBuilder builder, int requestOffset) { builder.addOffset(1, requestOffset, 0); }
   public static int endRequest(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

@@ -8,29 +8,29 @@ import java.util.*;
 import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
-public final class Gun extends Table {
+public final class GunTable extends Table {
   public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
-  public static Gun getRootAsGun(ByteBuffer _bb) { return getRootAsGun(_bb, new Gun()); }
-  public static Gun getRootAsGun(ByteBuffer _bb, Gun obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public static GunTable getRootAsGunTable(ByteBuffer _bb) { return getRootAsGunTable(_bb, new GunTable()); }
+  public static GunTable getRootAsGunTable(ByteBuffer _bb, GunTable obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
-  public Gun __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public GunTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public byte type() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
   public int remainBullets() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static int createGun(FlatBufferBuilder builder,
+  public static int createGunTable(FlatBufferBuilder builder,
       byte type,
       int remainBullets) {
     builder.startTable(2);
-    Gun.addRemainBullets(builder, remainBullets);
-    Gun.addType(builder, type);
-    return Gun.endGun(builder);
+    GunTable.addRemainBullets(builder, remainBullets);
+    GunTable.addType(builder, type);
+    return GunTable.endGunTable(builder);
   }
 
-  public static void startGun(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void startGunTable(FlatBufferBuilder builder) { builder.startTable(2); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static void addRemainBullets(FlatBufferBuilder builder, int remainBullets) { builder.addInt(1, remainBullets, 0); }
-  public static int endGun(FlatBufferBuilder builder) {
+  public static int endGunTable(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
@@ -38,8 +38,8 @@ public final class Gun extends Table {
   public static final class Vector extends BaseVector {
     public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
 
-    public Gun get(int j) { return get(new Gun(), j); }
-    public Gun get(Gun obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
+    public GunTable get(int j) { return get(new GunTable(), j); }
+    public GunTable get(GunTable obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 

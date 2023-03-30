@@ -8,14 +8,14 @@ import java.util.*;
 import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
-public final class Vec2 extends Struct {
+public final class Vector2Struct extends Struct {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
-  public Vec2 __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public Vector2Struct __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public double x() { return bb.getDouble(bb_pos + 0); }
   public double y() { return bb.getDouble(bb_pos + 8); }
 
-  public static int createVec2(FlatBufferBuilder builder, double x, double y) {
+  public static int createVector2Struct(FlatBufferBuilder builder, double x, double y) {
     builder.prep(8, 16);
     builder.putDouble(y);
     builder.putDouble(x);
@@ -25,8 +25,8 @@ public final class Vec2 extends Struct {
   public static final class Vector extends BaseVector {
     public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
 
-    public Vec2 get(int j) { return get(new Vec2(), j); }
-    public Vec2 get(Vec2 obj, int j) {  return obj.__assign(__element(j), bb); }
+    public Vector2Struct get(int j) { return get(new Vector2Struct(), j); }
+    public Vector2Struct get(Vector2Struct obj, int j) {  return obj.__assign(__element(j), bb); }
   }
 }
 

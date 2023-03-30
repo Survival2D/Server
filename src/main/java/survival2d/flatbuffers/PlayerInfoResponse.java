@@ -16,16 +16,16 @@ public final class PlayerInfoResponse extends Table {
   public PlayerInfoResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public double hp() { int o = __offset(4); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
-  public survival2d.flatbuffers.Weapon weapon(int j) { return weapon(new survival2d.flatbuffers.Weapon(), j); }
-  public survival2d.flatbuffers.Weapon weapon(survival2d.flatbuffers.Weapon obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public survival2d.flatbuffers.WeaponTable weapon(int j) { return weapon(new survival2d.flatbuffers.WeaponTable(), j); }
+  public survival2d.flatbuffers.WeaponTable weapon(survival2d.flatbuffers.WeaponTable obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int weaponLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.Weapon.Vector weaponVector() { return weaponVector(new survival2d.flatbuffers.Weapon.Vector()); }
-  public survival2d.flatbuffers.Weapon.Vector weaponVector(survival2d.flatbuffers.Weapon.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
-  public survival2d.flatbuffers.BulletWithQuantity bullets(int j) { return bullets(new survival2d.flatbuffers.BulletWithQuantity(), j); }
-  public survival2d.flatbuffers.BulletWithQuantity bullets(survival2d.flatbuffers.BulletWithQuantity obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public survival2d.flatbuffers.WeaponTable.Vector weaponVector() { return weaponVector(new survival2d.flatbuffers.WeaponTable.Vector()); }
+  public survival2d.flatbuffers.WeaponTable.Vector weaponVector(survival2d.flatbuffers.WeaponTable.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.BulletWithQuantityTable bullets(int j) { return bullets(new survival2d.flatbuffers.BulletWithQuantityTable(), j); }
+  public survival2d.flatbuffers.BulletWithQuantityTable bullets(survival2d.flatbuffers.BulletWithQuantityTable obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int bulletsLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.BulletWithQuantity.Vector bulletsVector() { return bulletsVector(new survival2d.flatbuffers.BulletWithQuantity.Vector()); }
-  public survival2d.flatbuffers.BulletWithQuantity.Vector bulletsVector(survival2d.flatbuffers.BulletWithQuantity.Vector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.BulletWithQuantityTable.Vector bulletsVector() { return bulletsVector(new survival2d.flatbuffers.BulletWithQuantityTable.Vector()); }
+  public survival2d.flatbuffers.BulletWithQuantityTable.Vector bulletsVector(survival2d.flatbuffers.BulletWithQuantityTable.Vector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createPlayerInfoResponse(FlatBufferBuilder builder,
       double hp,

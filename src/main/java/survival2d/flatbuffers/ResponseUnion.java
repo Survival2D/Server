@@ -2,8 +2,8 @@
 
 package survival2d.flatbuffers;
 
-public final class ResponseData {
-  private ResponseData() { }
+public final class ResponseUnion {
+  private ResponseUnion() { }
   public static final byte NONE = 0;
   public static final byte MatchInfoResponse = 1;
   public static final byte PlayerMoveResponse = 2;

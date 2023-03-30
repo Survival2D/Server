@@ -18,8 +18,8 @@ public final class PingByPlayerMoveResponse extends Table {
   public String username() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer usernameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
   public ByteBuffer usernameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
-  public survival2d.flatbuffers.Vec2 position() { return position(new survival2d.flatbuffers.Vec2()); }
-  public survival2d.flatbuffers.Vec2 position(survival2d.flatbuffers.Vec2 obj) { int o = __offset(6); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public survival2d.flatbuffers.Vector2Struct position() { return position(new survival2d.flatbuffers.Vector2Struct()); }
+  public survival2d.flatbuffers.Vector2Struct position(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(6); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
   public double rotation() { int o = __offset(8); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
 
   public static void startPingByPlayerMoveResponse(FlatBufferBuilder builder) { builder.startTable(3); }

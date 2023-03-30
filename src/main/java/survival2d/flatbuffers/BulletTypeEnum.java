@@ -2,8 +2,8 @@
 
 package survival2d.flatbuffers;
 
-public final class BulletType {
-  private BulletType() { }
+public final class BulletTypeEnum {
+  private BulletTypeEnum() { }
   public static final byte NORMAL = 0;
 
   public static final String[] names = { "NORMAL", };

@@ -5,7 +5,7 @@ table MatchInfoRequest {
 }
 
 table PlayerMoveRequest {
-  direction: Vec2;
+  direction: Vector2Struct;
   rotation: double;
 }
 
@@ -32,7 +32,7 @@ table PingRequest {}
 
 
 table PingByPlayerMoveRequest {
-  direction: Vec2;
+  direction: Vector2Struct;
   rotation: double;
 }
 
@@ -40,7 +40,7 @@ table PingByPlayerMoveRequest {
 table PingByMatchInfoRequest {}
 
 
-union RequestData {
+union RequestUnion {
   MatchInfoRequest,
   PlayerMoveRequest,
   PlayerAttackRequest,
@@ -53,7 +53,7 @@ union RequestData {
 }
 
 table Request {
-  data: RequestData;
+  request: RequestUnion;
 }
 
 root_type Request;

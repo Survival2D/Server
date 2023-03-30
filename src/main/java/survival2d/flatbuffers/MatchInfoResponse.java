@@ -15,18 +15,18 @@ public final class MatchInfoResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public MatchInfoResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public survival2d.flatbuffers.Player players(int j) { return players(new survival2d.flatbuffers.Player(), j); }
-  public survival2d.flatbuffers.Player players(survival2d.flatbuffers.Player obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public survival2d.flatbuffers.PlayerTable players(int j) { return players(new survival2d.flatbuffers.PlayerTable(), j); }
+  public survival2d.flatbuffers.PlayerTable players(survival2d.flatbuffers.PlayerTable obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int playersLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.Player.Vector playersVector() { return playersVector(new survival2d.flatbuffers.Player.Vector()); }
-  public survival2d.flatbuffers.Player.Vector playersVector(survival2d.flatbuffers.Player.Vector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
-  public survival2d.flatbuffers.MapObject mapObjects(int j) { return mapObjects(new survival2d.flatbuffers.MapObject(), j); }
-  public survival2d.flatbuffers.MapObject mapObjects(survival2d.flatbuffers.MapObject obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public survival2d.flatbuffers.PlayerTable.Vector playersVector() { return playersVector(new survival2d.flatbuffers.PlayerTable.Vector()); }
+  public survival2d.flatbuffers.PlayerTable.Vector playersVector(survival2d.flatbuffers.PlayerTable.Vector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.MapObjectTable mapObjects(int j) { return mapObjects(new survival2d.flatbuffers.MapObjectTable(), j); }
+  public survival2d.flatbuffers.MapObjectTable mapObjects(survival2d.flatbuffers.MapObjectTable obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int mapObjectsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.MapObject.Vector mapObjectsVector() { return mapObjectsVector(new survival2d.flatbuffers.MapObject.Vector()); }
-  public survival2d.flatbuffers.MapObject.Vector mapObjectsVector(survival2d.flatbuffers.MapObject.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
-  public survival2d.flatbuffers.Vec2 safeZone() { return safeZone(new survival2d.flatbuffers.Vec2()); }
-  public survival2d.flatbuffers.Vec2 safeZone(survival2d.flatbuffers.Vec2 obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public survival2d.flatbuffers.MapObjectTable.Vector mapObjectsVector() { return mapObjectsVector(new survival2d.flatbuffers.MapObjectTable.Vector()); }
+  public survival2d.flatbuffers.MapObjectTable.Vector mapObjectsVector(survival2d.flatbuffers.MapObjectTable.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.Vector2Struct safeZone() { return safeZone(new survival2d.flatbuffers.Vector2Struct()); }
+  public survival2d.flatbuffers.Vector2Struct safeZone(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
 
   public static void startMatchInfoResponse(FlatBufferBuilder builder) { builder.startTable(3); }
   public static void addPlayers(FlatBufferBuilder builder, int playersOffset) { builder.addOffset(0, playersOffset, 0); }

@@ -1,109 +1,109 @@
 namespace survival2d.flatbuffers;
 
-struct Vec2 {
+struct Vector2Struct {
   x: double;
   y: double;
 }
 
-table Player {
+table PlayerTable {
   username: string;
-  position: Vec2;
+  position: Vector2Struct;
   rotation: double;
   team: int;
 }
 
-table Tree {
+table TreeTable {
 }
 
-table Container {
+table ContainerTable {
 }
 
-table Stone {
+table StoneTable {
 }
 
-table Wall {
+table WallTable {
 }
 
-enum GunType: byte {
+enum GunTypeEnum: byte {
   NORMAL
 }
 
-table GunItem {
-  type: GunType;
+table GunItemTable {
+  type: GunTypeEnum;
 }
 
-enum BulletType: byte {
+enum BulletTypeEnum: byte {
   NORMAL
 }
 
-table BulletItem {
-  type: BulletType;
+table BulletItemTable {
+  type: BulletTypeEnum;
 }
 
-table VestItem {
+table VestItemTable {
 }
 
-table HelmetItem {
+table HelmetItemTable {
 }
 
-table BandageItem {
+table BandageItemTable {
 }
 
-table MedKitItem {
+table MedKitItemTable {
 }
 
-union Item {
-  BulletItem,
-  GunItem,
+union ItemUnion {
+  BulletItemTable,
+  GunItemTable,
 }
 
-union MapObjectData {
+union MapObjectUnion {
   //Item
-  BulletItem,
-  GunItem,
-  VestItem,
-  HelmetItem,
-  BandageItem,
-  MedKitItem,
+  BulletItemTable,
+  GunItemTable,
+  VestItemTable,
+  HelmetItemTable,
+  BandageItemTable,
+  MedKitItemTable,
   //Obstacle
-  Tree,
-  Container,
-  Stone,
-  Wall
+  TreeTable,
+  ContainerTable,
+  StoneTable,
+  WallTable
 }
 
-table MapObject {
+table MapObjectTable {
   id: int;
-  position: Vec2;
-  data: MapObjectData;
+  position: Vector2Struct;
+  data: MapObjectTable;
 }
 
-table Bullet {
+table BulletTable {
   id: int;
-  position: Vec2;
-  type: BulletType;
+  position: Vector2Struct;
+  type: BulletTypeEnum;
   owner: string;
-  direction: Vec2;
+  direction: Vector2Struct;
 }
 
-table BulletWithQuantity {
-  type: BulletType;
+table BulletWithQuantityTable {
+  type: BulletTypeEnum;
   num: int;
 }
 
-table Hand {
+table HandTable {
 }
 
-table Gun {
-  type: GunType;
+table GunTable {
+  type: GunTypeEnum;
   remainBullets: int;
 }
 
-union WeaponData {
-  Hand,
-  Gun
+union WeaponUnion {
+  HandTable,
+  GunTable
 }
 
-table Weapon {
-  data: WeaponData;
+table WeaponTable {
+  data: WeaponUnion;
 }

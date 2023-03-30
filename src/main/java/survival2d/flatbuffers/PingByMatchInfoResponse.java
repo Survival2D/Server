@@ -15,27 +15,35 @@ public final class PingByMatchInfoResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PingByMatchInfoResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public survival2d.flatbuffers.Player players(int j) { return players(new survival2d.flatbuffers.Player(), j); }
-  public survival2d.flatbuffers.Player players(survival2d.flatbuffers.Player obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public survival2d.flatbuffers.PlayerTable players(int j) { return players(new survival2d.flatbuffers.PlayerTable(), j); }
+  public survival2d.flatbuffers.PlayerTable players(survival2d.flatbuffers.PlayerTable obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int playersLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.Player.Vector playersVector() { return playersVector(new survival2d.flatbuffers.Player.Vector()); }
-  public survival2d.flatbuffers.Player.Vector playersVector(survival2d.flatbuffers.Player.Vector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
-  public survival2d.flatbuffers.MapObject mapObjects(int j) { return mapObjects(new survival2d.flatbuffers.MapObject(), j); }
-  public survival2d.flatbuffers.MapObject mapObjects(survival2d.flatbuffers.MapObject obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-  public int mapObjectsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.MapObject.Vector mapObjectsVector() { return mapObjectsVector(new survival2d.flatbuffers.MapObject.Vector()); }
-  public survival2d.flatbuffers.MapObject.Vector mapObjectsVector(survival2d.flatbuffers.MapObject.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
-  public survival2d.flatbuffers.Vec2 safeZone() { return safeZone(new survival2d.flatbuffers.Vec2()); }
-  public survival2d.flatbuffers.Vec2 safeZone(survival2d.flatbuffers.Vec2 obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public survival2d.flatbuffers.PlayerTable.Vector playersVector() { return playersVector(new survival2d.flatbuffers.PlayerTable.Vector()); }
+  public survival2d.flatbuffers.PlayerTable.Vector playersVector(survival2d.flatbuffers.PlayerTable.Vector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public byte mapObjectsType(int j) { int o = __offset(6); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
+  public int mapObjectsTypeLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
+  public ByteVector mapObjectsTypeVector() { return mapObjectsTypeVector(new ByteVector()); }
+  public ByteVector mapObjectsTypeVector(ByteVector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
+  public ByteBuffer mapObjectsTypeAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+  public ByteBuffer mapObjectsTypeInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
+  public Table mapObjects(Table obj, int j) { int o = __offset(8); return o != 0 ? __union(obj, __vector(o) + j * 4) : null; }
+  public int mapObjectsLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
+  public UnionVector mapObjectsVector() { return mapObjectsVector(new UnionVector()); }
+  public UnionVector mapObjectsVector(UnionVector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.Vector2Struct safeZone() { return safeZone(new survival2d.flatbuffers.Vector2Struct()); }
+  public survival2d.flatbuffers.Vector2Struct safeZone(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(10); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
 
-  public static void startPingByMatchInfoResponse(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startPingByMatchInfoResponse(FlatBufferBuilder builder) { builder.startTable(4); }
   public static void addPlayers(FlatBufferBuilder builder, int playersOffset) { builder.addOffset(0, playersOffset, 0); }
   public static int createPlayersVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startPlayersVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
-  public static void addMapObjects(FlatBufferBuilder builder, int mapObjectsOffset) { builder.addOffset(1, mapObjectsOffset, 0); }
+  public static void addMapObjectsType(FlatBufferBuilder builder, int mapObjectsTypeOffset) { builder.addOffset(1, mapObjectsTypeOffset, 0); }
+  public static int createMapObjectsTypeVector(FlatBufferBuilder builder, byte[] data) { builder.startVector(1, data.length, 1); for (int i = data.length - 1; i >= 0; i--) builder.addByte(data[i]); return builder.endVector(); }
+  public static void startMapObjectsTypeVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
+  public static void addMapObjects(FlatBufferBuilder builder, int mapObjectsOffset) { builder.addOffset(2, mapObjectsOffset, 0); }
   public static int createMapObjectsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startMapObjectsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
-  public static void addSafeZone(FlatBufferBuilder builder, int safeZoneOffset) { builder.addStruct(2, safeZoneOffset, 0); }
+  public static void addSafeZone(FlatBufferBuilder builder, int safeZoneOffset) { builder.addStruct(3, safeZoneOffset, 0); }
   public static int endPingByMatchInfoResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

@@ -15,8 +15,8 @@ public final class CreateBulletOnMapResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public CreateBulletOnMapResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public survival2d.flatbuffers.Bullet bullet() { return bullet(new survival2d.flatbuffers.Bullet()); }
-  public survival2d.flatbuffers.Bullet bullet(survival2d.flatbuffers.Bullet obj) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public survival2d.flatbuffers.BulletTable bullet() { return bullet(new survival2d.flatbuffers.BulletTable()); }
+  public survival2d.flatbuffers.BulletTable bullet(survival2d.flatbuffers.BulletTable obj) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
 
   public static int createCreateBulletOnMapResponse(FlatBufferBuilder builder,
       int bulletOffset) {

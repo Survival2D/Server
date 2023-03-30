@@ -15,8 +15,8 @@ public final class PlayerMoveRequest extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PlayerMoveRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public survival2d.flatbuffers.Vec2 direction() { return direction(new survival2d.flatbuffers.Vec2()); }
-  public survival2d.flatbuffers.Vec2 direction(survival2d.flatbuffers.Vec2 obj) { int o = __offset(4); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public survival2d.flatbuffers.Vector2Struct direction() { return direction(new survival2d.flatbuffers.Vector2Struct()); }
+  public survival2d.flatbuffers.Vector2Struct direction(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(4); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
   public double rotation() { int o = __offset(6); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
 
   public static void startPlayerMoveRequest(FlatBufferBuilder builder) { builder.startTable(2); }

@@ -3,15 +3,15 @@ include "common.fbs";
 namespace survival2d.flatbuffers;
 
 table MatchInfoResponse {
-  players: [Player];
-  mapObjects: [MapObject];
-  safeZone: Vec2;
+  players: [PlayerTable];
+  mapObjects: [MapObjectTable];
+  safeZone: Vector2Struct;
 }
 
 
 table PlayerMoveResponse {
   username: string;
-  position: Vec2;
+  position: Vector2Struct;
   rotation: double;
 }
 
@@ -24,7 +24,7 @@ table PlayerChangeWeaponResponse {
 
 table PlayerAttackResponse {
   username:string;
-  position:Vec2;
+  position:Vector2Struct;
   slot:byte;
 }
 
@@ -33,13 +33,13 @@ table PlayerDropItemResponse {
 }
 
 table CreateBulletOnMapResponse {
-  bullet: Bullet;
+  bullet: BulletTable;
 }
 
 table CreateItemOnMapResponse {
-  item: Item;
-  position: Vec2;
-  rawPosition: Vec2;
+  item: ItemUnion;
+  position: Vector2Struct;
+  rawPosition: Vector2Struct;
 }
 
 table StartGameResponse {
@@ -51,8 +51,8 @@ table EndGameResponse {
 
 table PlayerInfoResponse {
   hp: double;
-  weapon: [Weapon];
-  bullets: [BulletWithQuantity];
+  weapon: [WeaponTable];
+  bullets: [BulletWithQuantityTable];
 }
 
 table ObstacleDestroyResponse {
@@ -73,8 +73,6 @@ table PlayerDeadResponse {
   username: string;
 }
 
-
-
 table PlayerReloadWeaponResponse {
   remainBulletsInGun: int;
   remainBullets: int;
@@ -87,7 +85,7 @@ table PlayerTakeItemResponse {
 }
 
 table NewSafeZoneResponse {
-  safeZone: Vec2;
+  safeZone: Vector2Struct;
 }
 
 table SafeZoneMoveResponse {
@@ -99,17 +97,17 @@ table PingResponse {}
 
 table PingByPlayerMoveResponse {
   username: string;
-  position: Vec2;
+  position: Vector2Struct;
   rotation: double;
 }
 
 table PingByMatchInfoResponse {
-  players: [Player];
-  mapObjects: [MapObject];
-  safeZone: Vec2;
+  players: [PlayerTable];
+  mapObjects: [MapObjectUnion];
+  safeZone: Vector2Struct;
 }
 
-union ResponseData {
+union ResponseUnion {
   MatchInfoResponse,
   PlayerMoveResponse,
   PlayerAttackResponse,
@@ -133,7 +131,7 @@ union ResponseData {
 }
 
 table Response {
-  data: ResponseData;
+  response: ResponseUnion;
 }
 
 root_type Response;

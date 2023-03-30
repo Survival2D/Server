@@ -2,8 +2,8 @@
 
 package survival2d.flatbuffers;
 
-public final class RequestData {
-  private RequestData() { }
+public final class RequestUnion {
+  private RequestUnion() { }
   public static final byte NONE = 0;
   public static final byte MatchInfoRequest = 1;
   public static final byte PlayerMoveRequest = 2;

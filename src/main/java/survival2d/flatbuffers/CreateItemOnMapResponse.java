@@ -17,10 +17,10 @@ public final class CreateItemOnMapResponse extends Table {
 
   public byte itemType() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
   public Table item(Table obj) { int o = __offset(6); return o != 0 ? __union(obj, o + bb_pos) : null; }
-  public survival2d.flatbuffers.Vec2 position() { return position(new survival2d.flatbuffers.Vec2()); }
-  public survival2d.flatbuffers.Vec2 position(survival2d.flatbuffers.Vec2 obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
-  public survival2d.flatbuffers.Vec2 rawPosition() { return rawPosition(new survival2d.flatbuffers.Vec2()); }
-  public survival2d.flatbuffers.Vec2 rawPosition(survival2d.flatbuffers.Vec2 obj) { int o = __offset(10); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public survival2d.flatbuffers.Vector2Struct position() { return position(new survival2d.flatbuffers.Vector2Struct()); }
+  public survival2d.flatbuffers.Vector2Struct position(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public survival2d.flatbuffers.Vector2Struct rawPosition() { return rawPosition(new survival2d.flatbuffers.Vector2Struct()); }
+  public survival2d.flatbuffers.Vector2Struct rawPosition(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(10); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
 
   public static void startCreateItemOnMapResponse(FlatBufferBuilder builder) { builder.startTable(4); }
   public static void addItemType(FlatBufferBuilder builder, byte itemType) { builder.addByte(0, itemType, 0); }

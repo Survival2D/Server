@@ -15,8 +15,8 @@ public final class NewSafeZoneResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public NewSafeZoneResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public survival2d.flatbuffers.Vec2 safeZone() { return safeZone(new survival2d.flatbuffers.Vec2()); }
-  public survival2d.flatbuffers.Vec2 safeZone(survival2d.flatbuffers.Vec2 obj) { int o = __offset(4); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public survival2d.flatbuffers.Vector2Struct safeZone() { return safeZone(new survival2d.flatbuffers.Vector2Struct()); }
+  public survival2d.flatbuffers.Vector2Struct safeZone(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(4); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
 
   public static void startNewSafeZoneResponse(FlatBufferBuilder builder) { builder.startTable(1); }
   public static void addSafeZone(FlatBufferBuilder builder, int safeZoneOffset) { builder.addStruct(0, safeZoneOffset, 0); }
