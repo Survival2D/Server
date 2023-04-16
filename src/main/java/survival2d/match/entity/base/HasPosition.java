@@ -1,7 +1,6 @@
 package survival2d.match.entity.base;
 
-
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+import com.badlogic.gdx.math.Vector2;
 
 public interface HasPosition {
 

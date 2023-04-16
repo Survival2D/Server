@@ -6,7 +6,7 @@ import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
-import lombok.val;
+import lombok.var;
 import survival2d.common.ResponseError;
 import survival2d.util.serialize.GsonHolder;
 
@@ -22,8 +22,8 @@ public class FindMatchResponse {
 
     @Override
     public EzyHashMap write(EzyMarshaller ezyMarshaller, FindMatchResponse findMatchResponse) {
-      val data = "{map: " + GsonHolder.getResponseGson().toJson(findMatchResponse) + "}";
-      val map = GsonHolder.getResponseGson().fromJson(data, EzyHashMap.class);
+      var data = "{map: " + GsonHolder.getResponseGson().toJson(findMatchResponse) + "}";
+      var map = GsonHolder.getResponseGson().fromJson(data, EzyHashMap.class);
       return map;
     }
   }

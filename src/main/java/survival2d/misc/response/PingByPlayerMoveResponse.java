@@ -7,8 +7,8 @@ import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+import lombok.var;
+
 import survival2d.util.serialize.GsonHolder;
 
 @Data
@@ -25,9 +25,9 @@ public class PingByPlayerMoveResponse {
 
     @Override
     public EzyHashMap write(EzyMarshaller ezyMarshaller, PingByPlayerMoveResponse response) {
-      val data = "{map: " + GsonHolder.getNormalGson().toJson(response) + "}";
+      var data = "{map: " + GsonHolder.getNormalGson().toJson(response) + "}";
       log.info("PingByPlayerMoveResponse's length: {}", data.length());
-      val map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
+      var map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
       return map;
     }
   }

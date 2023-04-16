@@ -6,8 +6,8 @@ import com.tvd12.ezyfoxserver.context.EzyZoneContext;
 import com.tvd12.ezyfoxserver.controller.EzyAbstractZoneEventController;
 import com.tvd12.ezyfoxserver.event.EzyStreamingEvent;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+import lombok.var;
+
 import survival2d.flatbuffers.Packet;
 import survival2d.flatbuffers.PacketData;
 import survival2d.flatbuffers.PlayerAttackRequest;
@@ -27,140 +27,9 @@ public class StreamingController extends EzyAbstractZoneEventController<EzyStrea
 
   @Override
   public void handle(EzyZoneContext ezyZoneContext, EzyStreamingEvent ezyStreamingEvent) {
-    val username = ezyStreamingEvent.getSession().getOwnerName();
-    val buf = ByteBufferUtil.ezyFoxBytesToByteBuffer(ezyStreamingEvent.getBytes());
-    val packet = Packet.getRootAsPacket(buf);
-    switch (packet.dataType()) {
-      case PacketData.MatchInfoRequest: {
-        val optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-        if (!optMatch.isPresent()) {
-          log.warn("match is not present");
-          return;
-        }
-        val match = optMatch.get();
-        match.responseMatchInfo(username);
-        break;
-      }
-      case PacketData.PlayerMoveRequest: {
-        val optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-        if (!optMatch.isPresent()) {
-          log.warn("match is not present");
-          return;
-        }
-        val request = new PlayerMoveRequest();
-        packet.data(request);
+    var username = ezyStreamingEvent.getSession().getOwnerName();
+    var buf = ByteBufferUtil.ezyFoxBytesToByteBuffer(ezyStreamingEvent.getBytes());
+    var packet = Packet.getRootAsPacket(buf);
 
-        val match = optMatch.get();
-        match.onReceivePlayerAction(
-            username,
-            new PlayerMove(
-                new Vector2(request.direction().x(), request.direction().y()),
-                request.rotation()));
-        break;
-      }
-      case PacketData.PlayerChangeWeaponRequest: {
-        val optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-        if (!optMatch.isPresent()) {
-          log.warn("match is not present");
-          return;
-        }
-        val request = new PlayerChangeWeaponRequest();
-        packet.data(request);
-
-        val match = optMatch.get();
-        match.onReceivePlayerAction(username, new PlayerChangeWeapon(request.slot()));
-        break;
-      }
-      case PacketData.PlayerAttackRequest: {
-        val optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-        if (!optMatch.isPresent()) {
-          log.warn("match is not present");
-          return;
-        }
-        val request = new PlayerAttackRequest();
-        packet.data(request);
-        val match = optMatch.get();
-        match.onReceivePlayerAction(username, new PlayerAttack());
-        break;
-      }
-      case PacketData.PlayerReloadWeaponRequest: {
-        val optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-        if (!optMatch.isPresent()) {
-          log.warn("match is not present");
-          return;
-        }
-        val match = optMatch.get();
-        match.onReceivePlayerAction(username, new PlayerReloadWeapon());
-        break;
-      }
-      case PacketData.PlayerTakeItemRequest: {
-        val optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-        if (!optMatch.isPresent()) {
-          log.warn("match is not present");
-          return;
-        }
-        val match = optMatch.get();
-        match.onReceivePlayerAction(username, new PlayerTakeItem());
-        break;
-      }
-      case PacketData.PingRequest: {
-        val builder = new FlatBufferBuilder(0);
-        survival2d.flatbuffers.PingResponse.startPingResponse(builder);
-        val responseOffset = survival2d.flatbuffers.PingResponse.endPingResponse(builder);
-
-        Packet.startPacket(builder);
-        Packet.addDataType(builder, PacketData.PingResponse);
-        Packet.addData(builder, responseOffset);
-        val packetOffset = Packet.endPacket(builder);
-        builder.finish(packetOffset);
-
-        val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-        ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
-        log.info("pingByte's size {}", bytes.length);
-        break;
-      }
-      case PacketData.PingByPlayerMoveRequest: {
-        val builder = new FlatBufferBuilder(0);
-        val usernameOffset = builder.createString(SamplePingData.username);
-        survival2d.flatbuffers.PingByPlayerMoveResponse.startPingByPlayerMoveResponse(builder);
-        survival2d.flatbuffers.PingByPlayerMoveResponse.addUsername(builder, usernameOffset);
-        survival2d.flatbuffers.Vec2.createVec2(
-            builder, SamplePingData.position.getX(), SamplePingData.position.getY());
-        survival2d.flatbuffers.PingByPlayerMoveResponse.addRotation(
-            builder, SamplePingData.rotation);
-        val responseOffset = survival2d.flatbuffers.PingResponse.endPingResponse(builder);
-
-        Packet.startPacket(builder);
-        Packet.addDataType(builder, PacketData.PingByPlayerMoveResponse);
-        Packet.addData(builder, responseOffset);
-        val packetOffset = Packet.endPacket(builder);
-        builder.finish(packetOffset);
-
-        val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-        ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
-        log.info("pingByPlayerMoveByte's size {}", bytes.length);
-        break;
-      }
-      case PacketData.PingByMatchInfoRequest: {
-        val builder = new FlatBufferBuilder(0);
-
-        final int responseOffset = SamplePingData.match.putResponseData(builder);
-
-        Packet.startPacket(builder);
-        Packet.addDataType(builder, PacketData.PingByMatchInfoResponse);
-        Packet.addData(builder, responseOffset);
-        val packetOffset = Packet.endPacket(builder);
-        builder.finish(packetOffset);
-
-        val bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-        ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
-        log.info("pingByMatchInfoByte's size {}", bytes.length);
-        break;
-      }
-      default: {
-        log.warn("not handle packet data type {} from user {}", packet.dataType(), username);
-        break;
-      }
-    }
   }
 }

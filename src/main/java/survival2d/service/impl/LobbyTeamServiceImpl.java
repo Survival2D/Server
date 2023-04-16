@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import lombok.val;
+import lombok.var;
 import survival2d.service.LobbyTeamService;
 import survival2d.service.entity.LobbyTeam;
 
@@ -18,8 +18,8 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
 
   @Override
   public int createTeam() {
-    val teamId = currentTeamId.getAndIncrement();
-    val team = new LobbyTeam(teamId);
+    var teamId = currentTeamId.getAndIncrement();
+    var team = new LobbyTeam(teamId);
     teamIdToTeam.put(teamId, team);
     return teamId;
   }
@@ -34,11 +34,11 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
 
   @Override
   public boolean joinTeam(String username, int teamId) {
-    val optTeam = getTeam(teamId);
+    var optTeam = getTeam(teamId);
     if (!optTeam.isPresent()) {
       return false;
     }
-    val team = optTeam.get();
+    var team = optTeam.get();
     team.addPlayer(username);
     usernameToTeam.put(username, teamId);
     return true;
@@ -46,12 +46,12 @@ public class LobbyTeamServiceImpl implements LobbyTeamService {
 
   @Override
   public boolean quitTeam(String username, int teamId) {
-    val optTeam = getTeam(teamId);
+    var optTeam = getTeam(teamId);
     if (!optTeam.isPresent()) {
       return false;
     }
-    val team = optTeam.get();
-    val result = team.removePlayer(username);
+    var team = optTeam.get();
+    var result = team.removePlayer(username);
     if (result) {
       usernameToTeam.remove(username);
     }

@@ -4,7 +4,7 @@ import com.tvd12.ezyfox.binding.EzyReader;
 import com.tvd12.ezyfox.binding.EzyUnmarshaller;
 import com.tvd12.ezyfox.binding.annotation.EzyReaderImpl;
 import lombok.Data;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+
 import survival2d.util.serialize.GsonHolder;
 
 @Data

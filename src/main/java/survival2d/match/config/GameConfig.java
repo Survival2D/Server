@@ -11,13 +11,13 @@ import survival2d.util.serialize.PostProcessable;
 public class GameConfig implements PostProcessable {
 
   private static final String CONFIG_FILE = "config.json";
-  private double mapWidth;
-  private double mapHeight;
-  private List<Double> safeZonesRadius;
+  private float mapWidth;
+  private float mapHeight;
+  private List<Float> safeZonesRadius;
   private int minutePerSafeZone;
-  private double defaultSafeZoneCenterX;
-  private double defaultSafeZoneCenterY;
-  private double defaultSafeZoneRadius;
+  private float defaultSafeZoneCenterX;
+  private float defaultSafeZoneCenterY;
+  private float defaultSafeZoneRadius;
   private int ticksPerSafeZone;
 
   public static void load() {

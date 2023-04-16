@@ -6,7 +6,7 @@ import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+
 import survival2d.match.entity.Weapon;
 
 

@@ -1,4 +1,4 @@
-package survival2d.util.math;
+package survival2d.match.util;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MathUtil {
+public class MatchUtil {
 
   public static Vector2 randomPosition(float fromX, float toX, float fromY, float toY) {
     return new Vector2(MathUtils.random(fromX, toX), MathUtils.random(fromY, toY));

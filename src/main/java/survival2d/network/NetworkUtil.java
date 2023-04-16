@@ -1,8 +1,8 @@
 package survival2d.network;
 
-import com.miti99.netty.json.response.BaseJsonResponse;
 import io.netty.channel.Channel;
 import java.nio.ByteBuffer;
+import survival2d.network.json.response.BaseJsonResponse;
 
 public class NetworkUtil {
 

@@ -1,8 +1,11 @@
 package survival2d.match.entity;
 
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Shape2D;
+import com.badlogic.gdx.math.Vector2;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.base.Movable;
@@ -22,7 +25,7 @@ public class Bullet implements MapObject, Movable, Destroyable {
   Vector2 direction;
   BulletType type;
   boolean isDestroyed;
-  Dot shape = new Dot();
+  Circle shape = new Circle(position, 0);
 
   public Bullet(String ownerId, Vector2 rawPosition, Vector2 direction, BulletType type) {
     this.ownerId = ownerId;
@@ -33,12 +36,17 @@ public class Bullet implements MapObject, Movable, Destroyable {
   }
 
   public void move() {
-    moveBy(direction.scalarMultiply(type.getSpeed()));
+    moveBy(direction.scl(type.getSpeed()));
 //    log.info("position: {}", position);
   }
 
 
   public boolean isOutOfBound() {
-    return position.distance(rawPosition) > type.getMaxRange();
+    return position.dst(rawPosition) > type.getMaxRange();
+  }
+
+  public void setPosition(Vector2 position) {
+    this.position = position;
+    shape.setPosition(position);
   }
 }

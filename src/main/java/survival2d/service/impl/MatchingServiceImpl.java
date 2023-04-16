@@ -8,9 +8,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import lombok.var;
 import survival2d.match.entity.Match;
-import survival2d.match.entity.MatchImpl;
 import survival2d.service.LobbyTeamService;
 import survival2d.service.MatchingService;
 
@@ -26,8 +25,8 @@ public class MatchingServiceImpl implements MatchingService {
 
   @Override
   public int createMatch(List<Integer> teamIds) {
-    val matchId = currentMatchId.getAndIncrement();
-    val match = new MatchImpl(matchId);
+    var matchId = currentMatchId.getAndIncrement();
+    var match = new Match(matchId);
     matchIdToMatch.put(matchId, match);
     teamIds.stream()
         .map(teamId -> teamService.getTeam(teamId).get())
@@ -61,13 +60,13 @@ public class MatchingServiceImpl implements MatchingService {
 
   @Override
   public Optional<Match> getMatchOfPlayer(String playerId) {
-    val optMatchId = getMatchIdOfPlayer(playerId);
+    var optMatchId = getMatchIdOfPlayer(playerId);
     if (!optMatchId.isPresent()) {
       log.warn("matchId is not present");
       return Optional.empty();
     }
-    val matchId = optMatchId.get();
-    val optMatch = getMatchById(matchId);
+    var matchId = optMatchId.get();
+    var optMatch = getMatchById(matchId);
     if (!optMatch.isPresent()) {
       log.warn("match is not present");
       return Optional.empty();

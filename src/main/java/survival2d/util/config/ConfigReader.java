@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import java.io.InputStreamReader;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import lombok.var;
 import survival2d.util.resource.ResourceUtil;
 import survival2d.util.serialize.GsonHolder;
 
@@ -17,8 +17,8 @@ public class ConfigReader {
 
   public static <T> T fromFile(String fileName, Class<T> classOfT, Gson gson) {
     try {
-      val stream = ResourceUtil.getInstance().getFileFromResourceAsStream(fileName);
-      val reader = new InputStreamReader(stream);
+      var stream = ResourceUtil.getInstance().getFileFromResourceAsStream(fileName);
+      var reader = new InputStreamReader(stream);
       T t = gson.fromJson(new JsonReader(reader), classOfT);
       reader.close();
       stream.close();

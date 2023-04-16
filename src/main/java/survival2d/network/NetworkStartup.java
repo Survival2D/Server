@@ -16,7 +16,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import lombok.var;
 
 @Slf4j
 public class NetworkStartup {
@@ -25,7 +25,7 @@ public class NetworkStartup {
     var parentGroup = Epoll.isAvailable() ? new EpollEventLoopGroup() : new NioEventLoopGroup();
     var childGroup = Epoll.isAvailable() ? new EpollEventLoopGroup() : new NioEventLoopGroup();
 
-    val serverBootstrap = new ServerBootstrap();
+    var serverBootstrap = new ServerBootstrap();
     serverBootstrap
         .group(parentGroup, childGroup)
         .channel(NioServerSocketChannel.class)
@@ -42,7 +42,7 @@ public class NetworkStartup {
                     .addLast(new HttpObjectAggregator(65536))
                     .addLast(new WebSocketServerCompressionHandler())
                     .addLast(new WebSocketServerProtocolHandler("/fbs", null, true))
-                    .addLast(new WebsocketDecoder())
+                    .addLast(new FlatBuffersDecoder())
                     .addLast(new WebsocketHandler());
               }
             })
@@ -53,7 +53,7 @@ public class NetworkStartup {
               protected void initChannel(Channel channel) {
                 channel
                     .pipeline()
-                    .addLast(new LoggingHandler(LogLevel.INFO))
+                    .addLast(new LoggingHandler(LogLevel.DEBUG))
                     .addLast(new HttpServerCodec())
                     .addLast(new HttpObjectAggregator(65536))
                     .addLast(new WebSocketServerCompressionHandler())
@@ -63,7 +63,7 @@ public class NetworkStartup {
             });
 
     try {
-      val channelFuture = serverBootstrap.bind(1202).sync();
+      var channelFuture = serverBootstrap.bind(1202).sync();
       channelFuture.channel().closeFuture().sync();
     } catch (InterruptedException interruptedException) {
       log.error("Interrupted", interruptedException);

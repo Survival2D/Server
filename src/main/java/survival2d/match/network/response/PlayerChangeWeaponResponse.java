@@ -6,7 +6,7 @@ import com.tvd12.ezyfox.binding.annotation.EzyWriterImpl;
 import com.tvd12.ezyfox.entity.EzyHashMap;
 import lombok.Builder;
 import lombok.Data;
-import lombok.val;
+import lombok.var;
 import survival2d.match.entity.Weapon;
 import survival2d.util.serialize.GsonHolder;
 
@@ -24,8 +24,8 @@ public class PlayerChangeWeaponResponse {
 
     @Override
     public EzyHashMap write(EzyMarshaller ezyMarshaller, PlayerChangeWeaponResponse weapon) {
-      val data = "{map: " + GsonHolder.getNormalGson().toJson(weapon) + "}";
-      val map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
+      var data = "{map: " + GsonHolder.getNormalGson().toJson(weapon) + "}";
+      var map = GsonHolder.getNormalGson().fromJson(data, EzyHashMap.class);
       return map;
     }
   }

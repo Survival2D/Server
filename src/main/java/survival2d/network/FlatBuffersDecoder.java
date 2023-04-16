@@ -1,6 +1,5 @@
 package survival2d.network;
 
-import com.miti99.netty.fbs.Packet;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
@@ -9,9 +8,10 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import survival2d.flatbuffers.Request;
 
 @Slf4j
-public class WebsocketDecoder extends MessageToMessageDecoder<BinaryWebSocketFrame> {
+public class FlatBuffersDecoder extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 
   @Override
   protected void decode(
@@ -27,8 +27,8 @@ public class WebsocketDecoder extends MessageToMessageDecoder<BinaryWebSocketFra
 
     var byteBuffer = ByteBuffer.wrap(bytes);
 
-    var packet = Packet.getRootAsPacket(byteBuffer);
+    var request = Request.getRootAsRequest(byteBuffer);
 
-    list.add(packet);
+    list.add(request);
   }
 }

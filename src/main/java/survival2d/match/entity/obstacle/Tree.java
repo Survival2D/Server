@@ -1,7 +1,7 @@
 package survival2d.match.entity.obstacle;
 
 import lombok.Data;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.util.serialize.ExcludeFromGson;

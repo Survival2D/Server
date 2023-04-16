@@ -1,9 +1,10 @@
 package survival2d.match.action;
 
+import com.badlogic.gdx.math.Vector2;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2;
+
 
 
 @Builder

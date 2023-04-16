@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import lombok.var;
 import survival2d.service.FindMatchService;
 import survival2d.service.MatchingService;
 
@@ -30,14 +30,14 @@ public class FindMatchServiceImpl implements FindMatchService {
     if (matchingTeams.size() < 2) {
       return Optional.empty();
     }
-    val optTeam = matchingTeams.stream().filter(id -> id != teamId).findFirst();
+    var optTeam = matchingTeams.stream().filter(id -> id != teamId).findFirst();
     if (!optTeam.isPresent()) {
       return Optional.empty();
     }
     log.info("Match teams {} and {} together", teamId, optTeam.get());
     matchingTeams.remove(teamId);
     matchingTeams.remove(optTeam.get());
-    val matchId = matchingService.createMatch(Lists.newArrayList(teamId, optTeam.get()));
+    var matchId = matchingService.createMatch(Lists.newArrayList(teamId, optTeam.get()));
     return Optional.of(matchId);
   }
 
