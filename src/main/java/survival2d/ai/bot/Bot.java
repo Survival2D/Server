@@ -7,8 +7,8 @@ import lombok.Setter;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.ai.btree.BTNode;
 import survival2d.ai.btree.BehaviorTree;
-import survival2d.match.action.PlayerChangeWeapon;
-import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.action.ActionChangeWeapon;
+import survival2d.match.action.ActionTakeItem;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.item.ItemOnMap;
@@ -115,7 +115,7 @@ public class Bot {
             return false;
         }
 
-        this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
+        this.match.onReceivePlayerAction(controlId, new ActionChangeWeapon(1));
 
         if (curTick - lastTickAttack < 30) {
             return false;
@@ -161,7 +161,7 @@ public class Bot {
             return false;
         }
 
-        this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
+        this.match.onReceivePlayerAction(controlId, new ActionChangeWeapon(1));
 
         if (curTick - lastTickAttack < 10) {
             return false;
@@ -202,7 +202,7 @@ public class Bot {
         this.commandMove();
 
         if (MathUtil.isIntersect(item.getPosition(), item.getShape(), this.player.getPosition(), this.player.getShape())) {
-            this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
+            this.match.onReceivePlayerAction(controlId, new ActionTakeItem());
             this.commandStopMove();
             System.out.println(controlId + "taken item");
         }
@@ -212,7 +212,7 @@ public class Bot {
         Collection<ItemOnMap> items = this.match.getNearByItem(this.player.getPosition());
         for (ItemOnMap item : items) {
             if (MathUtil.isIntersect(item.getPosition(), item.getShape(), this.player.getPosition(), this.player.getShape())) {
-                this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
+                this.match.onReceivePlayerAction(controlId, new ActionTakeItem());
                 System.out.println(controlId + "taken a nearby item");
                 return true;
             }

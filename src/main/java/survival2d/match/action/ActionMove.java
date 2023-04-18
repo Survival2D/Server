@@ -10,7 +10,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @AllArgsConstructor
-public class PlayerMove implements PlayerAction {
+public class ActionMove implements PlayerAction {
 
   private Vector2 direction;
   private double rotation;

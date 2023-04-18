@@ -47,11 +47,11 @@ import survival2d.flatbuffers.TreeTable;
 import survival2d.flatbuffers.Vector2Struct;
 import survival2d.flatbuffers.WallTable;
 import survival2d.match.action.PlayerAction;
-import survival2d.match.action.PlayerAttack;
-import survival2d.match.action.PlayerChangeWeapon;
-import survival2d.match.action.PlayerMove;
-import survival2d.match.action.PlayerReloadWeapon;
-import survival2d.match.action.PlayerTakeItem;
+import survival2d.match.action.ActionAttack;
+import survival2d.match.action.ActionChangeWeapon;
+import survival2d.match.action.ActionMove;
+import survival2d.match.action.ActionReloadWeapon;
+import survival2d.match.action.ActionTakeItem;
 import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Destroyable;
@@ -132,7 +132,7 @@ public class Match {
     return players.keySet();
   }
 
-  public void onReceivePlayerAction(String playerId, PlayerAction action) {
+  public void onReceivePlayerAction(int playerId, PlayerAction action) {
     var player = players.get(playerId);
     if (player.isDestroyed()) {
       log.error("Player {} take action while dead", playerId);
@@ -398,11 +398,11 @@ public class Match {
   }
 
   public void responseMatchInfo(String username) {
-    final byte[] bytes = getMatchInfoPacket();
+    final byte[] bytes = getMatchInfoData();
     zoneContext.stream(bytes, getSession(username));
   }
 
-  private byte[] getMatchInfoPacket() {
+  public byte[] getMatchInfoData() {
     var builder = new FlatBufferBuilder(0);
 
     final int responseOffset = putResponseData(builder);
@@ -498,7 +498,7 @@ public class Match {
   }
 
   public void responseMatchInfo() {
-    var bytes = getMatchInfoPacket();
+    var bytes = getMatchInfoData();
     zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
@@ -761,7 +761,7 @@ public class Match {
       for (var action : playerActionMap.values()) {
         handlePlayerAction(player.getPlayerId(), action);
         // TODO: nếu mà client chưa sửa kịp, thì comment 3 dòng sau
-        if (!(action instanceof PlayerMove)) {
+        if (!(action instanceof ActionMove)) {
           playerActionMap.remove(action.getClass());
         }
       }
@@ -770,16 +770,16 @@ public class Match {
   }
 
   private void handlePlayerAction(String playerId, PlayerAction action) {
-    if (action instanceof PlayerMove playerMove) {
-      onPlayerMove(playerId, playerMove.getDirection(), playerMove.getRotation());
-    } else if (action instanceof PlayerAttack) {
+    if (action instanceof ActionMove actionMove) {
+      onPlayerMove(playerId, actionMove.getDirection(), actionMove.getRotation());
+    } else if (action instanceof ActionAttack) {
       var player = players.get(playerId);
       onPlayerAttack(playerId, player.getAttackDirection());
-    } else if (action instanceof PlayerChangeWeapon playerChangeWeapon) {
+    } else if (action instanceof ActionChangeWeapon playerChangeWeapon) {
       onPlayerSwitchWeapon(playerId, playerChangeWeapon.getWeaponIndex());
-    } else if (action instanceof PlayerReloadWeapon) {
+    } else if (action instanceof ActionReloadWeapon) {
       onPlayerReloadWeapon(playerId);
-    } else if (action instanceof PlayerTakeItem) {
+    } else if (action instanceof ActionTakeItem) {
       onPlayerTakeItem(playerId);
     }
   }

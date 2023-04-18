@@ -1,12 +1,14 @@
 package survival2d.network;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.flatbuffers.ByteBufferUtil;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.internal.ChannelUtils;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
 import io.netty.handler.timeout.IdleState;
@@ -17,103 +19,103 @@ import survival2d.flatbuffers.PlayerAttackRequest;
 import survival2d.flatbuffers.PlayerChangeWeaponRequest;
 import survival2d.flatbuffers.PlayerMoveRequest;
 import survival2d.flatbuffers.Request;
-import survival2d.match.action.PlayerAttack;
-import survival2d.match.action.PlayerChangeWeapon;
-import survival2d.match.action.PlayerMove;
-import survival2d.match.action.PlayerReloadWeapon;
-import survival2d.match.action.PlayerTakeItem;
-import survival2d.ping.data.SamplePingData;
+import survival2d.flatbuffers.RequestUnion;
+import survival2d.match.action.ActionAttack;
+import survival2d.match.action.ActionChangeWeapon;
+import survival2d.match.action.ActionMove;
+import survival2d.match.action.ActionReloadWeapon;
+import survival2d.match.action.ActionTakeItem;
 import survival2d.network.client.User;
 import survival2d.network.json.request.BaseJsonRequest;
 import survival2d.network.json.request.LoginJsonRequest;
 import survival2d.network.json.response.LoginJsonResponse;
+import survival2d.ping.data.SamplePingData;
+import survival2d.service.MatchingService;
 
-@ChannelHandler.Sharable
+@Sharable
 @Slf4j
 public class WebsocketHandler extends ChannelInboundHandlerAdapter {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof Request request) {
+      var userId = getId(ctx.channel());
       switch (request.requestType()) {
-        case PacketData.MatchInfoRequest: {
-          var optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-          if (!optMatch.isPresent()) {
+        case RequestUnion.MatchInfoRequest -> {
+          var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
+          if (optMatch.isEmpty()) {
             log.warn("match is not present");
-            return;
+            break;
           }
           var match = optMatch.get();
-          match.responseMatchInfo(username);
-          break;
+          var data = match.getMatchInfoData();
+          NetworkUtil.sendBinaryResponse(userId, data);
         }
-        case PacketData.PlayerMoveRequest: {
-          var optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-          if (!optMatch.isPresent()) {
+        case RequestUnion.PlayerMoveRequest -> {
+          var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
+          if (optMatch.isEmpty()) {
             log.warn("match is not present");
-            return;
+            break;
           }
-          var request = new PlayerMoveRequest();
-          packet.data(request);
+          var playerMoveRequest = new PlayerMoveRequest();
+          request.request(request);
 
           var match = optMatch.get();
           match.onReceivePlayerAction(
-              username,
-              new PlayerMove(
-                  new Vector2(request.direction().x(), request.direction().y()),
-                  request.rotation()));
-          break;
+              userId,
+              new ActionMove(
+                  new Vector2(playerMoveRequest.direction().x(), playerMoveRequest.direction().y()),
+                  playerMoveRequest.rotation()));
         }
-        case PacketData.PlayerChangeWeaponRequest: {
-          var optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-          if (!optMatch.isPresent()) {
+        case RequestUnion.PlayerChangeWeaponRequest -> {
+          var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
+          if (optMatch.isEmpty()) {
             log.warn("match is not present");
-            return;
+            break;
           }
-          var request = new PlayerChangeWeaponRequest();
-          packet.data(request);
+          var playerChangeWeaponRequest = new PlayerChangeWeaponRequest();
+          request.request(request);
 
           var match = optMatch.get();
-          match.onReceivePlayerAction(username, new PlayerChangeWeapon(request.slot()));
-          break;
+          match.onReceivePlayerAction(userId, new ActionChangeWeapon(playerChangeWeaponRequest.slot()));
         }
-        case PacketData.PlayerAttackRequest: {
-          var optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
-          if (!optMatch.isPresent()) {
+        case RequestUnion.PlayerAttackRequest -> {
+          var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
+          if (optMatch.isEmpty()) {
             log.warn("match is not present");
-            return;
+            break;
           }
           var request = new PlayerAttackRequest();
           packet.data(request);
           var match = optMatch.get();
-          match.onReceivePlayerAction(username, new PlayerAttack());
-          break;
+          match.onReceivePlayerAction(userId, new ActionAttack());
         }
-        case PacketData.PlayerReloadWeaponRequest: {
-          var optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
+        case RequestUnion.PlayerReloadWeaponRequest -> {
+          var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;
           }
           var match = optMatch.get();
-          match.onReceivePlayerAction(username, new PlayerReloadWeapon());
+          match.onReceivePlayerAction(userId, new ActionReloadWeapon());
           break;
         }
-        case PacketData.PlayerTakeItemRequest: {
-          var optMatch = BeanUtil.getMatchingService().getMatchOfPlayer(username);
+        case RequestUnion.PlayerTakeItemRequest -> {
+          var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
           if (!optMatch.isPresent()) {
             log.warn("match is not present");
             return;
           }
           var match = optMatch.get();
-          match.onReceivePlayerAction(username, new PlayerTakeItem());
+          match.onReceivePlayerAction(userId, new ActionTakeItem());
           break;
         }
-        case PacketData.PingRequest: {
+        case RequestUnion.PingRequest -> {
           var builder = new FlatBufferBuilder(0);
           survival2d.flatbuffers.PingResponse.startPingResponse(builder);
           var responseOffset = survival2d.flatbuffers.PingResponse.endPingResponse(builder);
 
           Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.PingResponse);
+          Packet.addDataType(builder, RequestUnion.PingResponse);
           Packet.addData(builder, responseOffset);
           var packetOffset = Packet.endPacket(builder);
           builder.finish(packetOffset);
@@ -123,11 +125,11 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           log.info("pingByte's size {}", bytes.length);
           break;
         }
-        case PacketData.PingByPlayerMoveRequest: {
+        case RequestUnion.PingByPlayerMoveRequest -> {
           var builder = new FlatBufferBuilder(0);
-          var usernameOffset = builder.createString(SamplePingData.username);
+          var userIdOffset = builder.createString(SamplePingData.userId);
           survival2d.flatbuffers.PingByPlayerMoveResponse.startPingByPlayerMoveResponse(builder);
-          survival2d.flatbuffers.PingByPlayerMoveResponse.addUsername(builder, usernameOffset);
+          survival2d.flatbuffers.PingByPlayerMoveResponse.adduserId(builder, userIdOffset);
           survival2d.flatbuffers.Vec2.createVec2(
               builder, SamplePingData.position.getX(), SamplePingData.position.getY());
           survival2d.flatbuffers.PingByPlayerMoveResponse.addRotation(
@@ -135,7 +137,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           var responseOffset = survival2d.flatbuffers.PingResponse.endPingResponse(builder);
 
           Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.PingByPlayerMoveResponse);
+          Packet.addDataType(builder, RequestUnion.PingByPlayerMoveResponse);
           Packet.addData(builder, responseOffset);
           var packetOffset = Packet.endPacket(builder);
           builder.finish(packetOffset);
@@ -145,13 +147,13 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           log.info("pingByPlayerMoveByte's size {}", bytes.length);
           break;
         }
-        case PacketData.PingByMatchInfoRequest: {
+        case RequestUnion.PingByMatchInfoRequest -> {
           var builder = new FlatBufferBuilder(0);
 
           final int responseOffset = SamplePingData.match.putResponseData(builder);
 
           Packet.startPacket(builder);
-          Packet.addDataType(builder, PacketData.PingByMatchInfoResponse);
+          Packet.addDataType(builder, RequestUnion.PingByMatchInfoResponse);
           Packet.addData(builder, responseOffset);
           var packetOffset = Packet.endPacket(builder);
           builder.finish(packetOffset);
@@ -161,8 +163,8 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           log.info("pingByMatchInfoByte's size {}", bytes.length);
           break;
         }
-        default: {
-          log.warn("not handle packet data type {} from user {}", packet.dataType(), username);
+        default -> {
+          log.warn("not handle packet data type {} from user {}", packet.dataType(), userId);
           break;
         }
       }

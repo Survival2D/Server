@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PlayerDropItem implements PlayerAction {
+public class ActionDropItem implements PlayerAction {
 
   String itemId;
 }

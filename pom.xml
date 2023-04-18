@@ -12,6 +12,16 @@
       <version>1.7.4</version>
     </dependency>
     <dependency>
+      <artifactId>gdx</artifactId>
+      <groupId>com.badlogicgames.gdx</groupId>
+      <version>1.11.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>gdx-ai</artifactId>
+      <groupId>com.badlogicgames.gdx</groupId>
+      <version>1.8.2</version>
+    </dependency>
+    <dependency>
       <artifactId>gson</artifactId>
       <groupId>com.google.code.gson</groupId>
       <version>2.10.1</version>
