@@ -1,3 +1,3 @@
 # Survival2D Server
 
-Base on: https://github.com/ainilili/ratel
+Reference: https://github.com/ainilili/ratel
