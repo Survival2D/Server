@@ -9,19 +9,19 @@ import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.weapon.Containable;
-import survival2d.util.serialize.ExcludeFromGson;
+import survival2d.util.serialize.GsonTransient;
 
 @Data
 public class Container implements Destroyable, HasHp, Obstacle, Containable {
 
-  @ExcludeFromGson
+  @GsonTransient
   int id;
-  @ExcludeFromGson
+  @GsonTransient
   double hp = 100;
   Vector2 position;
-  @ExcludeFromGson
+  @GsonTransient
   Rectangle shape;
-  @ExcludeFromGson
+  @GsonTransient
   List<Item> items;
   ObstacleType type = ObstacleType.CONTAINER;
 

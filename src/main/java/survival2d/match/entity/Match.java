@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
+import com.google.flatbuffers.ByteBufferUtil;
 import com.google.flatbuffers.FlatBufferBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,43 +69,49 @@ import survival2d.match.entity.obstacle.Tree;
 import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.weapon.Containable;
 import survival2d.match.util.MatchUtil;
-import survival2d.util.serialize.ExcludeFromGson;
+import survival2d.util.serialize.GsonTransient;
 
 @Getter
 @Slf4j
 public class Match {
 
-  @ExcludeFromGson private final long id;
+  @GsonTransient
+  private final long id;
   private final Map<Integer, MapObject> objects = new ConcurrentHashMap<>();
 
-  @ExcludeFromGson
+  @GsonTransient
   private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
       new ConcurrentHashMap<>();
 
   private final Map<String, Player> players = new ConcurrentHashMap<>();
-  @ExcludeFromGson private final Timer timer = new Timer();
+  @GsonTransient
+  private final Timer timer = new Timer();
   private final List<Circle> safeZones = new ArrayList<>();
-  @ExcludeFromGson int nextSafeZone;
-  @ExcludeFromGson private int currentMapObjectId;
-  @ExcludeFromGson private TimerTask gameLoopTask;
-  @ExcludeFromGson private long currentTick;
+  @GsonTransient
+  int nextSafeZone;
+  @GsonTransient
+  private int currentMapObjectId;
+  @GsonTransient
+  private TimerTask gameLoopTask;
+  @GsonTransient
+  private long currentTick;
 
   public Match(long id) {
     this.id = id;
     init();
   }
 
-  public void addPlayer(int teamId, String playerId) {
-    players.putIfAbsent(playerId, new Player(playerId, teamId));
+  public void addPlayer(int teamId, int userId) {
+    players.putIfAbsent(userId, new Player(userId, teamId));
     int tryCount = 0;
-    while (!randomPositionForPlayer(playerId)) {
+    while (!randomPositionForPlayer(userId)) {
       tryCount++;
       if (tryCount > 100) {
-        log.error("Can't find position for player {}", playerId);
+        log.error("Can't find position for player {}", userId);
         break;
       }
     }
-    playerRequests.put(playerId, new ConcurrentHashMap<>());
+    playerRequests.put(userId, new ConcurrentHashMap<>());
   }
 
   public boolean randomPositionForPlayer(String playerId) {

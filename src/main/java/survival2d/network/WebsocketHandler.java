@@ -22,7 +22,7 @@ import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
-import survival2d.misc.util.SamplePingData;
+import survival2d.ping.data.SamplePingData;
 import survival2d.network.client.User;
 import survival2d.network.json.request.BaseJsonRequest;
 import survival2d.network.json.request.LoginJsonRequest;

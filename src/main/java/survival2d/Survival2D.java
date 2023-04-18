@@ -6,7 +6,7 @@ import survival2d.network.NetworkStartup;
 @Slf4j
 public class Survival2D {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     log.trace("Begin init server");
     NetworkStartup.setup();
     log.trace("Complete init server!");

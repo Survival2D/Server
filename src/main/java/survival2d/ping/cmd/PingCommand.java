@@ -1,6 +1,6 @@
-package survival2d.misc;
+package survival2d.ping.cmd;
 
-public class MiscCommand {
+public class PingCommand {
 
   public static final String PING = "ping";
   public static final String PING_BY_PLAYER_MOVE = "pingByPlayerMove";

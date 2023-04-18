@@ -4,17 +4,17 @@ import lombok.Data;
 
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
-import survival2d.util.serialize.ExcludeFromGson;
+import survival2d.util.serialize.GsonTransient;
 
 @Data
 public class Tree implements Destroyable, HasHp, Obstacle {
 
-  @ExcludeFromGson
+  @GsonTransient
   int id;
-  @ExcludeFromGson
+  @GsonTransient
   double hp = 100;
   Vector2 position;
-  @ExcludeFromGson
+  @GsonTransient
   Circle shape;
   ObstacleType type = ObstacleType.TREE;
 

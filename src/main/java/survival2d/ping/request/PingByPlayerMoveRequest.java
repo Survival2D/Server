@@ -1,4 +1,4 @@
-package survival2d.misc.request;
+package survival2d.ping.request;
 
 import com.tvd12.ezyfox.binding.annotation.EzyObjectBinding;
 import lombok.Value;

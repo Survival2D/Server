@@ -17,7 +17,7 @@ import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
-import survival2d.util.serialize.ExcludeFromGson;
+import survival2d.util.serialize.GsonTransient;
 
 @Data
 @Slf4j
@@ -26,24 +26,24 @@ public class Player implements Destroyable, HasHp {
   String playerId;
   Vector2 position = new Vector2();
   float rotation;
-  @ExcludeFromGson
+  @GsonTransient
   double speed = 10;
-  @ExcludeFromGson
+  @GsonTransient
   double hp = 100;
-  @ExcludeFromGson
+  @GsonTransient
   Vector2 direction;
-  @ExcludeFromGson
+  @GsonTransient
   List<Weapon> weapons = new ArrayList<>();
-  @ExcludeFromGson
+  @GsonTransient
   Map<Item, Integer> items; // Map item to quantity
-  @ExcludeFromGson
+  @GsonTransient
   Map<BulletType, Integer> bullets; // Map bullet to quantity
-  @ExcludeFromGson
+  @GsonTransient
   int currentWeaponIndex;
   int team;
-  @ExcludeFromGson
+  @GsonTransient
   Circle shape = new Circle(30);
-  @ExcludeFromGson
+  @GsonTransient
   Circle head = new Circle(10);
 
   public Player(String playerId, int team) {

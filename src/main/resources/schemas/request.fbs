@@ -4,6 +4,21 @@ namespace survival2d.flatbuffers;
 table LoginRequest {
 }
 
+table GetUserInfoRequest {
+}
+
+table CreateTeamRequest {
+}
+
+table JoinTeamRequest {
+}
+
+table FindMatchRequest {
+}
+
+table GetConfigRequest {
+}
+
 table MatchInfoRequest {
 }
 
@@ -40,6 +55,11 @@ table PingByMatchInfoRequest {}
 
 union RequestUnion {
   LoginRequest,
+  GetUserInfoRequest,
+  CreateTeamRequest,
+  JoinTeamRequest,
+  FindMatchRequest,
+  GetConfigRequest,
   MatchInfoRequest,
   PlayerMoveRequest,
   PlayerAttackRequest,

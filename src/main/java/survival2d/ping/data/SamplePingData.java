@@ -1,4 +1,4 @@
-package survival2d.misc.util;
+package survival2d.ping.data;
 
 
 

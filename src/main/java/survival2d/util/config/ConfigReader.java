@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import java.io.InputStreamReader;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import survival2d.util.resource.ResourceUtil;
 import survival2d.util.serialize.GsonHolder;
 

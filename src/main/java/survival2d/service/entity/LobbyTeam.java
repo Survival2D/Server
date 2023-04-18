@@ -3,31 +3,30 @@ package survival2d.service.entity;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import survival2d.match.constant.GameConstant;
 
-public class LobbyTeam implements Team {
+@Getter
+public class LobbyTeam {
 
-  @Getter
   private final int id;
-  private final Set<String> playerUsernames = new HashSet<>(GameConstant.TEAM_PLAYER);
+  private final Set<Integer> memberIds =
+      ConcurrentHashMap.newKeySet(GameConstant.MAX_PLAYER_IN_TEAM);
 
   public LobbyTeam(int teamId) {
     id = teamId;
   }
 
-  @Override
-  public void addPlayer(String username) {
-    playerUsernames.add(username);
+  public void addMember(int userId) {
+    memberIds.add(userId);
   }
 
-  @Override
-  public boolean removePlayer(String username) {
-    return playerUsernames.remove(username);
+  public boolean removeMember(int userId) {
+    return memberIds.remove(userId);
   }
 
-  @Override
-  public Collection<String> getPlayers() {
-    return new HashSet<>(playerUsernames);
+  public Collection<Integer> getMemberIds() {
+    return new HashSet<>(memberIds);
   }
 }

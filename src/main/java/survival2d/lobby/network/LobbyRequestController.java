@@ -7,8 +7,6 @@ import com.tvd12.ezyfox.util.EzyLoggable;
 import com.tvd12.ezyfoxserver.entity.EzyUser;
 import com.tvd12.ezyfoxserver.support.factory.EzyResponseFactory;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
-import lombok.var;
 import survival2d.common.ResponseError;
 import survival2d.lobby.entity.JoinTeamResult;
 import survival2d.lobby.network.request.JoinTeamRequest;
@@ -19,9 +17,6 @@ import survival2d.lobby.network.response.GetUserInfoResponse;
 import survival2d.lobby.network.response.JoinTeamResponse;
 import survival2d.lobby.network.response.NewUserJoinTeamResponse;
 import survival2d.match.config.GameConfig;
-import survival2d.service.FindMatchService;
-import survival2d.service.LobbyTeamService;
-import survival2d.service.MatchingService;
 import survival2d.service.entity.LobbyTeam;
 
 @EzyRequestController

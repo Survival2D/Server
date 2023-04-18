@@ -7,6 +7,21 @@ table LoginResponse {
   token: string;
 }
 
+table GetUserInfoRequest {
+}
+
+table CreateTeamRequest {
+}
+
+table JoinTeamRequest {
+}
+
+table FindMatchRequest {
+}
+
+table GetConfigRequest {
+}
+
 table MatchInfoResponse {
   players: [PlayerTable];
   mapObjects: [MapObjectTable];
@@ -117,6 +132,11 @@ table ErrorResponse {
 }
 
 union ResponseUnion {
+  GetUserInfoResponse,
+  CreateTeamResponse,
+  JoinTeamResponse,
+  FindMatchResponse,
+  GetConfigResponse,
   MatchInfoResponse,
   PlayerMoveResponse,
   PlayerAttackResponse,

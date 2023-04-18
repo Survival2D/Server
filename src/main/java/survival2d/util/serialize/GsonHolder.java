@@ -23,7 +23,7 @@ public class GsonHolder {
   @Getter(lazy = true)
   private static final Gson withExcludeAnnotation =
       new GsonBuilder()
-          .setExclusionStrategies(ExcludeAnnotationFromGsonStrategy.getInstance())
+          .setExclusionStrategies(GsonTransientExclusionStrategy.getInstance())
           .create();
 
   @Getter(lazy = true)
