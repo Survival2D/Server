@@ -17,11 +17,11 @@ public final class PlayerMoveRequest extends Table {
 
   public survival2d.flatbuffers.Vector2Struct direction() { return direction(new survival2d.flatbuffers.Vector2Struct()); }
   public survival2d.flatbuffers.Vector2Struct direction(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(4); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
-  public double rotation() { int o = __offset(6); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
+  public float rotation() { int o = __offset(6); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
 
   public static void startPlayerMoveRequest(FlatBufferBuilder builder) { builder.startTable(2); }
   public static void addDirection(FlatBufferBuilder builder, int directionOffset) { builder.addStruct(0, directionOffset, 0); }
-  public static void addRotation(FlatBufferBuilder builder, double rotation) { builder.addDouble(1, rotation, 0.0); }
+  public static void addRotation(FlatBufferBuilder builder, float rotation) { builder.addFloat(1, rotation, 0.0f); }
   public static int endPlayerMoveRequest(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

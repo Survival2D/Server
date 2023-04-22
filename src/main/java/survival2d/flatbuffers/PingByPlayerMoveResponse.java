@@ -15,15 +15,13 @@ public final class PingByPlayerMoveResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PingByPlayerMoveResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public String username() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer usernameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public ByteBuffer usernameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
+  public int playerId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   public survival2d.flatbuffers.Vector2Struct position() { return position(new survival2d.flatbuffers.Vector2Struct()); }
   public survival2d.flatbuffers.Vector2Struct position(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(6); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
   public double rotation() { int o = __offset(8); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
 
   public static void startPingByPlayerMoveResponse(FlatBufferBuilder builder) { builder.startTable(3); }
-  public static void addUsername(FlatBufferBuilder builder, int usernameOffset) { builder.addOffset(0, usernameOffset, 0); }
+  public static void addPlayerId(FlatBufferBuilder builder, int playerId) { builder.addInt(0, playerId, 0); }
   public static void addPosition(FlatBufferBuilder builder, int positionOffset) { builder.addStruct(1, positionOffset, 0); }
   public static void addRotation(FlatBufferBuilder builder, double rotation) { builder.addDouble(2, rotation, 0.0); }
   public static int endPingByPlayerMoveResponse(FlatBufferBuilder builder) {

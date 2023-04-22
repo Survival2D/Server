@@ -17,7 +17,7 @@ import survival2d.match.entity.config.BulletType;
 public class Bullet implements MapObject, Movable, Destroyable {
 
   int id;
-  String ownerId;
+  int ownerId;
 
   Vector2 position;
 
@@ -27,7 +27,7 @@ public class Bullet implements MapObject, Movable, Destroyable {
   boolean isDestroyed;
   Circle shape = new Circle(position, 0);
 
-  public Bullet(String ownerId, Vector2 rawPosition, Vector2 direction, BulletType type) {
+  public Bullet(int ownerId, Vector2 rawPosition, Vector2 direction, BulletType type) {
     this.ownerId = ownerId;
     this.rawPosition = rawPosition;
     this.position = rawPosition;

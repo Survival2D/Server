@@ -30,7 +30,7 @@ public class PingController {
         .command(PingCommand.PING_BY_PLAYER_MOVE)
         .data(
             PingByPlayerMoveResponse.builder()
-                .username(SamplePingData.username)
+                .username(SamplePingData.userId)
                 .position(SamplePingData.position)
                 .rotation(SamplePingData.rotation)
                 .build())

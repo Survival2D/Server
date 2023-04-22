@@ -12,13 +12,13 @@ public final class Vector2Struct extends Struct {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public Vector2Struct __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public double x() { return bb.getDouble(bb_pos + 0); }
-  public double y() { return bb.getDouble(bb_pos + 8); }
+  public float x() { return bb.getFloat(bb_pos + 0); }
+  public float y() { return bb.getFloat(bb_pos + 4); }
 
-  public static int createVector2Struct(FlatBufferBuilder builder, double x, double y) {
-    builder.prep(8, 16);
-    builder.putDouble(y);
-    builder.putDouble(x);
+  public static int createVector2Struct(FlatBufferBuilder builder, float x, float y) {
+    builder.prep(4, 8);
+    builder.putFloat(y);
+    builder.putFloat(x);
     return builder.offset();
   }
 

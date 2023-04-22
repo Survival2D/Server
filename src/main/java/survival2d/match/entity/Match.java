@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import com.google.flatbuffers.ByteBufferUtil;
 import com.google.flatbuffers.FlatBufferBuilder;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,12 +47,12 @@ import survival2d.flatbuffers.StoneTable;
 import survival2d.flatbuffers.TreeTable;
 import survival2d.flatbuffers.Vector2Struct;
 import survival2d.flatbuffers.WallTable;
-import survival2d.match.action.PlayerAction;
 import survival2d.match.action.ActionAttack;
 import survival2d.match.action.ActionChangeWeapon;
 import survival2d.match.action.ActionMove;
 import survival2d.match.action.ActionReloadWeapon;
 import survival2d.match.action.ActionTakeItem;
+import survival2d.match.action.PlayerAction;
 import survival2d.match.config.GameConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Destroyable;
@@ -69,6 +70,8 @@ import survival2d.match.entity.obstacle.Tree;
 import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.weapon.Containable;
 import survival2d.match.util.MatchUtil;
+import survival2d.network.NetworkUtil;
+import survival2d.service.MatchingService;
 import survival2d.util.serialize.GsonTransient;
 
 @Getter
@@ -76,14 +79,14 @@ import survival2d.util.serialize.GsonTransient;
 public class Match {
 
   @GsonTransient
-  private final long id;
+  private final int id;
   private final Map<Integer, MapObject> objects = new ConcurrentHashMap<>();
 
   @GsonTransient
-  private final Map<String, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
+  private final Map<Integer, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
       new ConcurrentHashMap<>();
 
-  private final Map<String, Player> players = new ConcurrentHashMap<>();
+  private final Map<Integer, Player> players = new ConcurrentHashMap<>();
   @GsonTransient
   private final Timer timer = new Timer();
   private final List<Circle> safeZones = new ArrayList<>();
@@ -114,7 +117,7 @@ public class Match {
     playerRequests.put(userId, new ConcurrentHashMap<>());
   }
 
-  public boolean randomPositionForPlayer(String playerId) {
+  public boolean randomPositionForPlayer(int playerId) {
     var player = players.get(playerId);
     var newPosition = MatchUtil.randomPosition(100, 9900, 100, 9900);
     player.setPosition(newPosition);
@@ -128,7 +131,7 @@ public class Match {
     return true;
   }
 
-  public Collection<String> getAllPlayers() {
+  public Collection<Integer> getAllPlayers() {
     return players.keySet();
   }
 
@@ -142,7 +145,7 @@ public class Match {
     playerActionMap.put(action.getClass(), action);
   }
 
-  public void onPlayerMove(String playerId, Vector2 direction, double rotation) {
+  public void onPlayerMove(int playerId, Vector2 direction, float rotation) {
     var player = players.get(playerId);
     if (player == null) {
       log.error("player {} is null", playerId);
@@ -155,10 +158,9 @@ public class Match {
     }
     player.setRotation(rotation);
     var builder = new FlatBufferBuilder(0);
-    var usernameOffset = builder.createString(playerId);
 
     PlayerMoveResponse.startPlayerMoveResponse(builder);
-    PlayerMoveResponse.addUsername(builder, usernameOffset);
+    PlayerMoveResponse.addPlayerId(builder, playerId);
     PlayerMoveResponse.addRotation(builder, rotation);
     var positionOffset = Vector2Struct.createVector2Struct(builder, direction.x, direction.y);
     PlayerMoveResponse.addPosition(builder, positionOffset);
@@ -170,11 +172,11 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    var bytes = builder.dataBuffer();
+    NetworkUtil.sendResponse(playerId, bytes);
   }
 
-  public void onPlayerAttack(String playerId, Vector2 direction) {
+  public void onPlayerAttack(int playerId, Vector2 direction) {
     var player = players.get(playerId);
     var currentWeapon = player.getCurrentWeapon().get();
     if (currentWeapon.getAttachType() == AttachType.MELEE) {
@@ -182,7 +184,7 @@ public class Match {
           playerId,
           player
               .getPosition()
-              .add(player.getAttackDirection().scl(((Circle) player.getShape()).radius)),
+              .add(player.getAttackDirection().scl(player.getShape().radius)),
           new Circle(10),
           5);
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
@@ -194,7 +196,7 @@ public class Match {
                   player
                       .getAttackDirection()
                       .scl(
-                          ((Circle) player.getShape()).radius
+                          player.getShape().radius
                               + GameConstant.INITIAL_BULLET_DISTANCE)),
           direction,
           BulletType.NORMAL);
@@ -206,15 +208,14 @@ public class Match {
     objects.put(mapObject.getId(), mapObject);
   }
 
-  public void createDamage(String playerId, Shape2D shape, double damage) {
+  public void createDamage(int playerId, Circle circle, double damage) {
     var player = players.get(playerId);
     log.warn("match is not present");
     var builder = new FlatBufferBuilder(0);
-    var usernameOffset = builder.createString(playerId);
 
     PlayerAttackResponse.startPlayerAttackResponse(builder);
-    PlayerAttackResponse.addUsername(builder, usernameOffset);
-    var positionOffset = Vec2.createVec2(builder, position.getX(), position.getY());
+    PlayerAttackResponse.addPlayerId(builder, playerId);
+    var positionOffset = Vector2Struct.createVector2Struct(builder, circle.x, circle.y);
     PlayerMoveResponse.addPosition(builder, positionOffset);
     var responseOffset = PlayerAttackResponse.endPlayerAttackResponse(builder);
 
@@ -226,10 +227,10 @@ public class Match {
 
     var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
     zoneContext.stream(bytes, getSessions(getAllPlayers()));
-    makeDamage(playerId, shape, damage);
+    makeDamage(playerId, circle, damage);
   }
 
-  public void makeDamage(String playerId, Shape2D shape, double damage) {
+  public void makeDamage(int playerId, Shape2D shape, double damage) {
     var currentPlayer = players.get(playerId);
     for (var player : players.values()) {
       if (player.getTeam() == currentPlayer.getTeam()) {
@@ -369,11 +370,10 @@ public class Match {
     }
   }
 
-  public void createBullet(String playerId, Vector2 position, Vector2 direction, BulletType type) {
+  public void createBullet(int playerId, Vector2 position, Vector2 direction, BulletType type) {
     var bullet = new Bullet(playerId, position, direction, type);
     addMapObject(bullet);
     var builder = new FlatBufferBuilder(0);
-    var usernameOffset = builder.createString(playerId);
     var positionOffset = Vector2Struct.createVector2Struct(builder, position.x, position.y);
     var directionOffset = Vector2Struct.createVector2Struct(builder, direction.x, direction.y);
 
@@ -382,7 +382,7 @@ public class Match {
     BulletTable.addId(builder, bullet.getId());
     BulletTable.addPosition(builder, positionOffset);
     BulletTable.addDirection(builder, directionOffset);
-    BulletTable.addOwner(builder, usernameOffset);
+    BulletTable.addOwner(builder, playerId);
     var bulletOffset = BulletTable.endBulletTable(builder);
     var responseOffset =
         CreateBulletOnMapResponse.createCreateBulletOnMapResponse(builder, bulletOffset);
@@ -393,16 +393,10 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
   }
 
-  public void responseMatchInfo(String username) {
-    final byte[] bytes = getMatchInfoData();
-    zoneContext.stream(bytes, getSession(username));
-  }
-
-  public byte[] getMatchInfoData() {
+  public ByteBuffer getMatchInfoData() {
     var builder = new FlatBufferBuilder(0);
 
     final int responseOffset = putResponseData(builder);
@@ -413,8 +407,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    return bytes;
+    return builder.dataBuffer();
   }
 
   public int putResponseData(FlatBufferBuilder builder) {
@@ -422,9 +415,8 @@ public class Match {
     var players = this.players.values().toArray(new Player[0]);
     for (int i = 0; i < players.length; i++) {
       var player = players[i];
-      var usernameOffset = builder.createString(player.getPlayerId());
       PlayerTable.startPlayerTable(builder);
-      PlayerTable.addUsername(builder, usernameOffset);
+      PlayerTable.addPlayerId(builder, player.getPlayerId());
       var positionOffset =
           Vector2Struct.createVector2Struct(
               builder, player.getPosition().x, player.getPosition().y);
@@ -493,8 +485,7 @@ public class Match {
     var safeZoneOffset =
         Vector2Struct.createVector2Struct(builder, safeZones.get(0).x, safeZones.get(0).y);
     MatchInfoResponse.addSafeZone(builder, safeZoneOffset);
-    var responseOffset = MatchInfoResponse.endMatchInfoResponse(builder);
-    return responseOffset;
+    return MatchInfoResponse.endMatchInfoResponse(builder);
   }
 
   public void responseMatchInfo() {
@@ -502,7 +493,7 @@ public class Match {
     zoneContext.stream(bytes, getSessions(getAllPlayers()));
   }
 
-  public void onPlayerSwitchWeapon(String playerId, int weaponId) {
+  public void onPlayerSwitchWeapon(int playerId, int weaponId) {
     var player = players.get(playerId);
     if (player == null) {
       log.error("player {} is null", playerId);
@@ -510,11 +501,10 @@ public class Match {
     }
     player.switchWeapon(weaponId);
     var builder = new FlatBufferBuilder(0);
-    var usernameOffset = builder.createString(playerId);
 
     var responseOffset =
         PlayerChangeWeaponResponse.createPlayerChangeWeaponResponse(
-            builder, usernameOffset, (byte) weaponId);
+            builder, playerId, (byte) weaponId);
 
     Response.startResponse(builder);
     Response.addResponseType(builder, ResponseUnion.PlayerChangeWeaponResponse);
@@ -522,8 +512,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
   }
 
   public void init() {
@@ -564,7 +553,7 @@ public class Match {
 
   public void stop() {
     timer.cancel();
-    //    EzyFoxUtil.getInstance().getMatchingService().destroyMatch(this.getId());
+        MatchingService.getInstance().destroyMatch(id);
   }
 
   public boolean randomPositionForObstacle(Obstacle obstacle) {
@@ -640,8 +629,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
   }
 
   public void end() {
@@ -671,8 +659,7 @@ public class Match {
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
 
-      var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-      zoneContext.stream(bytes, getSessions(getAllPlayers()));
+      NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
     }
     if (nextSafeZone >= safeZones.size()) {
       return;
@@ -691,8 +678,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
   }
 
   private void updateMapObjects() {
@@ -700,7 +686,7 @@ public class Match {
       if (mapObject instanceof Bullet bullet) {
         bullet.move();
         log.info("bullet position {}", bullet.getPosition());
-        String ownerId = bullet.getOwnerId();
+        var ownerId = bullet.getOwnerId();
         var owner = players.get(ownerId);
         for (var player : players.values()) {
           log.info("player's team {}, owner's team {}", player.getTeam(), owner.getTeam());
@@ -769,7 +755,7 @@ public class Match {
     }
   }
 
-  private void handlePlayerAction(String playerId, PlayerAction action) {
+  private void handlePlayerAction(int playerId, PlayerAction action) {
     if (action instanceof ActionMove actionMove) {
       onPlayerMove(playerId, actionMove.getDirection(), actionMove.getRotation());
     } else if (action instanceof ActionAttack) {
@@ -817,11 +803,10 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
   }
 
-  private void onPlayerTakeItem(String playerId) {
+  private void onPlayerTakeItem(int playerId) {
     var player = players.get(playerId);
     for (var object : objects.values()) {
       if (!(object instanceof ItemOnMap itemOnMap)) {
@@ -832,11 +817,10 @@ public class Match {
         objects.remove(itemOnMap.getId());
 
         var builder = new FlatBufferBuilder(0);
-        var usernameOffset = builder.createString(playerId);
 
         var responseOffset =
             PlayerTakeItemResponse.createPlayerTakeItemResponse(
-                builder, usernameOffset, object.getId());
+                builder, playerId, object.getId());
 
         Response.startResponse(builder);
         Response.addResponseType(builder, ResponseUnion.PlayerTakeItemResponse);
@@ -844,13 +828,12 @@ public class Match {
         var packetOffset = Response.endResponse(builder);
         builder.finish(packetOffset);
 
-        var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-        zoneContext.stream(bytes, getSessions(getAllPlayers()));
+        NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
       }
     }
   }
 
-  private void onPlayerReloadWeapon(String playerId) {
+  private void onPlayerReloadWeapon(int playerId) {
     var player = players.get(playerId);
     player.reloadWeapon();
     var builder = new FlatBufferBuilder(0);
@@ -864,7 +847,6 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
   }
 }

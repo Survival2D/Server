@@ -15,19 +15,17 @@ public final class PlayerDeadResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PlayerDeadResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public String username() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer usernameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public ByteBuffer usernameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
+  public int playerId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createPlayerDeadResponse(FlatBufferBuilder builder,
-      int usernameOffset) {
+      int playerId) {
     builder.startTable(1);
-    PlayerDeadResponse.addUsername(builder, usernameOffset);
+    PlayerDeadResponse.addPlayerId(builder, playerId);
     return PlayerDeadResponse.endPlayerDeadResponse(builder);
   }
 
   public static void startPlayerDeadResponse(FlatBufferBuilder builder) { builder.startTable(1); }
-  public static void addUsername(FlatBufferBuilder builder, int usernameOffset) { builder.addOffset(0, usernameOffset, 0); }
+  public static void addPlayerId(FlatBufferBuilder builder, int playerId) { builder.addInt(0, playerId, 0); }
   public static int endPlayerDeadResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

@@ -5,28 +5,33 @@ package survival2d.flatbuffers;
 public final class ResponseUnion {
   private ResponseUnion() { }
   public static final byte NONE = 0;
-  public static final byte MatchInfoResponse = 1;
-  public static final byte PlayerMoveResponse = 2;
-  public static final byte PlayerAttackResponse = 3;
-  public static final byte PlayerInfoResponse = 4;
-  public static final byte CreateBulletOnMapResponse = 5;
-  public static final byte CreateItemOnMapResponse = 6;
-  public static final byte ObstacleTakeDamageResponse = 7;
-  public static final byte ObstacleDestroyResponse = 8;
-  public static final byte PlayerTakeDamageResponse = 9;
-  public static final byte PlayerDeadResponse = 10;
-  public static final byte PlayerReloadWeaponResponse = 11;
-  public static final byte PlayerChangeWeaponResponse = 12;
-  public static final byte PlayerTakeItemResponse = 13;
-  public static final byte StartGameResponse = 14;
-  public static final byte EndGameResponse = 15;
-  public static final byte NewSafeZoneResponse = 16;
-  public static final byte SafeZoneMoveResponse = 17;
-  public static final byte PingResponse = 18;
-  public static final byte PingByPlayerMoveResponse = 19;
-  public static final byte PingByMatchInfoResponse = 20;
+  public static final byte GetUserInfoResponse = 1;
+  public static final byte CreateTeamResponse = 2;
+  public static final byte JoinTeamResponse = 3;
+  public static final byte FindMatchResponse = 4;
+  public static final byte GetConfigResponse = 5;
+  public static final byte MatchInfoResponse = 6;
+  public static final byte PlayerMoveResponse = 7;
+  public static final byte PlayerAttackResponse = 8;
+  public static final byte PlayerInfoResponse = 9;
+  public static final byte CreateBulletOnMapResponse = 10;
+  public static final byte CreateItemOnMapResponse = 11;
+  public static final byte ObstacleTakeDamageResponse = 12;
+  public static final byte ObstacleDestroyResponse = 13;
+  public static final byte PlayerTakeDamageResponse = 14;
+  public static final byte PlayerDeadResponse = 15;
+  public static final byte PlayerReloadWeaponResponse = 16;
+  public static final byte PlayerChangeWeaponResponse = 17;
+  public static final byte PlayerTakeItemResponse = 18;
+  public static final byte StartGameResponse = 19;
+  public static final byte EndGameResponse = 20;
+  public static final byte NewSafeZoneResponse = 21;
+  public static final byte SafeZoneMoveResponse = 22;
+  public static final byte PingResponse = 23;
+  public static final byte PingByPlayerMoveResponse = 24;
+  public static final byte PingByMatchInfoResponse = 25;
 
-  public static final String[] names = { "NONE", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
+  public static final String[] names = { "NONE", "GetUserInfoResponse", "CreateTeamResponse", "JoinTeamResponse", "FindMatchResponse", "GetConfigResponse", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
 
   public static String name(int e) { return names[e]; }
 }

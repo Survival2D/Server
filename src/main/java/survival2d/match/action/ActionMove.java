@@ -13,5 +13,5 @@ import lombok.Getter;
 public class ActionMove implements PlayerAction {
 
   private Vector2 direction;
-  private double rotation;
+  private float rotation;
 }

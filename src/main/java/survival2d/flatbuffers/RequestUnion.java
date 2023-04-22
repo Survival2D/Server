@@ -5,17 +5,23 @@ package survival2d.flatbuffers;
 public final class RequestUnion {
   private RequestUnion() { }
   public static final byte NONE = 0;
-  public static final byte MatchInfoRequest = 1;
-  public static final byte PlayerMoveRequest = 2;
-  public static final byte PlayerAttackRequest = 3;
-  public static final byte PlayerReloadWeaponRequest = 4;
-  public static final byte PlayerChangeWeaponRequest = 5;
-  public static final byte PlayerTakeItemRequest = 6;
-  public static final byte PingRequest = 7;
-  public static final byte PingByPlayerMoveRequest = 8;
-  public static final byte PingByMatchInfoRequest = 9;
+  public static final byte LoginRequest = 1;
+  public static final byte GetUserInfoRequest = 2;
+  public static final byte CreateTeamRequest = 3;
+  public static final byte JoinTeamRequest = 4;
+  public static final byte FindMatchRequest = 5;
+  public static final byte GetConfigRequest = 6;
+  public static final byte MatchInfoRequest = 7;
+  public static final byte PlayerMoveRequest = 8;
+  public static final byte PlayerAttackRequest = 9;
+  public static final byte PlayerReloadWeaponRequest = 10;
+  public static final byte PlayerChangeWeaponRequest = 11;
+  public static final byte PlayerTakeItemRequest = 12;
+  public static final byte PingRequest = 13;
+  public static final byte PingByPlayerMoveRequest = 14;
+  public static final byte PingByMatchInfoRequest = 15;
 
-  public static final String[] names = { "NONE", "MatchInfoRequest", "PlayerMoveRequest", "PlayerAttackRequest", "PlayerReloadWeaponRequest", "PlayerChangeWeaponRequest", "PlayerTakeItemRequest", "PingRequest", "PingByPlayerMoveRequest", "PingByMatchInfoRequest", };
+  public static final String[] names = { "NONE", "LoginRequest", "GetUserInfoRequest", "CreateTeamRequest", "JoinTeamRequest", "FindMatchRequest", "GetConfigRequest", "MatchInfoRequest", "PlayerMoveRequest", "PlayerAttackRequest", "PlayerReloadWeaponRequest", "PlayerChangeWeaponRequest", "PlayerTakeItemRequest", "PingRequest", "PingByPlayerMoveRequest", "PingByMatchInfoRequest", };
 
   public static String name(int e) { return names[e]; }
 }

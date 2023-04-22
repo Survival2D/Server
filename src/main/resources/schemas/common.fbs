@@ -1,14 +1,14 @@
 namespace survival2d.flatbuffers;
 
 struct Vector2Struct {
-  x: double;
-  y: double;
+  x: float;
+  y: float;
 }
 
 table PlayerTable {
-  username: string;
+  playerId: int;
   position: Vector2Struct;
-  rotation: double;
+  rotation: float;
   team: int;
 }
 
@@ -82,7 +82,7 @@ table BulletTable {
   id: int;
   position: Vector2Struct;
   type: BulletTypeEnum;
-  owner: string;
+  owner: int;
   direction: Vector2Struct;
 }
 

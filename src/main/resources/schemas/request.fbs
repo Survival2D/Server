@@ -24,7 +24,7 @@ table MatchInfoRequest {
 
 table PlayerMoveRequest {
   direction: Vector2Struct;
-  rotation: double;
+  rotation: float;
 }
 
 table PlayerChangeWeaponRequest {

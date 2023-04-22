@@ -1,7 +1,6 @@
 package survival2d.network;
 
 import com.badlogic.gdx.math.Vector2;
-import com.google.flatbuffers.ByteBufferUtil;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
@@ -15,11 +14,16 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import survival2d.data.ServerData;
+import survival2d.flatbuffers.PingByPlayerMoveResponse;
+import survival2d.flatbuffers.PingResponse;
 import survival2d.flatbuffers.PlayerAttackRequest;
 import survival2d.flatbuffers.PlayerChangeWeaponRequest;
 import survival2d.flatbuffers.PlayerMoveRequest;
 import survival2d.flatbuffers.Request;
 import survival2d.flatbuffers.RequestUnion;
+import survival2d.flatbuffers.Response;
+import survival2d.flatbuffers.ResponseUnion;
+import survival2d.flatbuffers.Vector2Struct;
 import survival2d.match.action.ActionAttack;
 import survival2d.match.action.ActionChangeWeapon;
 import survival2d.match.action.ActionMove;
@@ -38,7 +42,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof Request request) {
-      var userId = getId(ctx.channel());
+      var userId = getUserId(ctx.channel());
       switch (request.requestType()) {
         case RequestUnion.MatchInfoRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -48,7 +52,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           }
           var match = optMatch.get();
           var data = match.getMatchInfoData();
-          NetworkUtil.sendBinaryResponse(userId, data);
+          NetworkUtil.sendResponse(userId, data);
         }
         case RequestUnion.PlayerMoveRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -84,89 +88,81 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
             log.warn("match is not present");
             break;
           }
-          var request = new PlayerAttackRequest();
-          packet.data(request);
+          var playerAttackRequest = new PlayerAttackRequest();
+          request.request(playerAttackRequest);
           var match = optMatch.get();
           match.onReceivePlayerAction(userId, new ActionAttack());
         }
         case RequestUnion.PlayerReloadWeaponRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
-          if (!optMatch.isPresent()) {
+          if (optMatch.isEmpty()) {
             log.warn("match is not present");
             return;
           }
           var match = optMatch.get();
           match.onReceivePlayerAction(userId, new ActionReloadWeapon());
-          break;
         }
         case RequestUnion.PlayerTakeItemRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
-          if (!optMatch.isPresent()) {
+          if (optMatch.isEmpty()) {
             log.warn("match is not present");
             return;
           }
           var match = optMatch.get();
           match.onReceivePlayerAction(userId, new ActionTakeItem());
-          break;
         }
         case RequestUnion.PingRequest -> {
           var builder = new FlatBufferBuilder(0);
-          survival2d.flatbuffers.PingResponse.startPingResponse(builder);
-          var responseOffset = survival2d.flatbuffers.PingResponse.endPingResponse(builder);
+          PingResponse.startPingResponse(builder);
+          var responseOffset = PingResponse.endPingResponse(builder);
 
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, RequestUnion.PingResponse);
-          Packet.addData(builder, responseOffset);
-          var packetOffset = Packet.endPacket(builder);
+          Response.startResponse(builder);
+          Response.addResponseType(builder, ResponseUnion.PingResponse);
+          Response.addResponse(builder, responseOffset);
+          var packetOffset = Response.endResponse(builder);
           builder.finish(packetOffset);
 
-          var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
-          log.info("pingByte's size {}", bytes.length);
-          break;
+          NetworkUtil.sendResponse(userId, builder.dataBuffer());
         }
         case RequestUnion.PingByPlayerMoveRequest -> {
           var builder = new FlatBufferBuilder(0);
-          var userIdOffset = builder.createString(SamplePingData.userId);
-          survival2d.flatbuffers.PingByPlayerMoveResponse.startPingByPlayerMoveResponse(builder);
-          survival2d.flatbuffers.PingByPlayerMoveResponse.adduserId(builder, userIdOffset);
-          survival2d.flatbuffers.Vec2.createVec2(
-              builder, SamplePingData.position.getX(), SamplePingData.position.getY());
-          survival2d.flatbuffers.PingByPlayerMoveResponse.addRotation(
+          PingByPlayerMoveResponse.startPingByPlayerMoveResponse(builder);
+          PingByPlayerMoveResponse.addPlayerId(builder, SamplePingData.userId);
+          Vector2Struct.createVector2Struct(
+              builder, SamplePingData.position.x, SamplePingData.position.y);
+          PingByPlayerMoveResponse.addRotation(
               builder, SamplePingData.rotation);
-          var responseOffset = survival2d.flatbuffers.PingResponse.endPingResponse(builder);
+          var responseOffset = PingResponse.endPingResponse(builder);
 
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, RequestUnion.PingByPlayerMoveResponse);
-          Packet.addData(builder, responseOffset);
-          var packetOffset = Packet.endPacket(builder);
+          Response.startResponse(builder);
+          Response.addResponseType(builder, ResponseUnion.PingByPlayerMoveResponse);
+          Response.addResponse(builder, responseOffset);
+          var packetOffset = Response.endResponse(builder);
           builder.finish(packetOffset);
 
-          var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
-          log.info("pingByPlayerMoveByte's size {}", bytes.length);
-          break;
+          var dataBuffer = builder.dataBuffer();
+          NetworkUtil.sendResponse(userId, dataBuffer);
+          var data = dataBuffer.array();
+          log.info("pingByPlayerMoveByte's size {}", data.length);
         }
         case RequestUnion.PingByMatchInfoRequest -> {
           var builder = new FlatBufferBuilder(0);
 
           final int responseOffset = SamplePingData.match.putResponseData(builder);
 
-          Packet.startPacket(builder);
-          Packet.addDataType(builder, RequestUnion.PingByMatchInfoResponse);
-          Packet.addData(builder, responseOffset);
-          var packetOffset = Packet.endPacket(builder);
+          Response.startResponse(builder);
+          Response.addResponseType(builder, ResponseUnion.PingByMatchInfoResponse);
+          Response.addResponse(builder, responseOffset);
+          var packetOffset = Response.endResponse(builder);
           builder.finish(packetOffset);
 
-          var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          ezyZoneContext.stream(bytes, ezyStreamingEvent.getSession());
-          log.info("pingByMatchInfoByte's size {}", bytes.length);
-          break;
+          var dataBuffer = builder.dataBuffer();
+          NetworkUtil.sendResponse(userId, dataBuffer);
+          var data = dataBuffer.array();
+          log.info("pingByMatchInfoByte's size {}", data.length);
         }
-        default -> {
-          log.warn("not handle packet data type {} from user {}", packet.dataType(), userId);
-          break;
-        }
+        default ->
+            log.warn("not handle requestType {} from user {}", request.requestType(), userId);
       }
     } else if (msg instanceof TextWebSocketFrame textWebSocketFrame) {
       try {
@@ -174,9 +170,9 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         if (request instanceof LoginJsonRequest loginRequest) {
           var response =
               new LoginJsonResponse(loginRequest.getUserId(), "user_" + loginRequest.getUserId());
-          NetworkUtil.sendJsonResponse(ctx.channel(), response);
+          NetworkUtil.sendResponse(ctx.channel(), response);
         } else {
-          NetworkUtil.sendTextResponse(ctx.channel(), new Gson().toJson(request));
+          NetworkUtil.sendResponse(ctx.channel(), new Gson().toJson(request));
         }
       } catch (Exception e) {
         log.error("can not parse text message: {}", textWebSocketFrame.text(), e);
@@ -205,7 +201,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
       }
     } else if (evt instanceof HandshakeComplete) {
       var channel = ctx.channel();
-      var user = new User(getId(ctx.channel()), channel);
+      var user = new User(getUserId(ctx.channel()), channel);
       user.setName(String.valueOf(user.getId()));
 
       ServerData.getInstance().getUserMap().put(user.getId(), user);
@@ -229,7 +225,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
     }
   }
 
-  private int getId(Channel channel) {
+  private int getUserId(Channel channel) {
     var channelId = channel.id().asLongText();
     var userId = ServerData.getInstance().getChannelMap().get(channelId);
     if (userId == null) {
@@ -240,11 +236,10 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
   }
 
   private void onReaderIdle(Channel channel) {
-    var clientId = getId(channel);
-    var user = ServerData.getInstance().getUserMap().get(clientId);
+    var userId = getUserId(channel);
+    var user = ServerData.getInstance().getUserMap().get(userId);
     if (user != null) {
-      SimplePrinter.serverLog(
-          "Has user exit to the server：" + clientId + " | " + user.getNickname());
+      log.info("onReaderIdle: userId {}, userName {}", userId, user.getName());
       ServerEventListener.get(ServerEventCode.CODE_CLIENT_OFFLINE).call(user, null);
     }
   }

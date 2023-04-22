@@ -15,23 +15,21 @@ public final class PlayerTakeItemResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public PlayerTakeItemResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public String username() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer usernameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public ByteBuffer usernameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
-  public int id() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int playerId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int itemOnMapId() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createPlayerTakeItemResponse(FlatBufferBuilder builder,
-      int usernameOffset,
-      int id) {
+      int playerId,
+      int itemOnMapId) {
     builder.startTable(2);
-    PlayerTakeItemResponse.addId(builder, id);
-    PlayerTakeItemResponse.addUsername(builder, usernameOffset);
+    PlayerTakeItemResponse.addItemOnMapId(builder, itemOnMapId);
+    PlayerTakeItemResponse.addPlayerId(builder, playerId);
     return PlayerTakeItemResponse.endPlayerTakeItemResponse(builder);
   }
 
   public static void startPlayerTakeItemResponse(FlatBufferBuilder builder) { builder.startTable(2); }
-  public static void addUsername(FlatBufferBuilder builder, int usernameOffset) { builder.addOffset(0, usernameOffset, 0); }
-  public static void addId(FlatBufferBuilder builder, int id) { builder.addInt(1, id, 0); }
+  public static void addPlayerId(FlatBufferBuilder builder, int playerId) { builder.addInt(0, playerId, 0); }
+  public static void addItemOnMapId(FlatBufferBuilder builder, int itemOnMapId) { builder.addInt(1, itemOnMapId, 0); }
   public static int endPlayerTakeItemResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

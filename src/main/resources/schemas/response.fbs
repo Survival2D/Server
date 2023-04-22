@@ -3,23 +3,22 @@ include "common.fbs";
 namespace survival2d.flatbuffers;
 
 table LoginResponse {
-  username: string;
-  token: string;
+  playerId: int;
 }
 
-table GetUserInfoRequest {
+table GetUserInfoResponse {
 }
 
-table CreateTeamRequest {
+table CreateTeamResponse {
 }
 
-table JoinTeamRequest {
+table JoinTeamResponse {
 }
 
-table FindMatchRequest {
+table FindMatchResponse {
 }
 
-table GetConfigRequest {
+table GetConfigResponse {
 }
 
 table MatchInfoResponse {
@@ -30,22 +29,22 @@ table MatchInfoResponse {
 
 
 table PlayerMoveResponse {
-  username: string;
+  playerId: int;
   position: Vector2Struct;
   rotation: double;
 }
 
 
 table PlayerChangeWeaponResponse {
-  username: string;
+  playerId: int;
   slot: byte;
 }
 
 
 table PlayerAttackResponse {
-  username:string;
-  position:Vector2Struct;
-  slot:byte;
+  playerId: int;
+  position: Vector2Struct;
+  slot: byte;
 }
 
 
@@ -76,21 +75,21 @@ table PlayerInfoResponse {
 }
 
 table ObstacleDestroyResponse {
-  id: int;
+  obstacleId: int;
 }
 
 table ObstacleTakeDamageResponse {
-  id: int;
+  obstacleId: int;
   remainHp: double;
 }
 
 table PlayerTakeDamageResponse {
-  username: string;
+  playerId: int;
   remainHp: double;
 }
 
 table PlayerDeadResponse {
-  username: string;
+  playerId: int;
 }
 
 table PlayerReloadWeaponResponse {
@@ -100,8 +99,8 @@ table PlayerReloadWeaponResponse {
 
 
 table PlayerTakeItemResponse {
-  username: string;
-  id: int; // id của map object
+  playerId: int;
+  itemOnMapId: int;
 }
 
 table NewSafeZoneResponse {
@@ -116,7 +115,7 @@ table PingResponse {}
 
 
 table PingByPlayerMoveResponse {
-  username: string;
+  playerId: int;
   position: Vector2Struct;
   rotation: double;
 }

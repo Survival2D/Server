@@ -15,17 +15,17 @@ public final class ObstacleDestroyResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public ObstacleDestroyResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public int id() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public int obstacleId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createObstacleDestroyResponse(FlatBufferBuilder builder,
-      int id) {
+      int obstacleId) {
     builder.startTable(1);
-    ObstacleDestroyResponse.addId(builder, id);
+    ObstacleDestroyResponse.addObstacleId(builder, obstacleId);
     return ObstacleDestroyResponse.endObstacleDestroyResponse(builder);
   }
 
   public static void startObstacleDestroyResponse(FlatBufferBuilder builder) { builder.startTable(1); }
-  public static void addId(FlatBufferBuilder builder, int id) { builder.addInt(0, id, 0); }
+  public static void addObstacleId(FlatBufferBuilder builder, int obstacleId) { builder.addInt(0, obstacleId, 0); }
   public static int endObstacleDestroyResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

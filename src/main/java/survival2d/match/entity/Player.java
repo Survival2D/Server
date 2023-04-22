@@ -23,11 +23,11 @@ import survival2d.util.serialize.GsonTransient;
 @Slf4j
 public class Player implements Destroyable, HasHp {
 
-  String playerId;
+  int playerId;
   Vector2 position = new Vector2();
   float rotation;
   @GsonTransient
-  double speed = 10;
+  float speed = 10;
   @GsonTransient
   double hp = 100;
   @GsonTransient
@@ -46,7 +46,7 @@ public class Player implements Destroyable, HasHp {
   @GsonTransient
   Circle head = new Circle(10);
 
-  public Player(String playerId, int team) {
+  public Player(int playerId, int team) {
     this.playerId = playerId;
     this.team = team;
     this.weapons.add(new Hand());
@@ -84,7 +84,7 @@ public class Player implements Destroyable, HasHp {
   
   public void reloadWeapon() {
     var optWeapon = getCurrentWeapon();
-    if (!optWeapon.isPresent()) {
+    if (optWeapon.isEmpty()) {
       log.warn("current weapon is not present");
       return;
     }
