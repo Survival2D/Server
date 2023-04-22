@@ -17,11 +17,12 @@ import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.config.GunType;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
+import survival2d.match.quadtree.BaseMapObject;
 import survival2d.util.serialize.GsonTransient;
 
 @Data
 @Slf4j
-public class Player implements Destroyable, HasHp {
+public class Player extends BaseMapObject implements Destroyable, HasHp {
 
   int playerId;
   Vector2 position = new Vector2();

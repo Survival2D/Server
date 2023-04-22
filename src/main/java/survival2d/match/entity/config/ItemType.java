@@ -1,4 +1,4 @@
-package survival2d.match.entity.base;
+package survival2d.match.entity.config;
 
 public enum ItemType {
   WEAPON,
@@ -8,8 +8,8 @@ public enum ItemType {
   HELMET,
   VEST,
   BANDAGE,
-  MED_KIT,
+  MEDKIT,
   SODA,
   PILL,
-  //TODO
+  UNKNOWN;
 }

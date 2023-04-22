@@ -1,15 +1,19 @@
 package survival2d.match.entity.item;
 
-import lombok.Builder;
 import lombok.Getter;
-import survival2d.match.entity.HelmetType;
+import lombok.NoArgsConstructor;
 import survival2d.match.entity.base.Item;
-import survival2d.match.entity.base.ItemType;
+import survival2d.match.entity.config.HelmetType;
+import survival2d.match.entity.config.ItemType;
 
 @Getter
-@Builder
+@NoArgsConstructor
 public class HelmetItem implements Item {
 
   final ItemType itemType = ItemType.HELMET;
-  final HelmetType helmetType = HelmetType.LEVEL_0;
+  HelmetType helmetType = HelmetType.LEVEL_0;
+
+  public HelmetItem(HelmetType helmetType) {
+    this.helmetType = helmetType;
+  }
 }

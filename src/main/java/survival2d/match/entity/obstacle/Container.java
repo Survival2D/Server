@@ -1,28 +1,27 @@
 package survival2d.match.entity.obstacle;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import java.util.List;
-import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
-import survival2d.match.entity.weapon.Containable;
-import survival2d.util.serialize.GsonTransient;
+import survival2d.match.entity.base.Rectangle;
+import survival2d.match.entity.quadtree.BaseMapObject;
+import survival2d.util.serialize.ExcludeFromGson;
 
-@Data
-public class Container implements Destroyable, HasHp, Obstacle, Containable {
+@Getter
+@Setter
+public class Container extends BaseMapObject implements Destroyable, HasHp, Obstacle, Containable {
 
-  @GsonTransient
-  int id;
-  @GsonTransient
-  double hp = 100;
-  Vector2 position;
-  @GsonTransient
-  Rectangle shape;
-  @GsonTransient
-  List<Item> items;
+  private static final Rectangle CONTAINER_SHAPE = new Rectangle(200, 200);
+  @ExcludeFromGson int id;
+  @ExcludeFromGson double hp = 100;
+  Vector2D position;
+  @ExcludeFromGson Rectangle shape = CONTAINER_SHAPE;
+  @ExcludeFromGson List<Item> items;
   ObstacleType type = ObstacleType.CONTAINER;
 
   @Override
@@ -31,6 +30,5 @@ public class Container implements Destroyable, HasHp, Obstacle, Containable {
   }
 
   @Override
-  public void setDestroyed(boolean destroyed) {
-  }
+  public void setDestroyed(boolean destroyed) {}
 }

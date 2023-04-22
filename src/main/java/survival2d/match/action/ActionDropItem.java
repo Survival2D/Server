@@ -1,11 +1,5 @@
 package survival2d.match.action;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public record ActionDropItem(int itemId) implements PlayerAction {
 
-@Getter
-@AllArgsConstructor
-public class ActionDropItem implements PlayerAction {
-
-  String itemId;
 }

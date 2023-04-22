@@ -18,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import survival2d.ai.bot.Bot;
 import survival2d.flatbuffers.BulletItemTable;
 import survival2d.flatbuffers.BulletTable;
 import survival2d.flatbuffers.ContainerTable;
@@ -69,6 +71,9 @@ import survival2d.match.entity.obstacle.Stone;
 import survival2d.match.entity.obstacle.Tree;
 import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.weapon.Containable;
+import survival2d.match.quadtree.QuadTree;
+import survival2d.match.quadtree.SpatialPartitionGeneric;
+import survival2d.match.util.AStar;
 import survival2d.match.util.MatchUtil;
 import survival2d.network.NetworkUtil;
 import survival2d.service.MatchingService;
@@ -76,11 +81,10 @@ import survival2d.util.serialize.GsonTransient;
 
 @Getter
 @Slf4j
-public class Match {
+public class Match extends SpatialPartitionGeneric<MapObject> {
 
   @GsonTransient
   private final int id;
-  private final Map<Integer, MapObject> objects = new ConcurrentHashMap<>();
 
   @GsonTransient
   private final Map<Integer, Map<Class<? extends PlayerAction>, PlayerAction>> playerRequests =
@@ -90,40 +94,64 @@ public class Match {
   @GsonTransient
   private final Timer timer = new Timer();
   private final List<Circle> safeZones = new ArrayList<>();
+  private final List<Vector2> spawnPoints = new ArrayList<>();
+  private final Map<String, Bot> bots = new ConcurrentHashMap<>();
+  private final int NUM_BOTS = 1;
   @GsonTransient
-  int nextSafeZone;
+  int currentSafeZone;
   @GsonTransient
   private int currentMapObjectId;
   @GsonTransient
   private TimerTask gameLoopTask;
   @GsonTransient
   private long currentTick;
+  @GsonTransient private AStar aStar;
+  @GsonTransient private int[][] grid;
 
-  public Match(long id) {
+  public Match(int id) {
     this.id = id;
+    objects = new ConcurrentHashMap<>();
+    quadTree =
+        new QuadTree<>(
+            0, 0, GameConfig.getInstance().getMapWidth(), GameConfig.getInstance().getMapHeight());
     init();
   }
 
-  public void addPlayer(int teamId, int userId) {
-    players.putIfAbsent(userId, new Player(userId, teamId));
-    int tryCount = 0;
-    while (!randomPositionForPlayer(userId)) {
-      tryCount++;
-      if (tryCount > 100) {
-        log.error("Can't find position for player {}", userId);
-        break;
+  public void addPlayer(int teamId, int playerId) {
+    var player = new Player(playerId, teamId);
+    players.putIfAbsent(playerId, player);
+    if (!spawnPoints.isEmpty()) {
+      val spawnPoint = spawnPoints.remove(0);
+      player.setPosition(spawnPoint);
+    } else {
+      int tryCount = 0;
+      while (!randomPositionForPlayer(playerId)) {
+        tryCount++;
+        if (tryCount > 100) {
+          log.error("Can't find position for player {}", playerId);
+          break;
+        }
       }
     }
-    playerRequests.put(userId, new ConcurrentHashMap<>());
+    playerRequests.put(playerId, new ConcurrentHashMap<>());
+    addMapObject(players.get(playerId));
   }
 
   public boolean randomPositionForPlayer(int playerId) {
-    var player = players.get(playerId);
-    var newPosition = MatchUtil.randomPosition(100, 9900, 100, 9900);
+    val player = players.get(playerId);
+    val newPosition =
+        new Vector2(
+            ThreadLocalRandom.current().nextFloat(
+                GameConfig.getInstance().getPlayerBodyRadius(),
+                GameConfig.getInstance().getMapWidth() - GameConfig.getInstance().getPlayerBodyRadius()),
+            ThreadLocalRandom.current().nextFloat(
+                GameConfig.getInstance().getPlayerBodyRadius(),
+                GameConfig.getInstance().getMapWidth() - GameConfig.getInstance().getPlayerBodyRadius()));
     player.setPosition(newPosition);
-    for (var object : objects.values()) {
+    for (val object : getNearBy(newPosition)) {
       if (object instanceof Obstacle obstacle) {
-        if (MatchUtil.isCollision(player.getShape(), obstacle.getShape())) {
+        if (MatchUtil.isCollision(
+             player.getShape(), obstacle.getShape())) {
           return false;
         }
       }
@@ -131,7 +159,7 @@ public class Match {
     return true;
   }
 
-  public Collection<Integer> getAllPlayers() {
+  public Collection<Integer> getAllPlayerIds() {
     return players.keySet();
   }
 
@@ -226,7 +254,7 @@ public class Match {
     builder.finish(packetOffset);
 
     var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    zoneContext.stream(bytes, getSessions(getAllPlayerIds()));
     makeDamage(playerId, circle, damage);
   }
 
@@ -261,7 +289,7 @@ public class Match {
           builder.finish(packetOffset);
 
           var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          zoneContext.stream(bytes, getSessions(getAllPlayerIds()));
         }
         if (player.isDestroyed()) {
           var builder = new FlatBufferBuilder(0);
@@ -278,7 +306,7 @@ public class Match {
           builder.finish(packetOffset);
 
           var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          zoneContext.stream(bytes, getSessions(getAllPlayerIds()));
           checkEndGame();
         }
       }
@@ -312,7 +340,7 @@ public class Match {
           builder.finish(packetOffset);
 
           var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          zoneContext.stream(bytes, getSessions(getAllPlayerIds()));
         }
         if (destroyable.isDestroyed()) {
           log.info("Obstacle {} destroyed", obstacle.getId());
@@ -328,7 +356,7 @@ public class Match {
           builder.finish(packetOffset);
 
           var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-          zoneContext.stream(bytes, getSessions(getAllPlayers()));
+          zoneContext.stream(bytes, getSessions(getAllPlayerIds()));
           if (obstacle instanceof Containable containable) {
             for (var item : containable.getItems()) {
               createItemOnMap(
@@ -365,7 +393,7 @@ public class Match {
       builder.finish(packetOffset);
 
       var bytes = ByteBufferUtil.byteBufferToEzyFoxBytes(builder.dataBuffer());
-      zoneContext.stream(bytes, getSessions(getAllPlayers()));
+      zoneContext.stream(bytes, getSessions(getAllPlayerIds()));
       stop();
     }
   }
@@ -393,7 +421,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   public ByteBuffer getMatchInfoData() {
@@ -490,7 +518,7 @@ public class Match {
 
   public void responseMatchInfo() {
     var bytes = getMatchInfoData();
-    zoneContext.stream(bytes, getSessions(getAllPlayers()));
+    zoneContext.stream(bytes, getSessions(getAllPlayerIds()));
   }
 
   public void onPlayerSwitchWeapon(int playerId, int weaponId) {
@@ -512,7 +540,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   public void init() {
@@ -548,7 +576,7 @@ public class Match {
           //                  previousSafeZone.getRight().getY() + deltaRadius)
           );
     }
-    nextSafeZone = 1;
+    currentSafeZone = 1;
   }
 
   public void stop() {
@@ -629,7 +657,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   public void end() {
@@ -646,7 +674,7 @@ public class Match {
 
   private void updateSafeZone() {
     if (currentTick % GameConfig.getInstance().getTicksPerSafeZone() != 0) return;
-    nextSafeZone++;
+    currentSafeZone++;
     {
       var builder = new FlatBufferBuilder(0);
 
@@ -659,12 +687,12 @@ public class Match {
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
 
-      NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+      NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
     }
-    if (nextSafeZone >= safeZones.size()) {
+    if (currentSafeZone >= safeZones.size()) {
       return;
     }
-    var safeZone = safeZones.get(nextSafeZone);
+    var safeZone = safeZones.get(currentSafeZone);
     var builder = new FlatBufferBuilder(0);
 
     NewSafeZoneResponse.startNewSafeZoneResponse(builder);
@@ -678,7 +706,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   private void updateMapObjects() {
@@ -803,7 +831,7 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   private void onPlayerTakeItem(int playerId) {
@@ -828,7 +856,7 @@ public class Match {
         var packetOffset = Response.endResponse(builder);
         builder.finish(packetOffset);
 
-        NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+        NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
       }
     }
   }
@@ -847,6 +875,6 @@ public class Match {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllPlayers(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 }
