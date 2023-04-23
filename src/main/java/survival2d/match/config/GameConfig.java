@@ -24,14 +24,22 @@ public class GameConfig implements PostProcessable {
   private double bandageHeal;
   private double medKitHeal;
   private int numMaxItemInContainer;
-  private double playerViewWidth;
-  private double playerViewHeight;
+  private float playerViewWidth;
+  private float playerViewHeight;
   private double playerViewWidthPlus1;
   private double playerViewHeightPlus1;
-  private double playerViewWidthPlus2;
-  private double playerViewHeightPlus2;
+  private float playerViewWidthPlus2;
+  private float playerViewHeightPlus2;
   private double halfPlayerViewWidth;
   private double halfPlayerViewHeight;
+  private float playerHeadRadius;
+  private float playerBodyRadius;
+  private float meleeAttackRadius;
+  private float meleeAttackDamage;
+  private float treeRootRadius;
+  private float treeFoliageRadius;
+  private float stoneRadius;
+  private float wallSize;
 
   public static void load() {
     InstanceHolder.instance =

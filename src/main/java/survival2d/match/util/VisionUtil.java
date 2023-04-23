@@ -1,9 +1,10 @@
 package survival2d.match.util;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import survival2d.match.config.GameConfig;
-import survival2d.match.entity.quadtree.BaseBoundary;
-import survival2d.match.entity.quadtree.RectangleBoundary;-public class VisionUtil {
+
+public class VisionUtil {
   public static final int TILE_SIZE = 100;
   public static final int HALF_TILE_SIZE = TILE_SIZE / 2;
   public static final int TILE_SIZE_PLUS_1 = TILE_SIZE + 1;
@@ -14,11 +15,11 @@ import survival2d.match.entity.quadtree.RectangleBoundary;-public class VisionUt
   }
 
   public static int getBaseX(Vector2 v) {
-    return getBase(v.getX());
+    return getBase(v.x);
   }
 
   public static int getBaseY(Vector2 v) {
-    return getBase(v.getY());
+    return getBase(v.y);
   }
 
   public static boolean isSameVisionX(Vector2 a, Vector2 b) {
@@ -29,30 +30,30 @@ import survival2d.match.entity.quadtree.RectangleBoundary;-public class VisionUt
     return getBaseY(a) == getBaseY(b);
   }
 
-  public static BaseBoundary getBoundaryXAxis(Vector2 oldPos, Vector2 newPos) {
-    if (newPos.getX() - oldPos.getX() > 0)
-      return new RectangleBoundary(
-          getBase(newPos.getX() + GameConfig.getInstance().getHalfPlayerViewWidth()) * TILE_SIZE - 1,
-          getBase(newPos.getY() - GameConfig.getInstance().getHalfPlayerViewHeight()) * TILE_SIZE - 1,
+  public static Rectangle getBoundaryXAxis(Vector2 oldPos, Vector2 newPos) {
+    if (newPos.x - oldPos.x > 0)
+      return new Rectangle(
+          getBase(newPos.x + GameConfig.getInstance().getHalfPlayerViewWidth()) * TILE_SIZE - 1,
+          getBase(newPos.y - GameConfig.getInstance().getHalfPlayerViewHeight()) * TILE_SIZE - 1,
           TILE_SIZE_PLUS_2,
           GameConfig.getInstance().getPlayerViewHeightPlus2());
     else
-      return new RectangleBoundary(
-          getBase(newPos.getX() - GameConfig.getInstance().getHalfPlayerViewWidth()) * TILE_SIZE - 1,
-          getBase(newPos.getY() - GameConfig.getInstance().getHalfPlayerViewHeight()) * TILE_SIZE - 1,
+      return new Rectangle(
+          getBase(newPos.x - GameConfig.getInstance().getHalfPlayerViewWidth()) * TILE_SIZE - 1,
+          getBase(newPos.y - GameConfig.getInstance().getHalfPlayerViewHeight()) * TILE_SIZE - 1,
           TILE_SIZE_PLUS_2,
           GameConfig.getInstance().getPlayerViewHeightPlus2());
   }
 
-  public static BaseBoundary getBoundaryYAxis(Vector2 oldPos, Vector2 newPos) {
+  public static Rectangle getBoundaryYAxis(Vector2 oldPos, Vector2 newPos) {
     if (newPos.y - oldPos.y > 0)
-      return new RectangleBoundary(
+      return new Rectangle(
           getBase(newPos.x - GameConfig.getInstance().getHalfPlayerViewWidth()) * TILE_SIZE - 1,
           getBase(newPos.y + GameConfig.getInstance().getHalfPlayerViewHeight()) * TILE_SIZE - 1,
           GameConfig.getInstance().getPlayerViewWidthPlus2(),
           TILE_SIZE_PLUS_2);
     else
-      return new RectangleBoundary(
+      return new Rectangle(
           getBase(newPos.x - GameConfig.getInstance().getHalfPlayerViewWidth()) * TILE_SIZE - 1,
           getBase(newPos.y - GameConfig.getInstance().getHalfPlayerViewHeight()) * TILE_SIZE - 1,
           GameConfig.getInstance().getPlayerViewWidthPlus2(),

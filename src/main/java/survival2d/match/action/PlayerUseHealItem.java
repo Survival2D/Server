@@ -1,3 +1,5 @@
 package survival2d.match.action;
 
-public record PlayerUseHealItem(int itemId) implements PlayerAction {}
+import survival2d.match.type.ItemType;
+
+public record PlayerUseHealItem(ItemType itemType) implements PlayerAction {}

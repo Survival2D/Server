@@ -1,7 +1,5 @@
 package survival2d.match.util;
 
-import ch.qos.logback.core.joran.sanity.Pair;
-import com.badlogic.gdx.math.Rectangle;
 import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +8,9 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import lombok.val;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class MapGenerator {
   public static final int MAP_WIDTH = 100;
@@ -66,12 +67,13 @@ public class MapGenerator {
 
   private void generateWalls(int offsetX, int offsetY, int width, int height, int depth) {
     if (width <= 2 * MIN_RECT_WIDTH || height <= 2 * MIN_RECT_HEIGHT || depth <= 0) {
-      rects.add(new Rectangle(new Position(offsetX, offsetY), width, height));
+      rects.add(new Rectangle(offsetX, offsetY, width, height));
       return;
     }
-    val verticalSplitPosition = RandomUtils.nextInt(MIN_RECT_WIDTH, width - MIN_RECT_WIDTH - 1);
+    val verticalSplitPosition =
+        ThreadLocalRandom.current().nextInt(MIN_RECT_WIDTH, width - MIN_RECT_WIDTH - 1);
     val horizontalSplitPosition =
-        RandomUtils.nextInt(MIN_RECT_HEIGHT, height - MIN_RECT_HEIGHT - 1);
+        ThreadLocalRandom.current().nextInt(MIN_RECT_HEIGHT, height - MIN_RECT_HEIGHT - 1);
 
     val topWalls = new LinkedList<Position>();
     val rightWalls = new LinkedList<Position>();
@@ -99,7 +101,7 @@ public class MapGenerator {
     longWalls.add(leftWalls);
 
     // Chọn 3 trong 4 bức tường để "đục" tường tạo lối đi
-    val keepWalls = RandomUtils.nextInt(0, longWalls.size());
+    val keepWalls = ThreadLocalRandom.current().nextInt(0, longWalls.size());
     for (var i = 0; i < longWalls.size(); i++) {
       if (i != keepWalls) {
         val removed = removeConsecutiveSegmentRandomly(longWalls.get(i));
@@ -147,7 +149,7 @@ public class MapGenerator {
     val acceptedWalls = new LinkedList<Position>();
     for (val wall : mapWalls) {
       var flag = false;
-      for (val neighbour : Position._4_NEIGHBOURS) {
+      for (val neighbour : Position.NEIGHBOURS) {
         val newX = wall.x + neighbour.x;
         val newY = wall.y + neighbour.y;
         if (newX >= 0
@@ -182,12 +184,10 @@ public class MapGenerator {
     val coverageRate = 0.1;
 
     for (var rect : rects) {
-
-      val offset = rect.position;
       val rectWidth = rect.width;
       val rectHeight = rect.height;
-      val offsetX = offset.x;
-      val offsetY = offset.y;
+      val offsetX = rect.x;
+      val offsetY = rect.y;
       var size = 0;
       val capacity = rectHeight * rectWidth * coverageRate;
 

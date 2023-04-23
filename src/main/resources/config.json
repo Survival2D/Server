@@ -15,5 +15,11 @@
   "playerViewWidth": 2400,
   "playerViewHeight": 1200,
   "playerBodyRadius": 50,
-  "playerHeadRadius": 10
+  "playerHeadRadius": 10,
+  "meleeAttackRadius": 10,
+  "meleeAttackDamage": 3,
+  "treeRootRadius": 50,
+  "treeFoliageRadius": 150,
+  "stoneRadius": 100,
+  "wallSize": 100
 }

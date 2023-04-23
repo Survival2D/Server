@@ -1,15 +1,13 @@
 package survival2d.match.entity.match;
 
-import static survival2d.match.constant.GameConstant.DAMAGE_SHAPE;
 import static survival2d.match.constant.GameConstant.DOUBLE_MAX_OBJECT_SIZE;
 import static survival2d.match.constant.GameConstant.QUAD_MAX_OBJECT_SIZE;
 
-import com.badlogic.gdx.Net;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import com.google.flatbuffers.FlatBufferBuilder;
-import java.awt.Shape;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import survival2d.ai.bot.Bot;
-import MatchInfoResponse;
 import survival2d.flatbuffers.BackPackItemTable;
 import survival2d.flatbuffers.BandageItemTable;
 import survival2d.flatbuffers.BulletItemTable;
@@ -89,13 +86,12 @@ import survival2d.match.entity.obstacle.Stone;
 import survival2d.match.entity.obstacle.Tree;
 import survival2d.match.entity.obstacle.Wall;
 import survival2d.match.entity.player.Player;
-import survival2d.match.entity.quadtree.BaseBoundary;
 import survival2d.match.entity.quadtree.QuadTree;
-import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
 import survival2d.match.entity.weapon.Bullet;
 import survival2d.match.type.AttachType;
 import survival2d.match.type.BulletType;
+import survival2d.match.type.ItemType;
 import survival2d.match.util.AStar;
 import survival2d.match.util.AStar.Point;
 import survival2d.match.util.MapGenerator;
@@ -169,7 +165,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     player.setPosition(newPosition);
     for (var object : getNearBy(newPosition)) {
       if (object instanceof Obstacle obstacle) {
-        if (MatchUtil.isCollision(player.getShape(), obstacle.getShape())) {
+        if (MatchUtil.isIntersect(player.getShape(), obstacle.getShape())) {
           return false;
         }
       }
@@ -220,7 +216,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     return !nearByTrees.isEmpty();
   }
 
-  public void onReceivePlayerAction(String playerId, PlayerAction action) {
+  public void onReceivePlayerAction(int playerId, PlayerAction action) {
     var player = players.get(playerId);
     if (player.isDestroyed()) {
       log.error("Player {} take action while dead", playerId);
@@ -306,19 +302,21 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
 
   private Collection<MapObject> getNearBy(Vector2 position) {
     return quadTree.query(
-        new RectangleBoundary(
+        new Rectangle(
             position.x - DOUBLE_MAX_OBJECT_SIZE,
             position.y - DOUBLE_MAX_OBJECT_SIZE,
             QUAD_MAX_OBJECT_SIZE,
             QUAD_MAX_OBJECT_SIZE));
   }
 
+  private Collection<MapObject> getObjectsIntersectWithBoundary(Shape2D boundary) {
+    return quadTree.query(boundary);
+  }
+
   private Collection<MapObject> getNearByInVision(Vector2 position) {
     var width = GameConfig.getInstance().getPlayerViewWidth();
     var height = GameConfig.getInstance().getPlayerViewHeight();
-    var boundary =
-        new RectangleBoundary(
-            position.x - width / 2, position.y - height / 2, width, height);
+    var boundary = new Rectangle(position.x - width / 2, position.y - height / 2, width, height);
     return quadTree.query(boundary);
   }
 
@@ -367,9 +365,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         .anyMatch(
             object -> {
               var obstacle = (Obstacle) object;
-              return MatchUtil.isCollision(
-                  mapObject.getShape(),
-                  obstacle.getShape());
+              return MatchUtil.isIntersect(mapObject.getShape(), obstacle.getShape());
             });
   }
 
@@ -379,11 +375,10 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     if (currentWeapon.getAttachType() == AttachType.MELEE) {
       createDamage(
           playerId,
-          player
-              .getPosition()
-              .add(player.getAttackDirection().scl(Player.BODY_RADIUS + 10)),
-          DAMAGE_SHAPE,
-          3);
+          new Circle(
+              player.getPosition().add(player.getAttackDirection().scl(Player.BODY_RADIUS + 10)),
+              GameConfig.getInstance().getMeleeAttackRadius()),
+          GameConfig.getInstance().getMeleeAttackDamage());
     } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
       if (!player.getGun().isReadyToShoot()) {
         return;
@@ -459,18 +454,16 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     quadTree.update(object);
   }
 
-  public void createDamage(int playerId, Vector2 position, Shape shape, double damage) {
-    var player = players.get(playerId);
+  public void createDamage(int playerId, Circle damageShape, double damage) {
     log.warn("match is not present");
 
     var builder = new FlatBufferBuilder(0);
 
     PlayerAttackResponse.startPlayerAttackResponse(builder);
     PlayerAttackResponse.addPlayerId(builder, playerId);
-    var positionOffset = Vector2Struct.createVector2Struct(builder, position.x, position.y);
+    var positionOffset = Vector2Struct.createVector2Struct(builder, damageShape.x, damageShape.y);
     PlayerMoveResponse.addPosition(builder, positionOffset);
-    var responseOffset =
-        PlayerAttackResponse.endPlayerAttackResponse(builder);
+    var responseOffset = PlayerAttackResponse.endPlayerAttackResponse(builder);
 
     Response.startResponse(builder);
     Response.addResponseType(builder, ResponseUnion.PlayerAttackResponse);
@@ -478,23 +471,23 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getUsernamesCanSeeAt(position), builder.dataBuffer());
+    NetworkUtil.sendResponse(
+        getUsernamesCanSeeAt(new Vector2(damageShape.x, damageShape.y)), builder.dataBuffer());
 
-    makeDamage(playerId, position, shape, damage);
+    makeDamage(playerId, damageShape, damage);
   }
 
-  public void makeDamage(int playerId, Vector2 position, Shape2D shape, double damage) {
+  public void makeDamage(int playerId, Shape2D shape, double damage) {
     var currentPlayer = players.get(playerId);
-    for (var object : getNearBy(position)) {
+    for (var object : getObjectsIntersectWithBoundary(shape)) {
       if (object instanceof Player player) {
         // Cùng team thì không tính damage
         if (player.getTeam() == currentPlayer.getTeam()) continue;
         // Chính người chơi đó thì mới không tính damage
         // if (Objects.equals(player.getPlayerId(), playerId)) continue;
         if (player.isDestroyed()) continue;
-        if (MatchUtil.isCollision( player.getShape(), shape)) {
-          var isHeadshot =
-              MatchUtil.isCollision( player.getHead(),  shape);
+        if (MatchUtil.isIntersect(player.getShape(), shape)) {
+          var isHeadshot = MatchUtil.isIntersect(player.getHead(), shape);
           var damageMultiple = isHeadshot ? GameConstant.HEADSHOT_DAMAGE : GameConstant.BODY_DAMAGE;
           var totalDamage = damage * damageMultiple;
           var reduceDamage =
@@ -512,7 +505,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
           continue;
         }
         var hasHp = (HasHp) obstacle;
-        if (MatchUtil.isCollision( obstacle.getShape(),  shape)) {
+        if (MatchUtil.isIntersect(obstacle.getShape(), shape)) {
           hasHp.reduceHp(damage);
           log.info(
               "Obstacle {} take damage {}, remainHp {}", obstacle.getId(), damage, hasHp.getHp());
@@ -529,15 +522,15 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
             var packetOffset = Response.endResponse(builder);
             builder.finish(packetOffset);
 
-            NetworkUtil.sendResponse(getUsernamesCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
+            NetworkUtil.sendResponse(
+                getUsernamesCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
           }
           if (destroyable.isDestroyed()) {
             log.info("Obstacle {} destroyed", obstacle.getId());
             var builder = new FlatBufferBuilder(0);
 
             var responseOffset =
-                ObstacleDestroyResponse.createObstacleDestroyResponse(
-                    builder, obstacle.getId());
+                ObstacleDestroyResponse.createObstacleDestroyResponse(builder, obstacle.getId());
             removeMapObject(obstacle);
 
             Response.startResponse(builder);
@@ -546,7 +539,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
             var packetOffset = Response.endResponse(builder);
             builder.finish(packetOffset);
 
-            NetworkUtil.sendResponse(getUsernamesCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
+            NetworkUtil.sendResponse(
+                getUsernamesCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
 
             if (obstacle instanceof Containable containable) {
               for (var item : containable.getItems()) {
@@ -568,8 +562,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       PlayerTakeDamageResponse.startPlayerTakeDamageResponse(builder);
       PlayerTakeDamageResponse.addPlayerId(builder, playerId);
       PlayerTakeDamageResponse.addRemainHp(builder, player.getHp());
-      var responseOffset =
-          PlayerTakeDamageResponse.endPlayerTakeDamageResponse(builder);
+      var responseOffset = PlayerTakeDamageResponse.endPlayerTakeDamageResponse(builder);
 
       Response.startResponse(builder);
       Response.addResponseType(builder, ResponseUnion.PlayerTakeDamageResponse);
@@ -591,9 +584,9 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       Response.addResponse(builder, responseOffset);
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
-      
+
       NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
-      
+
       checkEndGame();
     }
   }
@@ -612,8 +605,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
               .get();
       var builder = new FlatBufferBuilder(0);
 
-      var responseOffset =
-          EndGameResponse.createEndGameResponse(builder, winTeam);
+      var responseOffset = EndGameResponse.createEndGameResponse(builder, winTeam);
 
       Response.startResponse(builder);
       Response.addResponseType(builder, ResponseUnion.EndGameResponse);
@@ -636,17 +628,14 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     BulletTable.startBulletTable(builder);
     BulletTable.addType(builder, (byte) type.ordinal());
     BulletTable.addId(builder, bullet.getId());
-    var positionOffset =
-        Vector2Struct.createVector2Struct(builder, position.x, position.y);
+    var positionOffset = Vector2Struct.createVector2Struct(builder, position.x, position.y);
     BulletTable.addPosition(builder, positionOffset);
-    var directionOffset =
-        Vector2Struct.createVector2Struct(builder, direction.x, direction.y);
+    var directionOffset = Vector2Struct.createVector2Struct(builder, direction.x, direction.y);
     BulletTable.addDirection(builder, directionOffset);
     BulletTable.addOwner(builder, playerId);
     var bulletOffset = BulletTable.endBulletTable(builder);
     var responseOffset =
-        CreateBulletOnMapResponse.createCreateBulletOnMapResponse(
-            builder, bulletOffset);
+        CreateBulletOnMapResponse.createCreateBulletOnMapResponse(builder, bulletOffset);
 
     Response.startResponse(builder);
     Response.addResponseType(builder, ResponseUnion.CreateBulletOnMapResponse);
@@ -667,19 +656,19 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     NetworkUtil.sendResponse(username, data);
   }
 
-  private ByteBuffer getMatchInfoInBoundary(BaseBoundary boundary) {
+  private ByteBuffer getMatchInfoInBoundary(Shape2D boundary) {
     var objects = quadTree.query(boundary);
     return getMatchInfoData(objects);
   }
 
-  private ByteBuffer getMatchInfoData(Collection<MapObject> matchMapObjects) {
+  public ByteBuffer getMatchInfoData(Collection<MapObject> matchMapObjects) {
     var builder = new FlatBufferBuilder(0);
     builder.clear();
 
     final int responseOffset = putMatchInfoData(builder, matchMapObjects);
 
     Response.startResponse(builder);
-    Response.addResponseType(builder, MatchInfoResponse);
+    Response.addResponseType(builder, ResponseUnion.MatchInfoResponse);
     Response.addResponse(builder, responseOffset);
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
@@ -704,7 +693,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       PlayerTable.startPlayerTable(builder);
       PlayerTable.addPlayerId(builder, player.getPlayerId());
       var positionOffset =
-          Vector2Struct.createVector2Struct(builder, player.getPosition().x, player.getPosition().y);
+          Vector2Struct.createVector2Struct(
+              builder, player.getPosition().x, player.getPosition().y);
       PlayerTable.addPosition(builder, positionOffset);
       PlayerTable.addRotation(builder, player.getRotation());
       PlayerTable.addTeam(builder, player.getTeam());
@@ -724,8 +714,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       if (object instanceof BulletItem bulletItem) {
         objectDataType = MapObjectUnion.BulletItemTable;
         BulletItemTable.startBulletItemTable(builder);
-        BulletItemTable.addType(
-            builder, (byte) bulletItem.getBulletType().ordinal());
+        BulletItemTable.addType(builder, (byte) bulletItem.getBulletType().ordinal());
         objectDataOffset = BulletItemTable.endBulletItemTable(builder);
         //        var bulletItemOffset = BulletItem.endBulletItem(builder);
         //        MapObject.addResponse(builder, bulletItemOffset);
@@ -744,8 +733,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       } else if (object instanceof VestItem vestItem) {
         objectDataType = MapObjectUnion.VestItemTable;
         objectDataOffset =
-            VestItemTable.createVestItemTable(
-                builder, (byte) vestItem.getVestType().ordinal());
+            VestItemTable.createVestItemTable(builder, (byte) vestItem.getVestType().ordinal());
       } else if (object instanceof MedKitItem medKitItem) {
         objectDataType = MapObjectUnion.MedKitItemTable;
         MedKitItemTable.startMedKitItemTable(builder);
@@ -786,7 +774,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       MapObjectTable.startMapObjectTable(builder);
       MapObjectTable.addId(builder, object.getId());
       var positionOffset =
-          Vector2Struct.createVector2Struct(builder, object.getPosition().x, object.getPosition().y);
+          Vector2Struct.createVector2Struct(
+              builder, object.getPosition().x, object.getPosition().y);
       MapObjectTable.addPosition(builder, positionOffset);
       MapObjectTable.addData(builder, objectDataOffset);
       mapObjectOffsets[i] = MapObjectTable.endMapObjectTable(builder);
@@ -799,8 +788,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     MatchInfoResponse.addPlayers(builder, playersOffset);
     MatchInfoResponse.addMapObjects(builder, mapObjectsOffset);
     var safeZoneOffset =
-        Vector2Struct.createVector2Struct(
-            builder, safeZones.get(0).x, safeZones.get(0).y);
+        Vector2Struct.createVector2Struct(builder, safeZones.get(0).x, safeZones.get(0).y);
     MatchInfoResponse.addSafeZone(builder, safeZoneOffset);
     return MatchInfoResponse.endMatchInfoResponse(builder);
   }
@@ -837,7 +825,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   }
 
   public void init() {
-    //FIXME:
+    // FIXME:
     var testPing = true;
     if (!testPing) {
       timer.schedule(
@@ -851,7 +839,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     }
     initSafeZones();
     initObstacles();
-        initBots();
+    initBots();
   }
 
   private void initBots() {
@@ -859,28 +847,29 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       this.addPlayer(-1 - i, i);
 
       Bot bot = new Bot();
-      bot.setMatch(this,  i);
+      bot.setMatch(this, i);
       bot.setConfidencePercent(1.0);
-      bots.putIfAbsent( i, bot);
+      bots.putIfAbsent(i, bot);
     }
   }
 
   private void initSafeZones() {
     safeZones.add(
-            new Circle(
-                GameConfig.getInstance().getDefaultSafeZoneCenterX(),
-                GameConfig.getInstance().getDefaultSafeZoneCenterY(),
-                GameConfig.getInstance().getDefaultSafeZoneRadius()));
+        new Circle(
+            GameConfig.getInstance().getDefaultSafeZoneCenterX(),
+            GameConfig.getInstance().getDefaultSafeZoneCenterY(),
+            GameConfig.getInstance().getDefaultSafeZoneRadius()));
 
     for (var radius : GameConfig.getInstance().getSafeZonesRadius()) {
       var previousSafeZone = safeZones.get(safeZones.size() - 1);
       var deltaRadius = previousSafeZone.radius - radius;
-      var newPosition = MatchUtil.randomPosition(
-                  previousSafeZone.x - deltaRadius,
-                  previousSafeZone.x + deltaRadius,
-                  previousSafeZone.y - deltaRadius,
-                  previousSafeZone.y + deltaRadius);
-      safeZones.add(new Circle(newPosition, radius) );
+      var newPosition =
+          MatchUtil.randomPosition(
+              previousSafeZone.x - deltaRadius,
+              previousSafeZone.x + deltaRadius,
+              previousSafeZone.y - deltaRadius,
+              previousSafeZone.y + deltaRadius);
+      safeZones.add(new Circle(newPosition, radius));
     }
     currentSafeZone = -1;
   }
@@ -905,8 +894,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
           spawnPoints.add(position.add(TileObject.PLAYER.getCenterOffset()));
         }
         case ITEM -> {
-          var item =
-              ItemOnMap.builder().item(ItemFactory.randomItem()).position(position).build();
+          var item = ItemOnMap.builder().item(ItemFactory.randomItem()).position(position).build();
           addMapObject(item);
         }
         case WALL -> {
@@ -984,11 +972,9 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
 
       SafeZoneMoveResponse.startSafeZoneMoveResponse(builder);
       var safeZonePositionOffset =
-          CircleStruct.createCircleStruct(
-              builder, safeZone.x, safeZone.y, safeZone.radius);
+          CircleStruct.createCircleStruct(builder, safeZone.x, safeZone.y, safeZone.radius);
       SafeZoneMoveResponse.addSafeZone(builder, safeZonePositionOffset);
-      var responseOffset =
-          SafeZoneMoveResponse.endSafeZoneMoveResponse(builder);
+      var responseOffset = SafeZoneMoveResponse.endSafeZoneMoveResponse(builder);
 
       Response.startResponse(builder);
       Response.addResponseType(builder, ResponseUnion.SafeZoneMoveResponse);
@@ -1009,8 +995,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       var safeZone = safeZones.get(i);
       for (var player : players.values()) {
         if (player.isDestroyed()) continue;
-        if (safeZone.contains(player.getPosition()))
-          continue;
+        if (safeZone.contains(player.getPosition())) continue;
         onPlayerTakeDamage(player.getPlayerId(), GameConstant.SAFE_ZONE_DAMAGE);
       }
     }
@@ -1021,7 +1006,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var builder = new FlatBufferBuilder(0);
 
     NewSafeZoneResponse.startNewSafeZoneResponse(builder);
-    var safeZoneOffset = CircleStruct.createCircleStruct(builder, safeZone.x, safeZone.y, safeZone.radius);
+    var safeZoneOffset =
+        CircleStruct.createCircleStruct(builder, safeZone.x, safeZone.y, safeZone.radius);
     NewSafeZoneResponse.addSafeZone(builder, safeZoneOffset);
     var responseOffset = NewSafeZoneResponse.endNewSafeZoneResponse(builder);
 
@@ -1052,13 +1038,11 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
               continue;
             }
             log.warn("player position {}", player.getPosition());
-            if (MatchUtil.isCollision(
-                player.getShape(),  bullet.getShape())) {
+            if (MatchUtil.isIntersect(player.getShape(), bullet.getShape())) {
               log.warn("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
               makeDamage(
                   ownerId,
-                  bullet.getPosition(),
-                  new Circle(bullet.getType().getDamageRadius()),
+                  new Circle(bullet.getPosition(), bullet.getType().getDamageRadius()),
                   bullet.getType().getDamage());
               bullet.setDestroyed(true);
             }
@@ -1071,13 +1055,11 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
                 continue;
               }
             }
-            if (MatchUtil.isCollision(
-                 object.getShape(),  bullet.getShape())) {
+            if (MatchUtil.isIntersect(object.getShape(), bullet.getShape())) {
               log.info("object {} is hit by bullet {}", object.getId(), bullet.getId());
               makeDamage(
                   ownerId,
-                  bullet.getPosition(),
-                  new Circle(bullet.getType().getDamageRadius()),
+                  new Circle(bullet.getPosition(), bullet.getType().getDamageRadius()),
                   bullet.getType().getDamageRadius());
               bullet.setDestroyed(true);
             }
@@ -1119,7 +1101,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     } else if (action instanceof PlayerTakeItem) {
       onPlayerTakeItem(playerId);
     } else if (action instanceof PlayerUseHealItem playerUseHealItem) {
-      onPlayerUseHealItem(playerId, playerUseHealItem.itemId());
+      onPlayerUseHealItem(playerId, playerUseHealItem.itemType());
     }
   }
 
@@ -1149,8 +1131,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     } else if (item instanceof VestItem vestItem) {
       itemType = ItemUnion.VestItemTable;
       itemOffset =
-          VestItemTable.createVestItemTable(
-              builder, (byte) vestItem.getVestType().ordinal());
+          VestItemTable.createVestItemTable(builder, (byte) vestItem.getVestType().ordinal());
     } else if (item instanceof MedKitItem medKitItem) {
       itemType = ItemUnion.MedKitItemTable;
       MedKitItemTable.startMedKitItemTable(builder);
@@ -1171,14 +1152,12 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     CreateItemOnMapResponse.addId(builder, itemOnMap.getId());
     CreateItemOnMapResponse.addItem(builder, itemOffset);
     CreateItemOnMapResponse.addItemType(builder, itemType);
-    var positionOffset =
-        Vector2Struct.createVector2Struct(builder, position.x, position.y);
+    var positionOffset = Vector2Struct.createVector2Struct(builder, position.x, position.y);
     CreateItemOnMapResponse.addPosition(builder, positionOffset);
     var rawPositionOffset =
         Vector2Struct.createVector2Struct(builder, rawPosition.x, rawPosition.y);
     CreateItemOnMapResponse.addRawPosition(builder, rawPositionOffset);
-    var responseOffset =
-        CreateItemOnMapResponse.endCreateItemOnMapResponse(builder);
+    var responseOffset = CreateItemOnMapResponse.endCreateItemOnMapResponse(builder);
 
     Response.startResponse(builder);
     Response.addResponseType(builder, ResponseUnion.CreateItemOnMapResponse);
@@ -1195,16 +1174,14 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       if (!(object instanceof ItemOnMap itemOnMap)) {
         continue;
       }
-      if (MatchUtil.isCollision(
-           player.getShape(),  itemOnMap.getShape())) {
+      if (MatchUtil.isIntersect(player.getShape(), itemOnMap.getShape())) {
         player.takeItem(itemOnMap.getItem());
         removeMapObject(itemOnMap);
 
         var builder = new FlatBufferBuilder(0);
 
         var responseOffset =
-            PlayerTakeItemResponse.createPlayerTakeItemResponse(
-                builder, playerId, object.getId());
+            PlayerTakeItemResponse.createPlayerTakeItemResponse(builder, playerId, object.getId());
 
         Response.startResponse(builder);
         Response.addResponseType(builder, ResponseUnion.PlayerTakeItemResponse);
@@ -1212,7 +1189,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         var packetOffset = Response.endResponse(builder);
         builder.finish(packetOffset);
 
-        NetworkUtil.sendResponse(getUsernamesCanSeeAt(itemOnMap.getPosition()), builder.dataBuffer());
+        NetworkUtil.sendResponse(
+            getUsernamesCanSeeAt(itemOnMap.getPosition()), builder.dataBuffer());
       }
     }
   }
@@ -1236,20 +1214,27 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
   }
 
-  private void onPlayerUseHealItem(int playerId, int itemId) {
+  private void onPlayerUseHealItem(int playerId, ItemType itemType) {
     var player = players.get(playerId);
     var result = false;
-    switch (itemId) {
-      case ItemUnion.BandageItemTable -> result = player.useBandage();
-      case ItemUnion.MedKitItemTable -> result = player.useMedKit();
-      default -> log.warn("Not handle use item {}", itemId);
+    byte itemId = -1;
+    switch (itemType) {
+      case BANDAGE -> {
+        result = player.useBandage();
+        itemId = ItemUnion.BandageItemTable;
+      }
+      case MEDKIT -> {
+        result = player.useMedKit();
+        itemId = ItemUnion.MedKitItemTable;
+      }
+      default -> log.warn("Not handle use item {}", itemType);
     }
     if (result) {
       var builder = new FlatBufferBuilder(0);
 
       var responseOffset =
           UseHealItemResponse.createUseHealItemResponse(
-              builder, player.getHp(), (byte) itemId, player.getNumItem(itemId));
+              builder, player.getHp(), itemId, player.getNumItem(itemType));
 
       Response.startResponse(builder);
       Response.addResponseType(builder, ResponseUnion.UseHealItemResponse);

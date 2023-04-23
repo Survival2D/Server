@@ -24,11 +24,11 @@ import survival2d.flatbuffers.RequestUnion;
 import survival2d.flatbuffers.Response;
 import survival2d.flatbuffers.ResponseUnion;
 import survival2d.flatbuffers.Vector2Struct;
-import survival2d.match.action.ActionAttack;
-import survival2d.match.action.ActionChangeWeapon;
-import survival2d.match.action.ActionMove;
-import survival2d.match.action.ActionReloadWeapon;
-import survival2d.match.action.ActionTakeItem;
+import survival2d.match.action.PlayerAttack;
+import survival2d.match.action.PlayerChangeWeapon;
+import survival2d.match.action.PlayerMove;
+import survival2d.match.action.PlayerReloadWeapon;
+import survival2d.match.action.PlayerTakeItem;
 import survival2d.network.client.User;
 import survival2d.network.json.request.BaseJsonRequest;
 import survival2d.network.json.request.LoginJsonRequest;
@@ -51,8 +51,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
             break;
           }
           var match = optMatch.get();
-          var data = match.getMatchInfoData();
-          NetworkUtil.sendResponse(userId, data);
+          match.responseMatchInfoOnStart(userId);
         }
         case RequestUnion.PlayerMoveRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -66,7 +65,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           var match = optMatch.get();
           match.onReceivePlayerAction(
               userId,
-              new ActionMove(
+              new PlayerMove(
                   new Vector2(playerMoveRequest.direction().x(), playerMoveRequest.direction().y()),
                   playerMoveRequest.rotation()));
         }
@@ -80,7 +79,8 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           request.request(request);
 
           var match = optMatch.get();
-          match.onReceivePlayerAction(userId, new ActionChangeWeapon(playerChangeWeaponRequest.slot()));
+          match.onReceivePlayerAction(
+              userId, new PlayerChangeWeapon(playerChangeWeaponRequest.slot()));
         }
         case RequestUnion.PlayerAttackRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -91,7 +91,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           var playerAttackRequest = new PlayerAttackRequest();
           request.request(playerAttackRequest);
           var match = optMatch.get();
-          match.onReceivePlayerAction(userId, new ActionAttack());
+          match.onReceivePlayerAction(userId, new PlayerAttack());
         }
         case RequestUnion.PlayerReloadWeaponRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -100,7 +100,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
             return;
           }
           var match = optMatch.get();
-          match.onReceivePlayerAction(userId, new ActionReloadWeapon());
+          match.onReceivePlayerAction(userId, new PlayerReloadWeapon());
         }
         case RequestUnion.PlayerTakeItemRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -109,7 +109,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
             return;
           }
           var match = optMatch.get();
-          match.onReceivePlayerAction(userId, new ActionTakeItem());
+          match.onReceivePlayerAction(userId, new PlayerTakeItem());
         }
         case RequestUnion.PingRequest -> {
           var builder = new FlatBufferBuilder(0);
@@ -148,7 +148,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         case RequestUnion.PingByMatchInfoRequest -> {
           var builder = new FlatBufferBuilder(0);
 
-          final int responseOffset = SamplePingData.match.putResponseData(builder);
+          final int responseOffset = SamplePingData.match.putMatchInfoData(builder);
 
           Response.startResponse(builder);
           Response.addResponseType(builder, ResponseUnion.PingByMatchInfoResponse);
@@ -208,16 +208,17 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
       log.info("User {} connected", user.getId());
       new Thread(
               () -> {
-                try {
-                  Thread.sleep(2000L);
-                  NetworkUtil.sendBinaryResponse(
-                      channel,
-                      ClientEventCode.CODE_CLIENT_CONNECT,
-                      String.valueOf(user.getId()));
-                  ChannelUtils.pushToClient(
-                      channel, ClientEventCode.CODE_CLIENT_NICKNAME_SET, null);
-                } catch (InterruptedException ignored) {
-                }
+                //TODO
+//                try {
+//                  Thread.sleep(2000L);
+//                  NetworkUtil.sendBinaryResponse(
+//                      channel,
+//                      ClientEventCode.CODE_CLIENT_CONNECT,
+//                      String.valueOf(user.getId()));
+//                  ChannelUtils.pushToClient(
+//                      channel, ClientEventCode.CODE_CLIENT_NICKNAME_SET, null);
+//                } catch (InterruptedException ignored) {
+//                }
               })
           .start();
     } else {
@@ -240,7 +241,8 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
     var user = ServerData.getInstance().getUserMap().get(userId);
     if (user != null) {
       log.info("onReaderIdle: userId {}, userName {}", userId, user.getName());
-      ServerEventListener.get(ServerEventCode.CODE_CLIENT_OFFLINE).call(user, null);
+      //TODO
+//      ServerEventListener.get(ServerEventCode.CODE_CLIENT_OFFLINE).call(user, null);
     }
   }
 }

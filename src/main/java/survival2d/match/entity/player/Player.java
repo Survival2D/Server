@@ -2,6 +2,8 @@ package survival2d.match.entity.player;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +15,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import survival2d.match.config.GameConfig;
-import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.Movable;
@@ -22,7 +23,6 @@ import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.HelmetItem;
 import survival2d.match.entity.item.VestItem;
 import survival2d.match.entity.quadtree.BaseMapObject;
-import survival2d.match.entity.quadtree.RectangleBoundary;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
 import survival2d.match.entity.weapon.Weapon;
@@ -41,8 +41,6 @@ import survival2d.util.serialize.GsonTransient;
 public class Player extends BaseMapObject implements Movable, HasHp {
 
   public static final int BODY_RADIUS = 30;
-  public static final Circle BODY_SHAPE = new Circle(BODY_RADIUS);
-  public static final Circle HEAD_SHAPE = new Circle(10);
   int id; // Id trên map
   int playerId; // Username của player
   Vector2 position = MatchUtil.randomPosition(100, 900, 100, 900);
@@ -58,10 +56,10 @@ public class Player extends BaseMapObject implements Movable, HasHp {
   @GsonTransient Map<ItemType, Integer> items = new HashMap<>(); // Chỉ map những item 1 loại
   @GsonTransient int currentWeaponIndex;
   int team;
-  @GsonTransient Circle head = HEAD_SHAPE;
+  @GsonTransient Circle body = new Circle(0, 0, GameConfig.getInstance().getPlayerBodyRadius());
+  @GsonTransient Circle head = new Circle(0, 0, GameConfig.getInstance().getPlayerHeadRadius());
 
   public Player(int playerId, int team) {
-    super(BODY_SHAPE);
     this.playerId = playerId;
     this.team = team;
     weapons.add(new Hand());
@@ -69,6 +67,13 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     //    gun.reload(100);
     weapons.add(gun);
   }
+
+@Override
+public void setPosition(Vector2 position) {
+    this.position = position;
+    body.setPosition(position);
+    head.setPosition(position);
+}
 
   public Vector2 getAttackDirection() {
     return new Vector2(MathUtils.cos(rotation), MathUtils.sin(rotation));
@@ -94,8 +99,7 @@ public class Player extends BaseMapObject implements Movable, HasHp {
       return;
     }
     val weapon = optWeapon.get();
-    if (weapon instanceof Gun) {
-      val gun = (Gun) weapon;
+    if (weapon instanceof Gun gun) {
       val gunType = gun.getType();
       val bulletType = gunType.getBulletType();
       gun.reload(bullets.getOrDefault(bulletType, 0));
@@ -180,8 +184,8 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     return true;
   }
 
-  public int getNumItem(int itemId) {
-    return items.getOrDefault(ItemType.parse(itemId), 0);
+  public int getNumItem(ItemType itemType) {
+    return items.getOrDefault(itemType, 0);
   }
 
   public int getNumBullet() {
@@ -193,14 +197,18 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     hp = Math.min(hp + amount, GameConfig.getInstance().getDefaultPlayerHp());
   }
 
-  public RectangleBoundary getPlayerView() {
+  public Rectangle getPlayerView() {
     val width = GameConfig.getInstance().getPlayerViewWidth();
     val height = GameConfig.getInstance().getPlayerViewHeight();
-    return new RectangleBoundary(
-        position.getX() - width / 2, position.getY() - height / 2, width, height);
+    return new Rectangle(position.x - width / 2, position.y - height / 2, width, height);
   }
 
   public Gun getGun() {
     return (Gun) weapons.get(1);
+  }
+
+  @Override
+  public Shape2D getShape() {
+    return body;
   }
 }

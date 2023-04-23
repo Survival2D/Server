@@ -15,7 +15,7 @@ public class MatchUtil {
     return new Vector2(MathUtils.random(fromX, toX), MathUtils.random(fromY, toY));
   }
 
-  public static boolean isCollision(Shape2D s1, Shape2D s2) {
+  public static boolean isIntersect(Shape2D s1, Shape2D s2) {
     if (s1 instanceof Circle c1) {
       if (s2 instanceof Circle c2) {
         return Intersector.overlaps(c1, c2);

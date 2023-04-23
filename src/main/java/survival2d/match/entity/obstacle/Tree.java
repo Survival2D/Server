@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.quadtree.BaseMapObject;
@@ -13,15 +13,17 @@ import survival2d.util.serialize.GsonTransient;
 @Getter
 @Setter
 public class Tree extends BaseMapObject implements Destroyable, HasHp, Obstacle {
-
-  private static final Circle ROOT_SHAPE = new Circle(50);
-  private static final Circle FOLIAGE_SHAPE = new Circle(150);
-  @GsonTransient int id;
   @GsonTransient double hp = 100;
-  Vector2 position;
-  @GsonTransient Circle shape = ROOT_SHAPE;
-  @GsonTransient Circle foliage = FOLIAGE_SHAPE;
+  @GsonTransient Circle shape = new Circle(0, 0, GameConfig.getInstance().getTreeRootRadius());
+  @GsonTransient Circle foliage = new Circle(0, 0, GameConfig.getInstance().getTreeFoliageRadius());
   ObstacleType type = ObstacleType.TREE;
+
+  @Override
+  public void setPosition(Vector2 position) {
+    super.setPosition(position);
+    shape.setPosition(position);
+    foliage.setPosition(position);
+  }
 
   @Override
   public boolean isDestroyed() {

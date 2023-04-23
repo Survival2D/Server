@@ -16,16 +16,20 @@ public final class GunItemTable extends Table {
   public GunItemTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public byte type() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public int numBullet() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
   public static int createGunItemTable(FlatBufferBuilder builder,
-      byte type) {
-    builder.startTable(1);
+      byte type,
+      int numBullet) {
+    builder.startTable(2);
+    GunItemTable.addNumBullet(builder, numBullet);
     GunItemTable.addType(builder, type);
     return GunItemTable.endGunItemTable(builder);
   }
 
-  public static void startGunItemTable(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void startGunItemTable(FlatBufferBuilder builder) { builder.startTable(2); }
   public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
+  public static void addNumBullet(FlatBufferBuilder builder, int numBullet) { builder.addInt(1, numBullet, 0); }
   public static int endGunItemTable(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

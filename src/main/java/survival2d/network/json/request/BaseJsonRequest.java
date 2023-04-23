@@ -2,9 +2,9 @@ package survival2d.network.json.request;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.miti99.netty.json.BaseJsonPacket;
-import com.miti99.netty.json.JsonPacketId;
-import com.miti99.netty.json.JsonPacketIdDeserializer;
+import survival2d.network.json.BaseJsonPacket;
+import survival2d.network.json.JsonPacketId;
+import survival2d.network.json.JsonPacketIdDeserializer;
 
 public abstract class BaseJsonRequest extends BaseJsonPacket {
 

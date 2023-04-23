@@ -12,6 +12,6 @@ public class GameConstant {
   public static final int MAX_OBJECT_SIZE = 200;
   public static final int DOUBLE_MAX_OBJECT_SIZE = 2 * MAX_OBJECT_SIZE;
   public static final int QUAD_MAX_OBJECT_SIZE = 2 * DOUBLE_MAX_OBJECT_SIZE;
-  public static final Circle DAMAGE_SHAPE = new Circle(10);
   public static final int SAFE_ZONE_DAMAGE = 1;
+  public static final int MAX_PLAYER_IN_TEAM = 4;
 }

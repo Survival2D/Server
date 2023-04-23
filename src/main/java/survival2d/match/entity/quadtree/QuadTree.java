@@ -1,5 +1,7 @@
 package survival2d.match.entity.quadtree;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Shape2D;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -8,11 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.val;
+import survival2d.match.util.MatchUtil;
 
 @Getter
 public class QuadTree<T extends Node> {
   private static final int CAPACITY = 4; // Sức chứa của mỗi quadtree
-  RectangleBoundary boundary;
+  Rectangle treeBoundary;
   boolean partitioned = false;
   Map<Integer, T> nodes = new ConcurrentHashMap<>();
   QuadTree<T> northwest;
@@ -20,16 +23,16 @@ public class QuadTree<T extends Node> {
   QuadTree<T> southwest;
   QuadTree<T> southeast;
 
-  public QuadTree(double x, double y, double width, double height) {
-    boundary = new RectangleBoundary(x, y, width, height);
+  public QuadTree(float x, float y, float width, float height) {
+    treeBoundary = new Rectangle(x, y, width, height);
   }
 
-  public QuadTree(RectangleBoundary boundary) {
-    this.boundary = boundary;
+  public QuadTree(Rectangle boundary) {
+    treeBoundary = boundary;
   }
 
   public void add(T node) {
-    if (!boundary.contains(node)) return;
+    if (!treeBoundary.contains(node.getPosition())) return;
 
     if (nodes.containsKey(node.getId())) return;
 
@@ -39,13 +42,13 @@ public class QuadTree<T extends Node> {
     }
 
     if (!partitioned) partition();
-    if (northwest.boundary.contains(node)) {
+    if (northwest.treeBoundary.contains(node.getPosition())) {
       northwest.add(node);
-    } else if (northeast.boundary.contains(node)) {
+    } else if (northeast.treeBoundary.contains(node.getPosition())) {
       northeast.add(node);
-    } else if (southwest.boundary.contains(node)) {
+    } else if (southwest.treeBoundary.contains(node.getPosition())) {
       southwest.add(node);
-    } else if (southeast.boundary.contains(node)) {
+    } else if (southeast.treeBoundary.contains(node.getPosition())) {
       southeast.add(node);
     }
   }
@@ -60,10 +63,10 @@ public class QuadTree<T extends Node> {
   }
 
   private void partition() {
-    val x = boundary.getPosition().getX();
-    val y = boundary.getPosition().getY();
-    val width = boundary.getShape().getWidth();
-    val height = boundary.getShape().getHeight();
+    val x = treeBoundary.x;
+    val y = treeBoundary.y;
+    val width = treeBoundary.width;
+    val height = treeBoundary.height;
     val halfWidth = width / 2;
     val halfHeight = height / 2;
     northwest = new QuadTree<>(x, y, halfWidth, halfHeight);
@@ -73,12 +76,12 @@ public class QuadTree<T extends Node> {
     partitioned = true;
   }
 
-  public List<T> query(BaseBoundary boundary) {
-    if (boundary.isIntersect(boundary)) {
-      val result = nodes.values().stream().filter(boundary::contains).collect(Collectors.toList());
+  public List<T> query(Shape2D boundary) {
+    if (MatchUtil.isIntersect(treeBoundary,boundary)) {
+      val result = nodes.values().stream().filter(node -> boundary.contains(node.getPosition())).collect(Collectors.toList());
       if (partitioned) {
-        result.addAll(northwest.query(boundary ));
-        result.addAll(northeast.query(boundary ));
+        result.addAll(northwest.query(boundary));
+        result.addAll(northeast.query(boundary));
         result.addAll(southwest.query(boundary));
         result.addAll(southeast.query(boundary));
       }
