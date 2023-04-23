@@ -44,6 +44,10 @@ table PlayerReloadWeaponRequest {
 table PlayerTakeItemRequest {
 }
 
+table SetAutoPlayRequest {
+  enable: bool;
+}
+
 table PingRequest {}
 
 table PingByPlayerMoveRequest {
@@ -66,6 +70,7 @@ union RequestUnion {
   PlayerReloadWeaponRequest,
   PlayerChangeWeaponRequest,
   PlayerTakeItemRequest,
+  SetAutoPlayRequest,
   PingRequest,
   PingByPlayerMoveRequest,
   PingByMatchInfoRequest,

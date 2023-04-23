@@ -1,7 +1,6 @@
 package survival2d.ai.bot.leaf;
 
 import survival2d.ai.bot.BotBehaviorNode;
-import survival2d.match.entity.player.Player;
 
 public class UseMedicineNode extends BotBehaviorNode {
     @Override

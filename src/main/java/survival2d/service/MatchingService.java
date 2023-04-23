@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import survival2d.match.Match;
+import survival2d.match.entity.match.Match;
 
 @Slf4j
 public class MatchingService {

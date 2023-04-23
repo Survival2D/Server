@@ -15,8 +15,11 @@ public final class SafeZoneMoveResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public SafeZoneMoveResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public survival2d.flatbuffers.CircleStruct safeZone() { return safeZone(new survival2d.flatbuffers.CircleStruct()); }
+  public survival2d.flatbuffers.CircleStruct safeZone(survival2d.flatbuffers.CircleStruct obj) { int o = __offset(4); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
 
-  public static void startSafeZoneMoveResponse(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static void startSafeZoneMoveResponse(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addSafeZone(FlatBufferBuilder builder, int safeZoneOffset) { builder.addStruct(0, safeZoneOffset, 0); }
   public static int endSafeZoneMoveResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

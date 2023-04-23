@@ -1,10 +1,10 @@
 package survival2d.match.entity.quadtree;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import com.badlogic.gdx.math.Vector2;
 
 public interface Node {
 
   int getId();
 
-  Vector2D getPosition();
+  Vector2 getPosition();
 }

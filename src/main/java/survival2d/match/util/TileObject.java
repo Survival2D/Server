@@ -1,11 +1,10 @@
 package survival2d.match.util;
 
-import com.tvd12.reflections.util.Lists;
+import com.badlogic.gdx.math.Vector2;
 import java.util.List;
 import java.util.TreeMap;
 import lombok.Getter;
 import lombok.val;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @Getter
 public enum TileObject {
@@ -20,17 +19,18 @@ public enum TileObject {
   final int width;
   final int height;
   final int weight;
-  final Vector2D centerOffset;
+  final Vector2 centerOffset;
 
   TileObject(int width, int height, int weight) {
     this.width = width;
     this.height = height;
     this.weight = weight;
-    centerOffset = new Vector2D(width * MapGenerator.TILE_SIZE / 2, height * MapGenerator.TILE_SIZE / 2);
+    centerOffset =
+        new Vector2(width * MapGenerator.TILE_SIZE / 2, height * MapGenerator.TILE_SIZE / 2);
   }
 
   public static List<TileObject> getListObstacles() {
-    return Lists.newArrayList(ITEM, TREE, BOX, ROCK);
+    return List.of(ITEM, TREE, BOX, ROCK);
   }
 
   public static TreeMap<Integer, TileObject> buildObstacleWeight() {

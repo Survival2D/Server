@@ -1,9 +1,9 @@
 package survival2d.match.entity.quadtree;
 
 import java.util.Map;
-import survival2d.util.serialize.ExcludeFromGson;
+import survival2d.util.serialize.GsonTransient;
 
 public abstract class SpatialPartitionGeneric<T extends Node> {
-  @ExcludeFromGson protected Map<Integer, T> objects;
-  @ExcludeFromGson protected QuadTree<T> quadTree;
+  @GsonTransient protected Map<Integer, T> objects;
+  @GsonTransient protected QuadTree<T> quadTree;
 }

@@ -15,8 +15,17 @@ public final class VestItemTable extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public VestItemTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public byte type() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
 
-  public static void startVestItemTable(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static int createVestItemTable(FlatBufferBuilder builder,
+      byte type) {
+    builder.startTable(1);
+    VestItemTable.addType(builder, type);
+    return VestItemTable.endVestItemTable(builder);
+  }
+
+  public static void startVestItemTable(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static int endVestItemTable(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

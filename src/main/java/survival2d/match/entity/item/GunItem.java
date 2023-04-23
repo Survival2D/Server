@@ -2,9 +2,9 @@ package survival2d.match.entity.item;
 
 import lombok.Getter;
 import survival2d.match.entity.base.Item;
-import survival2d.match.entity.config.GunType;
-import survival2d.match.entity.config.ItemType;
-import survival2d.match.entity.config.WeaponType;
+import survival2d.match.type.GunType;
+import survival2d.match.type.ItemType;
+import survival2d.match.type.WeaponType;
 
 @Getter
 public class GunItem implements Item {

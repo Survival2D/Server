@@ -1,6 +1,6 @@
 package survival2d.match.entity.quadtree;
 
-import survival2d.match.entity.base.Rectangle;
+import com.badlogic.gdx.math.Rectangle;
 
 public class RectangleBoundary extends BaseBoundary {
   public RectangleBoundary(double x, double y, double width, double height) {

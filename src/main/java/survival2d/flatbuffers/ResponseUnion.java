@@ -27,11 +27,12 @@ public final class ResponseUnion {
   public static final byte EndGameResponse = 20;
   public static final byte NewSafeZoneResponse = 21;
   public static final byte SafeZoneMoveResponse = 22;
-  public static final byte PingResponse = 23;
-  public static final byte PingByPlayerMoveResponse = 24;
-  public static final byte PingByMatchInfoResponse = 25;
+  public static final byte UseHealItemResponse = 23;
+  public static final byte PingResponse = 24;
+  public static final byte PingByPlayerMoveResponse = 25;
+  public static final byte PingByMatchInfoResponse = 26;
 
-  public static final String[] names = { "NONE", "GetUserInfoResponse", "CreateTeamResponse", "JoinTeamResponse", "FindMatchResponse", "GetConfigResponse", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
+  public static final String[] names = { "NONE", "GetUserInfoResponse", "CreateTeamResponse", "JoinTeamResponse", "FindMatchResponse", "GetConfigResponse", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "UseHealItemResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
 
   public static String name(int e) { return names[e]; }
 }

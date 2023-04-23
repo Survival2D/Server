@@ -1,7 +1,5 @@
 package survival2d.match.constant;
 
-import survival2d.match.entity.base.Circle;
-
 public class GameConstant {
   public static final int TICK_PER_SECOND = 60;
   public static final int PERIOD_PER_TICK = 1000 / TICK_PER_SECOND;

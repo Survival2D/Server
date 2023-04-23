@@ -1,14 +1,5 @@
 package survival2d.match.action;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import com.badlogic.gdx.math.Vector2;
 
-@Builder
-@Getter
-@AllArgsConstructor
-public class PlayerMove implements PlayerAction {
-  private Vector2D direction;
-  private double rotation;
-}
+public record PlayerMove(Vector2 direction, float rotation) implements PlayerAction {}

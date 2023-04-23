@@ -1,12 +1,12 @@
 package survival2d.match.entity.item;
 
-import static survival2d.match.entity.config.ItemType.BACKPACK;
-import static survival2d.match.entity.config.ItemType.BANDAGE;
-import static survival2d.match.entity.config.ItemType.BULLET;
-import static survival2d.match.entity.config.ItemType.HELMET;
-import static survival2d.match.entity.config.ItemType.MEDKIT;
-import static survival2d.match.entity.config.ItemType.VEST;
-import static survival2d.match.entity.config.ItemType.WEAPON;
+import static survival2d.match.type.ItemType.BACKPACK;
+import static survival2d.match.type.ItemType.BANDAGE;
+import static survival2d.match.type.ItemType.BULLET;
+import static survival2d.match.type.ItemType.HELMET;
+import static survival2d.match.type.ItemType.MEDKIT;
+import static survival2d.match.type.ItemType.VEST;
+import static survival2d.match.type.ItemType.WEAPON;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import lombok.val;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Item;
-import survival2d.match.entity.config.BulletType;
-import survival2d.match.entity.config.GunType;
-import survival2d.match.entity.config.ItemType;
+import survival2d.match.type.BulletType;
+import survival2d.match.type.GunType;
+import survival2d.match.type.ItemType;
 
 public class ItemFactory {
   private static final TreeMap<Integer, ItemType> itemsToRandom = new TreeMap<>();

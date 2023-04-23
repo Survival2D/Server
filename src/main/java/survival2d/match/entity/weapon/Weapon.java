@@ -1,7 +1,7 @@
 package survival2d.match.entity.weapon;
 
-import survival2d.match.entity.config.AttachType;
-import survival2d.match.entity.config.WeaponType;
+import survival2d.match.type.AttachType;
+import survival2d.match.type.WeaponType;
 
 public abstract class Weapon {
 

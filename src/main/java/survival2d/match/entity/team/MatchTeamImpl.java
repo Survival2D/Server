@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import survival2d.match.entity.player.Player;
 
 public class MatchTeamImpl implements MatchTeam {
 

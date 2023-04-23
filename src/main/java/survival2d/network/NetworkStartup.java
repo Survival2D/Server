@@ -16,7 +16,6 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 
 @Slf4j
 public class NetworkStartup {

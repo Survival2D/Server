@@ -1,15 +1,15 @@
 package survival2d.match.entity.weapon;
 
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import survival2d.match.entity.base.Destroyable;
-import survival2d.match.entity.base.Dot;
 import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.base.Movable;
-import survival2d.match.entity.config.BulletType;
 import survival2d.match.entity.quadtree.BaseMapObject;
+import survival2d.match.type.BulletType;
 
 @Getter
 @Setter
@@ -17,17 +17,17 @@ import survival2d.match.entity.quadtree.BaseMapObject;
 public class Bullet extends BaseMapObject implements MapObject, Movable, Destroyable {
 
   int id;
-  String ownerId;
+  int ownerId;
 
-  Vector2D position;
+  Vector2 position;
 
-  Vector2D rawPosition;
-  Vector2D direction;
+  Vector2 rawPosition;
+  Vector2 direction;
   BulletType type;
   boolean isDestroyed;
-  Dot shape = new Dot();
+  Circle shape;
 
-  public Bullet(String ownerId, Vector2D rawPosition, Vector2D direction, BulletType type) {
+  public Bullet(int ownerId, Vector2 rawPosition, Vector2 direction, BulletType type) {
     this.ownerId = ownerId;
     this.rawPosition = rawPosition;
     this.position = rawPosition;
@@ -36,11 +36,11 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
   }
 
   public void move() {
-    moveBy(direction.scalarMultiply(type.getSpeed()));
-//    log.info("position: {}", position);
+    moveBy(direction.scl(type.getSpeed()));
+    //    log.info("position: {}", position);
   }
 
   public boolean isOutOfBound() {
-    return position.distance(rawPosition) > type.getMaxRange();
+    return position.dst(rawPosition) > type.getMaxRange();
   }
 }

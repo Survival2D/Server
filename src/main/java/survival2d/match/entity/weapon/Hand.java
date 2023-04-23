@@ -1,7 +1,7 @@
 package survival2d.match.entity.weapon;
 
 import lombok.Getter;
-import survival2d.match.entity.config.WeaponType;
+import survival2d.match.type.WeaponType;
 
 @Getter
 public class Hand extends Weapon {

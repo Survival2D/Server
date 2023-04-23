@@ -1,4 +1,4 @@
-package survival2d.match.entity.config;
+package survival2d.match.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

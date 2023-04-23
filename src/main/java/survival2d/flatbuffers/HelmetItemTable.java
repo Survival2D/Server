@@ -15,8 +15,17 @@ public final class HelmetItemTable extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public HelmetItemTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public byte type() { int o = __offset(4); return o != 0 ? bb.get(o + bb_pos) : 0; }
 
-  public static void startHelmetItemTable(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static int createHelmetItemTable(FlatBufferBuilder builder,
+      byte type) {
+    builder.startTable(1);
+    HelmetItemTable.addType(builder, type);
+    return HelmetItemTable.endHelmetItemTable(builder);
+  }
+
+  public static void startHelmetItemTable(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addType(FlatBufferBuilder builder, byte type) { builder.addByte(0, type, 0); }
   public static int endHelmetItemTable(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

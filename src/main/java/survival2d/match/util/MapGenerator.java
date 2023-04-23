@@ -1,5 +1,7 @@
 package survival2d.match.util;
 
+import ch.qos.logback.core.joran.sanity.Pair;
+import com.badlogic.gdx.math.Rectangle;
 import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,9 +10,6 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import lombok.val;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class MapGenerator {
   public static final int MAP_WIDTH = 100;

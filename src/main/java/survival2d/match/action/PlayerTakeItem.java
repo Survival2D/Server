@@ -1,3 +1,3 @@
 package survival2d.match.action;
 
-public class PlayerTakeItem implements PlayerAction {}
+public record PlayerTakeItem() implements PlayerAction {}

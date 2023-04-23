@@ -1,9 +1,8 @@
 package survival2d.ai.bot.leaf;
 
 import survival2d.ai.bot.BotBehaviorNode;
-import survival2d.match.entity.config.HelmetType;
-import survival2d.match.entity.config.VestType;
-import survival2d.match.entity.player.Player;
+import survival2d.match.type.HelmetType;
+import survival2d.match.type.VestType;
 
 public class HaveArmorNode extends BotBehaviorNode {
     @Override

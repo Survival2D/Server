@@ -1,10 +1,10 @@
 package survival2d.match.entity.quadtree;
 
+import com.badlogic.gdx.math.Vector2;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 @AllArgsConstructor
 @Getter
@@ -12,7 +12,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 @Setter
 public abstract class BaseNode<T extends BaseNode<?>> implements Node {
   protected int id;
-  protected Vector2D position;
+  protected Vector2 position;
 
   public abstract boolean isCollision(T other);
 }
