@@ -1,6 +1,6 @@
 package survival2d.match.constant;
 
-import com.badlogic.gdx.math.Circle;
+import survival2d.match.entity.base.Circle;
 
 public class GameConstant {
   public static final int TICK_PER_SECOND = 60;

@@ -1,10 +1,10 @@
 package survival2d.match.entity.base;
 
-import com.badlogic.gdx.math.Vector2;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 public interface HasPosition {
 
-  Vector2 getPosition();
+  Vector2D getPosition();
 
-  void setPosition(Vector2 position);
+  void setPosition(Vector2D position);
 }

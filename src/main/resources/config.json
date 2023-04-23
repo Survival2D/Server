@@ -13,5 +13,7 @@
   "defaultPlayerSpeed": 10,
   "bandageHeal": 10,
   "playerViewWidth": 2400,
-  "playerViewHeight": 1200
+  "playerViewHeight": 1200,
+  "playerBodyRadius": 50,
+  "playerHeadRadius": 10
 }

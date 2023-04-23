@@ -2,7 +2,7 @@ package survival2d.ping.data;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import survival2d.match.entity.Match;
+import survival2d.match.Match;
 
 public class SamplePingData {
 
