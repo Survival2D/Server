@@ -111,7 +111,7 @@ union MapObjectUnion {
 table MapObjectTable {
   id: int;
   position: Vector2Struct;
-  data: MapObjectTable;
+  data: MapObjectUnion;
 }
 
 table BulletTable {

@@ -18,13 +18,14 @@ public final class MapObjectTable extends Table {
   public int id() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   public survival2d.flatbuffers.Vector2Struct position() { return position(new survival2d.flatbuffers.Vector2Struct()); }
   public survival2d.flatbuffers.Vector2Struct position(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(6); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
-  public survival2d.flatbuffers.MapObjectTable data() { return data(new survival2d.flatbuffers.MapObjectTable()); }
-  public survival2d.flatbuffers.MapObjectTable data(survival2d.flatbuffers.MapObjectTable obj) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public byte dataType() { int o = __offset(8); return o != 0 ? bb.get(o + bb_pos) : 0; }
+  public Table data(Table obj) { int o = __offset(10); return o != 0 ? __union(obj, o + bb_pos) : null; }
 
-  public static void startMapObjectTable(FlatBufferBuilder builder) { builder.startTable(3); }
+  public static void startMapObjectTable(FlatBufferBuilder builder) { builder.startTable(4); }
   public static void addId(FlatBufferBuilder builder, int id) { builder.addInt(0, id, 0); }
   public static void addPosition(FlatBufferBuilder builder, int positionOffset) { builder.addStruct(1, positionOffset, 0); }
-  public static void addData(FlatBufferBuilder builder, int dataOffset) { builder.addOffset(2, dataOffset, 0); }
+  public static void addDataType(FlatBufferBuilder builder, byte dataType) { builder.addByte(2, dataType, 0); }
+  public static void addData(FlatBufferBuilder builder, int dataOffset) { builder.addOffset(3, dataOffset, 0); }
   public static int endMapObjectTable(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

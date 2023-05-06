@@ -778,6 +778,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
               builder, object.getPosition().x, object.getPosition().y);
       MapObjectTable.addPosition(builder, positionOffset);
       MapObjectTable.addData(builder, objectDataOffset);
+      MapObjectTable.addDataType(builder, objectDataType);
       mapObjectOffsets[i] = MapObjectTable.endMapObjectTable(builder);
     }
 
