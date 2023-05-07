@@ -5,17 +5,10 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 import survival2d.data.ServerData;
-import survival2d.network.client.User;
 import survival2d.network.json.response.BaseJsonResponse;
 
 @Slf4j
 public class NetworkUtil {
-  public static User getUserById(int userId) {
-    if (ServerData.getInstance().getUserMap().get(userId) == null) {
-      log.error("getUserById - user {} is null", userId);
-    }
-    return ServerData.getInstance().getUserMap().get(userId);
-  }
 
   public static void sendResponse(Channel channel, BaseJsonResponse response) {
     sendResponse(channel, response.toJson());
@@ -38,11 +31,11 @@ public class NetworkUtil {
   }
 
   public static void sendResponse(int userId, ByteBuffer byteBuffer) {
-    sendResponse(getUserById(userId).getChannel(), byteBuffer);
+    sendResponse(ServerData.getInstance().getUser(userId).getChannel(), byteBuffer);
   }
 
   public static void sendResponse(int userId, byte[] bytes) {
-    sendResponse(getUserById(userId).getChannel(), bytes);
+    sendResponse(ServerData.getInstance().getUser(userId).getChannel(), bytes);
   }
 
   public static void sendResponse(Channel channel, ByteBuffer byteBuffer) {

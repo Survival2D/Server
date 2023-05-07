@@ -5,34 +5,35 @@ package survival2d.flatbuffers;
 public final class ResponseUnion {
   private ResponseUnion() { }
   public static final byte NONE = 0;
-  public static final byte GetUserInfoResponse = 1;
-  public static final byte CreateTeamResponse = 2;
-  public static final byte JoinTeamResponse = 3;
-  public static final byte FindMatchResponse = 4;
-  public static final byte GetConfigResponse = 5;
-  public static final byte MatchInfoResponse = 6;
-  public static final byte PlayerMoveResponse = 7;
-  public static final byte PlayerAttackResponse = 8;
-  public static final byte PlayerInfoResponse = 9;
-  public static final byte CreateBulletOnMapResponse = 10;
-  public static final byte CreateItemOnMapResponse = 11;
-  public static final byte ObstacleTakeDamageResponse = 12;
-  public static final byte ObstacleDestroyResponse = 13;
-  public static final byte PlayerTakeDamageResponse = 14;
-  public static final byte PlayerDeadResponse = 15;
-  public static final byte PlayerReloadWeaponResponse = 16;
-  public static final byte PlayerChangeWeaponResponse = 17;
-  public static final byte PlayerTakeItemResponse = 18;
-  public static final byte StartGameResponse = 19;
-  public static final byte EndGameResponse = 20;
-  public static final byte NewSafeZoneResponse = 21;
-  public static final byte SafeZoneMoveResponse = 22;
-  public static final byte UseHealItemResponse = 23;
-  public static final byte PingResponse = 24;
-  public static final byte PingByPlayerMoveResponse = 25;
-  public static final byte PingByMatchInfoResponse = 26;
+  public static final byte LoginResponse = 1;
+  public static final byte GetUserInfoResponse = 2;
+  public static final byte CreateTeamResponse = 3;
+  public static final byte JoinTeamResponse = 4;
+  public static final byte FindMatchResponse = 5;
+  public static final byte GetConfigResponse = 6;
+  public static final byte MatchInfoResponse = 7;
+  public static final byte PlayerMoveResponse = 8;
+  public static final byte PlayerAttackResponse = 9;
+  public static final byte PlayerInfoResponse = 10;
+  public static final byte CreateBulletOnMapResponse = 11;
+  public static final byte CreateItemOnMapResponse = 12;
+  public static final byte ObstacleTakeDamageResponse = 13;
+  public static final byte ObstacleDestroyResponse = 14;
+  public static final byte PlayerTakeDamageResponse = 15;
+  public static final byte PlayerDeadResponse = 16;
+  public static final byte PlayerReloadWeaponResponse = 17;
+  public static final byte PlayerChangeWeaponResponse = 18;
+  public static final byte PlayerTakeItemResponse = 19;
+  public static final byte StartGameResponse = 20;
+  public static final byte EndGameResponse = 21;
+  public static final byte NewSafeZoneResponse = 22;
+  public static final byte SafeZoneMoveResponse = 23;
+  public static final byte UseHealItemResponse = 24;
+  public static final byte PingResponse = 25;
+  public static final byte PingByPlayerMoveResponse = 26;
+  public static final byte PingByMatchInfoResponse = 27;
 
-  public static final String[] names = { "NONE", "GetUserInfoResponse", "CreateTeamResponse", "JoinTeamResponse", "FindMatchResponse", "GetConfigResponse", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "UseHealItemResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
+  public static final String[] names = { "NONE", "LoginResponse", "GetUserInfoResponse", "CreateTeamResponse", "JoinTeamResponse", "FindMatchResponse", "GetConfigResponse", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "UseHealItemResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
 
   public static String name(int e) { return names[e]; }
 }

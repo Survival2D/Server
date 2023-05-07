@@ -138,6 +138,7 @@ table ErrorResponse {
 }
 
 union ResponseUnion {
+  LoginResponse,
   GetUserInfoResponse,
   CreateTeamResponse,
   JoinTeamResponse,

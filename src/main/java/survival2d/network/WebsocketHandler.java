@@ -7,29 +7,18 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.internal.ChannelUtils;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import survival2d.data.ServerData;
-import survival2d.flatbuffers.PingByPlayerMoveResponse;
-import survival2d.flatbuffers.PingResponse;
-import survival2d.flatbuffers.PlayerAttackRequest;
-import survival2d.flatbuffers.PlayerChangeWeaponRequest;
-import survival2d.flatbuffers.PlayerMoveRequest;
-import survival2d.flatbuffers.Request;
-import survival2d.flatbuffers.RequestUnion;
-import survival2d.flatbuffers.Response;
-import survival2d.flatbuffers.ResponseUnion;
-import survival2d.flatbuffers.Vector2Struct;
+import survival2d.flatbuffers.*;
 import survival2d.match.action.PlayerAttack;
 import survival2d.match.action.PlayerChangeWeapon;
 import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
-import survival2d.network.client.User;
 import survival2d.network.json.request.BaseJsonRequest;
 import survival2d.network.json.request.LoginJsonRequest;
 import survival2d.network.json.response.LoginJsonResponse;
@@ -42,7 +31,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof Request request) {
-      var userId = getUserId(ctx.channel());
+      var userId = ServerData.getInstance().getUserId(ctx.channel());
       switch (request.requestType()) {
         case RequestUnion.MatchInfoRequest -> {
           var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -201,24 +190,21 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
       }
     } else if (evt instanceof HandshakeComplete) {
       var channel = ctx.channel();
-      var user = new User(getUserId(ctx.channel()), channel);
-      user.setName(String.valueOf(user.getId()));
-
-      ServerData.getInstance().getUserMap().put(user.getId(), user);
+      var user = ServerData.getInstance().newUser(channel);
       log.info("User {} connected", user.getId());
       new Thread(
               () -> {
-                //TODO
-//                try {
-//                  Thread.sleep(2000L);
-//                  NetworkUtil.sendBinaryResponse(
-//                      channel,
-//                      ClientEventCode.CODE_CLIENT_CONNECT,
-//                      String.valueOf(user.getId()));
-//                  ChannelUtils.pushToClient(
-//                      channel, ClientEventCode.CODE_CLIENT_NICKNAME_SET, null);
-//                } catch (InterruptedException ignored) {
-//                }
+                var builder = new FlatBufferBuilder(0);
+                var responseOffset = LoginResponse.createLoginResponse(builder, user.getId());
+
+                Response.startResponse(builder);
+                Response.addResponseType(builder, ResponseUnion.LoginResponse);
+                Response.addResponse(builder, responseOffset);
+                var packetOffset = Response.endResponse(builder);
+                builder.finish(packetOffset);
+
+                var dataBuffer = builder.dataBuffer();
+                NetworkUtil.sendResponse(user.getId(), dataBuffer);
               })
           .start();
     } else {
@@ -226,21 +212,10 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
     }
   }
 
-  private int getUserId(Channel channel) {
-    var channelId = channel.id().asLongText();
-    var userId = ServerData.getInstance().getChannelMap().get(channelId);
-    if (userId == null) {
-      userId = ServerData.getInstance().newUserId();
-      ServerData.getInstance().getChannelMap().put(channelId, userId);
-    }
-    return userId;
-  }
-
   private void onReaderIdle(Channel channel) {
-    var userId = getUserId(channel);
-    var user = ServerData.getInstance().getUserMap().get(userId);
+    var user = ServerData.getInstance().getUser(channel);
     if (user != null) {
-      log.info("onReaderIdle: userId {}, userName {}", userId, user.getName());
+      log.info("onReaderIdle: userId {}, userName {}", user.getId(), user.getName());
       //TODO
 //      ServerEventListener.get(ServerEventCode.CODE_CLIENT_OFFLINE).call(user, null);
     }
