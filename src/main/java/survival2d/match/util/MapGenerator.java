@@ -62,7 +62,7 @@ public class MapGenerator {
     }
 
     generateOtherObjects();
-    return MapGeneratorResult.builder().mapObjects(mapObjects).tiles(map).build();
+    return new MapGeneratorResult(map, mapObjects);
   }
 
   private void generateWalls(int offsetX, int offsetY, int width, int height, int depth) {

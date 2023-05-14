@@ -93,7 +93,7 @@ import survival2d.match.type.AttachType;
 import survival2d.match.type.BulletType;
 import survival2d.match.type.ItemType;
 import survival2d.match.util.AStar;
-import survival2d.match.util.AStar.Point;
+import survival2d.match.util.Point;
 import survival2d.match.util.MapGenerator;
 import survival2d.match.util.MatchUtil;
 import survival2d.match.util.TileObject;
@@ -895,7 +895,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
           spawnPoints.add(position.add(TileObject.PLAYER.getCenterOffset()));
         }
         case ITEM -> {
-          var item = ItemOnMap.builder().item(ItemFactory.randomItem()).position(position).build();
+          var item = new ItemOnMap(ItemFactory.randomItem(), position);
           addMapObject(item);
         }
         case WALL -> {
@@ -1109,7 +1109,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   private void createItemOnMap(Item item, Vector2 rawPosition) {
     var randomNeighborPosition = MatchUtil.randomPosition(-100, 100, -100, 100);
     var position = rawPosition.add(randomNeighborPosition);
-    var itemOnMap = ItemOnMap.builder().item(item).position(position).build();
+    var itemOnMap = new ItemOnMap(item, position);
     addMapObject(itemOnMap);
     var builder = new FlatBufferBuilder(0);
     var itemOffset = 0;

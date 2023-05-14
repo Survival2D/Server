@@ -11,6 +11,12 @@ import survival2d.util.serialize.PostProcessable;
 public class GameConfig implements PostProcessable {
 
   private static final String CONFIG_FILE = "config.json";
+  @Getter private static GameConfig instance;
+
+  static {
+    load();
+  }
+
   private float mapWidth;
   private float mapHeight;
   private List<Float> safeZonesRadius;
@@ -42,12 +48,8 @@ public class GameConfig implements PostProcessable {
   private float wallSize;
 
   public static void load() {
-    InstanceHolder.instance =
+    instance =
         ConfigReader.fromFile(CONFIG_FILE, GameConfig.class, GsonHolder.getEnablePostProcess());
-  }
-
-  public static GameConfig getInstance() {
-    return InstanceHolder.instance;
   }
 
   @Override
@@ -64,14 +66,5 @@ public class GameConfig implements PostProcessable {
     playerViewHeightPlus1 = playerViewHeight + 1;
     playerViewWidthPlus2 = playerViewWidth + 2;
     playerViewHeightPlus2 = playerViewHeight + 2;
-  }
-
-  private static class InstanceHolder {
-
-    private static GameConfig instance;
-
-    static {
-      load();
-    }
   }
 }
