@@ -16,6 +16,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import lombok.extern.slf4j.Slf4j;
+import survival2d.ServerConstant;
 
 @Slf4j
 public class NetworkStartup {
@@ -62,7 +63,7 @@ public class NetworkStartup {
             });
 
     try {
-      var channelFuture = serverBootstrap.bind(1202).sync();
+      var channelFuture = serverBootstrap.bind(ServerConstant.PORT).sync();
       channelFuture.channel().closeFuture().sync();
     } catch (InterruptedException interruptedException) {
       log.error("Interrupted", interruptedException);
