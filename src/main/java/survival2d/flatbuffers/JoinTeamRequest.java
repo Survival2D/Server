@@ -15,8 +15,17 @@ public final class JoinTeamRequest extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public JoinTeamRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public int teamId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static void startJoinTeamRequest(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static int createJoinTeamRequest(FlatBufferBuilder builder,
+      int teamId) {
+    builder.startTable(1);
+    JoinTeamRequest.addTeamId(builder, teamId);
+    return JoinTeamRequest.endJoinTeamRequest(builder);
+  }
+
+  public static void startJoinTeamRequest(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addTeamId(FlatBufferBuilder builder, int teamId) { builder.addInt(0, teamId, 0); }
   public static int endJoinTeamRequest(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

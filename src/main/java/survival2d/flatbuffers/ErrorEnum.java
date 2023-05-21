@@ -3,13 +3,16 @@
 package survival2d.flatbuffers;
 
 public final class ErrorEnum {
-  private ErrorEnum() { }
   public static final byte SUCCESS = 0;
   public static final byte NOT_FOUND_YET = 1;
   public static final byte FAILURE = 2;
+  public static final String[] names = {
+    "SUCCESS", "NOT_FOUND_YET", "FAILURE",
+  };
 
-  public static final String[] names = { "SUCCESS", "NOT_FOUND_YET", "FAILURE", };
+  private ErrorEnum() {}
 
-  public static String name(int e) { return names[e]; }
+  public static String name(int e) {
+    return names[e];
+  }
 }
-

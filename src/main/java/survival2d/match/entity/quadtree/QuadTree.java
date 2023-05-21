@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.Getter;
-import lombok.val;
 import survival2d.match.util.MatchUtil;
 
 @Getter
@@ -63,12 +62,12 @@ public class QuadTree<T extends Node> {
   }
 
   private void partition() {
-    val x = treeBoundary.x;
-    val y = treeBoundary.y;
-    val width = treeBoundary.width;
-    val height = treeBoundary.height;
-    val halfWidth = width / 2;
-    val halfHeight = height / 2;
+    var x = treeBoundary.x;
+    var y = treeBoundary.y;
+    var width = treeBoundary.width;
+    var height = treeBoundary.height;
+    var halfWidth = width / 2;
+    var halfHeight = height / 2;
     northwest = new QuadTree<>(x, y, halfWidth, halfHeight);
     northeast = new QuadTree<>(x, y + halfHeight, halfWidth, halfHeight);
     southwest = new QuadTree<>(x + halfWidth, y, halfWidth, halfHeight);
@@ -77,8 +76,11 @@ public class QuadTree<T extends Node> {
   }
 
   public List<T> query(Shape2D boundary) {
-    if (MatchUtil.isIntersect(treeBoundary,boundary)) {
-      val result = nodes.values().stream().filter(node -> boundary.contains(node.getPosition())).collect(Collectors.toList());
+    if (MatchUtil.isIntersect(treeBoundary, boundary)) {
+      var result =
+          nodes.values().stream()
+              .filter(node -> boundary.contains(node.getPosition()))
+              .collect(Collectors.toList());
       if (partitioned) {
         result.addAll(northwest.query(boundary));
         result.addAll(northeast.query(boundary));

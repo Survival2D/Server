@@ -13,7 +13,6 @@ import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
@@ -68,12 +67,12 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     weapons.add(gun);
   }
 
-@Override
-public void setPosition(Vector2 position) {
+  @Override
+  public void setPosition(Vector2 position) {
     this.position = position;
     body.setPosition(position);
     head.setPosition(position);
-}
+  }
 
   public Vector2 getAttackDirection() {
     return new Vector2(MathUtils.cos(rotation), MathUtils.sin(rotation));
@@ -93,15 +92,15 @@ public void setPosition(Vector2 position) {
   }
 
   public void reloadWeapon() {
-    val optWeapon = getCurrentWeapon();
+    var optWeapon = getCurrentWeapon();
     if (!optWeapon.isPresent()) {
       log.warn("current weapon is not present");
       return;
     }
-    val weapon = optWeapon.get();
+    var weapon = optWeapon.get();
     if (weapon instanceof Gun gun) {
-      val gunType = gun.getType();
-      val bulletType = gunType.getBulletType();
+      var gunType = gun.getType();
+      var bulletType = gunType.getBulletType();
       gun.reload(bullets.getOrDefault(bulletType, 0));
     }
   }
@@ -112,19 +111,19 @@ public void setPosition(Vector2 position) {
         // TODO:
         break;
       case BACKPACK:
-        val backPackItem = (BackPackItem) item;
+        var backPackItem = (BackPackItem) item;
         takeBackPack(backPackItem.getBackPackType());
         break;
       case BULLET:
-        val bulletItem = (BulletItem) item;
+        var bulletItem = (BulletItem) item;
         takeBullet(bulletItem.getBulletType(), bulletItem.getNumBullet());
         break;
       case HELMET:
-        val helmetItem = (HelmetItem) item;
+        var helmetItem = (HelmetItem) item;
         takeHelmet(helmetItem.getHelmetType());
         break;
       case VEST:
-        val vestItem = (VestItem) item;
+        var vestItem = (VestItem) item;
         takeVest(vestItem.getVestType());
         break;
       case MEDKIT:
@@ -198,8 +197,8 @@ public void setPosition(Vector2 position) {
   }
 
   public Rectangle getPlayerView() {
-    val width = GameConfig.getInstance().getPlayerViewWidth();
-    val height = GameConfig.getInstance().getPlayerViewHeight();
+    var width = GameConfig.getInstance().getPlayerViewWidth();
+    var height = GameConfig.getInstance().getPlayerViewHeight();
     return new Rectangle(position.x - width / 2, position.y - height / 2, width, height);
   }
 

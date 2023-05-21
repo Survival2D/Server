@@ -6,7 +6,7 @@ import survival2d.match.entity.match.Match;
 
 public class SamplePingData {
 
-  public static int userId = 1999;
+  public static int playerId = 1999;
   public static Vector2 position = new Vector2(MathUtils.PI, MathUtils.PI);
   public static float rotation = new Vector2(1, 1).angleRad();
   public static Match match;

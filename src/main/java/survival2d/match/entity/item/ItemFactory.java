@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
-import lombok.val;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Item;
 import survival2d.match.type.BulletType;
@@ -53,7 +52,7 @@ public class ItemFactory {
   }
 
   public static Item randomItem() {
-    val itemType =
+    var itemType =
         itemsToRandom
             .ceilingEntry(ThreadLocalRandom.current().nextInt(itemsToRandom.lastKey()))
             .getValue();
@@ -61,13 +60,13 @@ public class ItemFactory {
   }
 
   public static List<Item> randomItems() {
-    val numItems =
+    var numItems =
         ThreadLocalRandom.current().nextInt(1, GameConfig.getInstance().getNumMaxItemInContainer());
     return randomItems(numItems);
   }
 
   public static List<Item> randomItems(int numItems) {
-    val items = new ArrayList<Item>();
+    var items = new ArrayList<Item>();
     for (int i = 0; i < numItems; i++) {
       items.add(randomItem());
     }

@@ -21,5 +21,6 @@
   "treeRootRadius": 50,
   "treeFoliageRadius": 150,
   "stoneRadius": 100,
-  "wallSize": 100
+  "wallSize": 100,
+  "containerSize": 100
 }

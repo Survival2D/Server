@@ -34,6 +34,10 @@ public class NetworkUtil {
   }
 
   public static void sendResponse(int userId, ByteBuffer byteBuffer) {
+    if (ServerData.getInstance().getUser(userId) == null) {
+      log.warn("User {} is not online", userId);
+        return;
+    }
     sendResponse(ServerData.getInstance().getUser(userId).getChannel(), byteBuffer);
   }
 

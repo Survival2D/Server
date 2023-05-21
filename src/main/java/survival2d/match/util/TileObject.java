@@ -1,10 +1,10 @@
 package survival2d.match.util;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.TreeMap;
 import lombok.Getter;
-import lombok.val;
 
 @Getter
 public enum TileObject {
@@ -30,13 +30,13 @@ public enum TileObject {
   }
 
   public static List<TileObject> getListObstacles() {
-    return List.of(ITEM, TREE, BOX, ROCK);
+    return Lists.newArrayList(ITEM, TREE, BOX, ROCK);
   }
 
   public static TreeMap<Integer, TileObject> buildObstacleWeight() {
-    val map = new TreeMap<Integer, TileObject>();
+    var map = new TreeMap<Integer, TileObject>();
     var weight = 0;
-    for (val obstacle : TileObject.values()) {
+    for (var obstacle : TileObject.values()) {
       weight += obstacle.weight;
       map.put(weight, obstacle);
     }

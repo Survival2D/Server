@@ -15,8 +15,17 @@ public final class CreateTeamResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public CreateTeamResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public int teamId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static void startCreateTeamResponse(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static int createCreateTeamResponse(FlatBufferBuilder builder,
+      int teamId) {
+    builder.startTable(1);
+    CreateTeamResponse.addTeamId(builder, teamId);
+    return CreateTeamResponse.endCreateTeamResponse(builder);
+  }
+
+  public static void startCreateTeamResponse(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addTeamId(FlatBufferBuilder builder, int teamId) { builder.addInt(0, teamId, 0); }
   public static int endCreateTeamResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

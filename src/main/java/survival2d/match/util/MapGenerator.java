@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,15 +30,15 @@ public class MapGenerator {
   private MapGenerator() {}
 
   public static MapGeneratorResult generateMap() {
-    val generator = new MapGenerator();
+    var generator = new MapGenerator();
     return generator.generate();
   }
 
   private boolean isValidPosition(int posX, int posY, TileObject tileObject) {
     for (var i = 0; i < tileObject.width; i++) {
       for (var j = 0; j < tileObject.height; j++) {
-        val newPosX = posX + i;
-        val newPosY = posY + j;
+        var newPosX = posX + i;
+        var newPosY = posY + j;
         if (newPosX < 0 || newPosY < 0 || newPosX >= MAP_WIDTH || newPosY >= MAP_HEIGHT)
           return false;
         if (map[newPosX][newPosY] != TileObject.EMPTY.ordinal()) return false;
@@ -57,7 +56,7 @@ public class MapGenerator {
     fillMap(mapWalls, TileObject.WALL);
     removeIsolatedWall();
 
-    for (val pos : mapWalls) {
+    for (var pos : mapWalls) {
       mapObjects.add(new Tile(TileObject.WALL, pos));
     }
 
@@ -70,15 +69,14 @@ public class MapGenerator {
       rects.add(new Rectangle(offsetX, offsetY, width, height));
       return;
     }
-    val verticalSplitPosition =
-        ThreadLocalRandom.current().nextInt(MIN_RECT_WIDTH, width - MIN_RECT_WIDTH - 1);
-    val horizontalSplitPosition =
-        ThreadLocalRandom.current().nextInt(MIN_RECT_HEIGHT, height - MIN_RECT_HEIGHT - 1);
+    var verticalSplitPosition = RandomUtils.nextInt(MIN_RECT_WIDTH, width - MIN_RECT_WIDTH - 1);
+    var horizontalSplitPosition =
+        RandomUtils.nextInt(MIN_RECT_HEIGHT, height - MIN_RECT_HEIGHT - 1);
 
-    val topWalls = new LinkedList<Position>();
-    val rightWalls = new LinkedList<Position>();
-    val botWalls = new LinkedList<Position>();
-    val leftWalls = new LinkedList<Position>();
+    var topWalls = new LinkedList<Position>();
+    var rightWalls = new LinkedList<Position>();
+    var botWalls = new LinkedList<Position>();
+    var leftWalls = new LinkedList<Position>();
 
     for (var i = 0; i < height; i++) {
       if (i < horizontalSplitPosition)
@@ -94,20 +92,20 @@ public class MapGenerator {
         rightWalls.add(new Position(offsetX + horizontalSplitPosition, offsetY + i));
     }
 
-    val longWalls = Lists.newArrayList(topWalls, rightWalls, botWalls, leftWalls);
+    var longWalls = Lists.newArrayList(topWalls, rightWalls, botWalls, leftWalls);
     longWalls.add(topWalls);
     longWalls.add(rightWalls);
     longWalls.add(botWalls);
     longWalls.add(leftWalls);
 
     // Chọn 3 trong 4 bức tường để "đục" tường tạo lối đi
-    val keepWalls = ThreadLocalRandom.current().nextInt(0, longWalls.size());
+    var keepWalls = ThreadLocalRandom.current().nextInt(0, longWalls.size());
     for (var i = 0; i < longWalls.size(); i++) {
       if (i != keepWalls) {
-        val removed = removeConsecutiveSegmentRandomly(longWalls.get(i));
-        val removedFrom = removed.getLeft();
-        val removedTo = removed.getRight();
-        val removedWalls = Lists.newArrayList(longWalls.get(i).subList(removedFrom, removedTo + 1));
+        var removed = removeConsecutiveSegmentRandomly(longWalls.get(i));
+        var removedFrom = removed.getLeft();
+        var removedTo = removed.getRight();
+        var removedWalls = Lists.newArrayList(longWalls.get(i).subList(removedFrom, removedTo + 1));
         longWalls.get(i).removeAll(removedWalls);
       }
     }
@@ -146,12 +144,12 @@ public class MapGenerator {
   }
 
   private void removeIsolatedWall() {
-    val acceptedWalls = new LinkedList<Position>();
-    for (val wall : mapWalls) {
+    var acceptedWalls = new LinkedList<Position>();
+    for (var wall : mapWalls) {
       var flag = false;
-      for (val neighbour : Position.NEIGHBOURS) {
-        val newX = wall.x + neighbour.x;
-        val newY = wall.y + neighbour.y;
+      for (var neighbour : Position.NEIGHBOURS) {
+        var newX = wall.x + neighbour.x;
+        var newY = wall.y + neighbour.y;
         if (newX >= 0
             && newY >= 0
             && newX < MAP_WIDTH
@@ -172,8 +170,8 @@ public class MapGenerator {
 
   private Pair<Integer, Integer> removeConsecutiveSegmentRandomly(List<Position> array) {
     if (array.size() <= MIN_DOOR) return new ImmutablePair<>(0, array.size());
-    val startPosition = RandomUtils.nextInt(1, Math.max(1, array.size() - MAX_DOOR));
-    val endPosition =
+    var startPosition = RandomUtils.nextInt(1, Math.max(1, array.size() - MAX_DOOR));
+    var endPosition =
         RandomUtils.nextInt(
             Math.min(startPosition + MIN_DOOR - 1, array.size() - 1),
             Math.min(startPosition + MAX_DOOR - 1, array.size() - 1));
@@ -181,47 +179,47 @@ public class MapGenerator {
   }
 
   private void generateOtherObjects() {
-    val coverageRate = 0.1;
+    var coverageRate = 0.1;
 
     for (var rect : rects) {
-      val rectWidth = rect.width;
-      val rectHeight = rect.height;
-      val offsetX = rect.x;
-      val offsetY = rect.y;
+      var rectWidth = rect.width;
+      var rectHeight = rect.height;
+      var offsetX = rect.x;
+      var offsetY = rect.y;
       var size = 0;
-      val capacity = rectHeight * rectWidth * coverageRate;
+      var capacity = rectHeight * rectWidth * coverageRate;
 
       // Duyệt tất cả tile trong rect theo thứ tự random
-      val cells = new LinkedList<Position>();
+      var cells = new LinkedList<Position>();
       for (var i = DONT_GEN_BORDER; i < rectHeight - DONT_GEN_BORDER; i++) {
         for (var j = DONT_GEN_BORDER; j < rectWidth - DONT_GEN_BORDER; j++) {
           cells.add(new Position(offsetX + i, offsetY + j));
         }
       }
       Collections.shuffle(cells);
-      val first = cells.removeFirst();
+      var first = cells.removeFirst();
       fillMap(first.x, first.y, TileObject.PLAYER);
       mapObjects.add(new Tile(TileObject.PLAYER, first));
 
-      for (val position : cells) {
+      for (var position : cells) {
 
         // choose random object, if cannot put object at (posX, posY), remove random object from
         // list then repeat
         TileObject spawnObject = null;
 
-        val listObjects = TileObject.getListObstacles();
+        var listObjects = TileObject.getListObstacles();
         //                if str(TYPE_EMPTY) in listObjects:
         //      listObjects.remove(str(TYPE_EMPTY))
         //      if str(TYPE_WALL) in listObjects:
         //      listObjects.remove(str(TYPE_WALL))
 
         while (!listObjects.isEmpty()) {
-          val weights = new LinkedList<Integer>();
+          var weights = new LinkedList<Integer>();
           weights.add(0);
-          for (val object : listObjects) weights.add(weights.getLast() + object.weight);
+          for (var object : listObjects) weights.add(weights.getLast() + object.weight);
 
           TileObject randomObject = null;
-          val randWeight = ThreadLocalRandom.current().nextInt(weights.getLast());
+          var randWeight = ThreadLocalRandom.current().nextInt(weights.getLast());
           for (var i = 1; i < weights.size(); i++) {
             if (weights.get(i - 1) <= randWeight && randWeight < weights.get(i)) {
 
@@ -230,8 +228,8 @@ public class MapGenerator {
             }
           }
 
-          val objectHeight = randomObject.height;
-          val objectWidth = randomObject.width;
+          var objectHeight = randomObject.height;
+          var objectWidth = randomObject.width;
           if (isValidPosition(position.x, position.y, randomObject)
               && size + objectHeight * objectWidth <= capacity) {
             spawnObject = randomObject;
@@ -253,15 +251,15 @@ public class MapGenerator {
   private void fillMap(int posX, int posY, TileObject tileObject) {
     for (var i = 0; i < tileObject.width; i++) {
       for (var j = 0; j < tileObject.height; j++) {
-        val newPosX = posX + i;
-        val newPosY = posY + j;
+        var newPosX = posX + i;
+        var newPosY = posY + j;
         map[newPosX][newPosY] = tileObject.ordinal();
       }
     }
   }
 
   private void fillMap(List<Position> positions, TileObject tileObject) {
-    for (val position : positions) {
+    for (var position : positions) {
       fillMap(position.x, position.y, tileObject);
     }
   }

@@ -1,13 +1,12 @@
 package survival2d.match.util;
 
 import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.Collections;
-import java.util.List;
 
 @AllArgsConstructor
 @EqualsAndHashCode

@@ -3,19 +3,28 @@ include "common.fbs";
 namespace survival2d.flatbuffers;
 
 table LoginResponse {
-  playerId: int;
+  userId: int;
+  userName: string;
 }
 
 table GetUserInfoResponse {
 }
 
 table CreateTeamResponse {
+  teamId: int;
 }
 
 table JoinTeamResponse {
+  teamId: int;
+}
+
+table NewUserJoinTeamResponse {
+  userId: int;
+  userName: string;
 }
 
 table FindMatchResponse {
+  matchId: int;
 }
 
 table GetConfigResponse {
@@ -142,6 +151,7 @@ union ResponseUnion {
   GetUserInfoResponse,
   CreateTeamResponse,
   JoinTeamResponse,
+  NewUserJoinTeamResponse,
   FindMatchResponse,
   GetConfigResponse,
   MatchInfoResponse,
@@ -168,6 +178,7 @@ union ResponseUnion {
 }
 
 table Response {
+  error: ResponseErrorEnum = SUCCESS;
   response: ResponseUnion;
 }
 

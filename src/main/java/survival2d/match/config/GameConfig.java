@@ -46,6 +46,7 @@ public class GameConfig implements PostProcessable {
   private float treeFoliageRadius;
   private float stoneRadius;
   private float wallSize;
+  private float containerSize;
 
   public static void load() {
     instance =

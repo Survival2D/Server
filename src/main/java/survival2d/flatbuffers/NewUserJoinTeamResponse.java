@@ -8,31 +8,31 @@ import java.util.*;
 import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
-public final class LoginResponse extends Table {
+public final class NewUserJoinTeamResponse extends Table {
   public static void ValidateVersion() { Constants.FLATBUFFERS_1_12_0(); }
-  public static LoginResponse getRootAsLoginResponse(ByteBuffer _bb) { return getRootAsLoginResponse(_bb, new LoginResponse()); }
-  public static LoginResponse getRootAsLoginResponse(ByteBuffer _bb, LoginResponse obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public static NewUserJoinTeamResponse getRootAsNewUserJoinTeamResponse(ByteBuffer _bb) { return getRootAsNewUserJoinTeamResponse(_bb, new NewUserJoinTeamResponse()); }
+  public static NewUserJoinTeamResponse getRootAsNewUserJoinTeamResponse(ByteBuffer _bb, NewUserJoinTeamResponse obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
-  public LoginResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+  public NewUserJoinTeamResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public int userId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
   public String userName() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
   public ByteBuffer userNameAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
   public ByteBuffer userNameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
 
-  public static int createLoginResponse(FlatBufferBuilder builder,
+  public static int createNewUserJoinTeamResponse(FlatBufferBuilder builder,
       int userId,
       int userNameOffset) {
     builder.startTable(2);
-    LoginResponse.addUserName(builder, userNameOffset);
-    LoginResponse.addUserId(builder, userId);
-    return LoginResponse.endLoginResponse(builder);
+    NewUserJoinTeamResponse.addUserName(builder, userNameOffset);
+    NewUserJoinTeamResponse.addUserId(builder, userId);
+    return NewUserJoinTeamResponse.endNewUserJoinTeamResponse(builder);
   }
 
-  public static void startLoginResponse(FlatBufferBuilder builder) { builder.startTable(2); }
+  public static void startNewUserJoinTeamResponse(FlatBufferBuilder builder) { builder.startTable(2); }
   public static void addUserId(FlatBufferBuilder builder, int userId) { builder.addInt(0, userId, 0); }
   public static void addUserName(FlatBufferBuilder builder, int userNameOffset) { builder.addOffset(1, userNameOffset, 0); }
-  public static int endLoginResponse(FlatBufferBuilder builder) {
+  public static int endNewUserJoinTeamResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
   }
@@ -40,8 +40,8 @@ public final class LoginResponse extends Table {
   public static final class Vector extends BaseVector {
     public Vector __assign(int _vector, int _element_size, ByteBuffer _bb) { __reset(_vector, _element_size, _bb); return this; }
 
-    public LoginResponse get(int j) { return get(new LoginResponse(), j); }
-    public LoginResponse get(LoginResponse obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
+    public NewUserJoinTeamResponse get(int j) { return get(new NewUserJoinTeamResponse(), j); }
+    public NewUserJoinTeamResponse get(NewUserJoinTeamResponse obj, int j) {  return obj.__assign(__indirect(__element(j), bb), bb); }
   }
 }
 

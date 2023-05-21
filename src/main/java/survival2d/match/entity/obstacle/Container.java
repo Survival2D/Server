@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
@@ -18,7 +19,15 @@ public class Container extends BaseMapObject implements Destroyable, HasHp, Obst
   @GsonTransient int id;
   @GsonTransient double hp = 100;
   Vector2 position;
-  @GsonTransient Rectangle shape;
+
+  @GsonTransient
+  Rectangle shape =
+      new Rectangle(
+          0,
+          0,
+          GameConfig.getInstance().getContainerSize(),
+          GameConfig.getInstance().getContainerSize());
+
   @GsonTransient List<Item> items;
   ObstacleType type = ObstacleType.CONTAINER;
 
@@ -29,4 +38,10 @@ public class Container extends BaseMapObject implements Destroyable, HasHp, Obst
 
   @Override
   public void setDestroyed(boolean destroyed) {}
+
+  @Override
+  public void setPosition(Vector2 position) {
+    this.position = position;
+    shape.setPosition(position);
+  }
 }

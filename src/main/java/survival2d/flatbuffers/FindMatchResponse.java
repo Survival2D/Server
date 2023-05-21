@@ -15,8 +15,17 @@ public final class FindMatchResponse extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public FindMatchResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
+  public int matchId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static void startFindMatchResponse(FlatBufferBuilder builder) { builder.startTable(0); }
+  public static int createFindMatchResponse(FlatBufferBuilder builder,
+      int matchId) {
+    builder.startTable(1);
+    FindMatchResponse.addMatchId(builder, matchId);
+    return FindMatchResponse.endFindMatchResponse(builder);
+  }
+
+  public static void startFindMatchResponse(FlatBufferBuilder builder) { builder.startTable(1); }
+  public static void addMatchId(FlatBufferBuilder builder, int matchId) { builder.addInt(0, matchId, 0); }
   public static int endFindMatchResponse(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

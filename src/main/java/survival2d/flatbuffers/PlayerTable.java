@@ -16,16 +16,20 @@ public final class PlayerTable extends Table {
   public PlayerTable __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public int playerId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public String playerName() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer playerNameAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+  public ByteBuffer playerNameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
   public survival2d.flatbuffers.Vector2Struct position() { return position(new survival2d.flatbuffers.Vector2Struct()); }
-  public survival2d.flatbuffers.Vector2Struct position(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(6); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
-  public float rotation() { int o = __offset(8); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
-  public int team() { int o = __offset(10); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+  public survival2d.flatbuffers.Vector2Struct position(survival2d.flatbuffers.Vector2Struct obj) { int o = __offset(8); return o != 0 ? obj.__assign(o + bb_pos, bb) : null; }
+  public float rotation() { int o = __offset(10); return o != 0 ? bb.getFloat(o + bb_pos) : 0.0f; }
+  public int team() { int o = __offset(12); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
 
-  public static void startPlayerTable(FlatBufferBuilder builder) { builder.startTable(4); }
+  public static void startPlayerTable(FlatBufferBuilder builder) { builder.startTable(5); }
   public static void addPlayerId(FlatBufferBuilder builder, int playerId) { builder.addInt(0, playerId, 0); }
-  public static void addPosition(FlatBufferBuilder builder, int positionOffset) { builder.addStruct(1, positionOffset, 0); }
-  public static void addRotation(FlatBufferBuilder builder, float rotation) { builder.addFloat(2, rotation, 0.0f); }
-  public static void addTeam(FlatBufferBuilder builder, int team) { builder.addInt(3, team, 0); }
+  public static void addPlayerName(FlatBufferBuilder builder, int playerNameOffset) { builder.addOffset(1, playerNameOffset, 0); }
+  public static void addPosition(FlatBufferBuilder builder, int positionOffset) { builder.addStruct(2, positionOffset, 0); }
+  public static void addRotation(FlatBufferBuilder builder, float rotation) { builder.addFloat(3, rotation, 0.0f); }
+  public static void addTeam(FlatBufferBuilder builder, int team) { builder.addInt(4, team, 0); }
   public static int endPlayerTable(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

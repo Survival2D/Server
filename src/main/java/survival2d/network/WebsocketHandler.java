@@ -23,11 +23,30 @@ import survival2d.network.json.request.BaseJsonRequest;
 import survival2d.network.json.request.LoginJsonRequest;
 import survival2d.network.json.response.LoginJsonResponse;
 import survival2d.ping.data.SamplePingData;
+import survival2d.service.FindMatchService;
+import survival2d.service.LobbyTeamService;
 import survival2d.service.MatchingService;
 
 @Sharable
 @Slf4j
 public class WebsocketHandler extends ChannelInboundHandlerAdapter {
+  private void createTeam(int userId) {
+    var teamId = LobbyTeamService.getInstance().createTeam();
+    LobbyTeamService.getInstance().joinTeam(userId, teamId);
+
+    var builder = new FlatBufferBuilder(0);
+    var createTeamResponse = CreateTeamResponse.createCreateTeamResponse(builder, teamId);
+
+    Response.startResponse(builder);
+    Response.addResponseType(builder, ResponseUnion.CreateTeamResponse);
+    Response.addResponse(builder, createTeamResponse);
+    var response = Response.endResponse(builder);
+    builder.finish(response);
+
+    var dataBuffer = builder.dataBuffer();
+    NetworkUtil.sendResponse(userId, dataBuffer);
+  }
+
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof Request request) {
@@ -66,26 +85,26 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
   private void onHandshakeComplete(Channel channel) {
     var user = ServerData.getInstance().newUser(channel);
     log.info("User {} connected", user.getId());
-//    new Thread(
-//            () -> {
-//              try {
-//                Thread.sleep(1000);
-//              } catch (InterruptedException e) {
-//                log.error("onHandshakeComplete error", e);
-//              }
-//              var builder = new FlatBufferBuilder(0);
-//              var responseOffset = LoginResponse.createLoginResponse(builder, user.getId());
-//
-//              Response.startResponse(builder);
-//              Response.addResponseType(builder, ResponseUnion.LoginResponse);
-//              Response.addResponse(builder, responseOffset);
-//              var packetOffset = Response.endResponse(builder);
-//              builder.finish(packetOffset);
-//
-//              var dataBuffer = builder.dataBuffer();
-//              NetworkUtil.sendResponse(user.getId(), dataBuffer);
-//            })
-//        .start();
+    //    new Thread(
+    //            () -> {
+    //              try {
+    //                Thread.sleep(1000);
+    //              } catch (InterruptedException e) {
+    //                log.error("onHandshakeComplete error", e);
+    //              }
+    //              var builder = new FlatBufferBuilder(0);
+    //              var responseOffset = LoginResponse.createLoginResponse(builder, user.getId());
+    //
+    //              Response.startResponse(builder);
+    //              Response.addResponseType(builder, ResponseUnion.LoginResponse);
+    //              Response.addResponse(builder, responseOffset);
+    //              var packetOffset = Response.endResponse(builder);
+    //              builder.finish(packetOffset);
+    //
+    //              var dataBuffer = builder.dataBuffer();
+    //              NetworkUtil.sendResponse(user.getId(), dataBuffer);
+    //            })
+    //        .start();
   }
 
   private void handleBinaryData(ChannelHandlerContext ctx, Request request) {
@@ -94,19 +113,132 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
     var userId = user.getId();
     switch (request.requestType()) {
       case RequestUnion.LoginRequest -> {
+        var loginRequest = new LoginRequest();
+        request.request(loginRequest);
+
+        var userName = loginRequest.userName();
+        user.setName(userName);
+        log.info("User {} login with name {}", userId, userName);
+
         var builder = new FlatBufferBuilder(0);
-        var responseOffset = LoginResponse.createLoginResponse(builder, user.getId());
+        var nameOffset = builder.createString(userName);
+        var loginResponse = LoginResponse.createLoginResponse(builder, userId, nameOffset);
 
         Response.startResponse(builder);
         Response.addResponseType(builder, ResponseUnion.LoginResponse);
-        Response.addResponse(builder, responseOffset);
-        var packetOffset = Response.endResponse(builder);
-        builder.finish(packetOffset);
+        Response.addResponse(builder, loginResponse);
+        var response = Response.endResponse(builder);
+        builder.finish(response);
 
         var dataBuffer = builder.dataBuffer();
-        NetworkUtil.sendResponse(user.getId(), dataBuffer);
-//        NetworkUtil.sendResponse(channel, "abcxyz");
-//        channel.writeAndFlush(new TextWebSocketFrame("abcxyz"));
+        NetworkUtil.sendResponse(userId, dataBuffer);
+      }
+      case RequestUnion.CreateTeamRequest -> {
+        createTeam(userId);
+      }
+      case RequestUnion.JoinTeamRequest -> {
+        var joinTeamRequest = new JoinTeamRequest();
+        request.request(joinTeamRequest);
+        var teamId = joinTeamRequest.teamId();
+        var optTeam = LobbyTeamService.getInstance().getTeam(teamId);
+        if (optTeam.isEmpty()) {
+          var builder = new FlatBufferBuilder(0);
+          JoinTeamResponse.startJoinTeamResponse(builder);
+          var joinTeamResponse = JoinTeamResponse.endJoinTeamResponse(builder);
+
+          var response =
+              Response.createResponse(
+                  builder,
+                  ResponseErrorEnum.TEAM_NOT_FOUND,
+                  ResponseUnion.JoinTeamResponse,
+                  joinTeamResponse);
+          builder.finish(response);
+
+          var dataBuffer = builder.dataBuffer();
+          NetworkUtil.sendResponse(userId, dataBuffer);
+          return;
+        }
+        var team = optTeam.get();
+        var teamMemberIds = team.getMemberIds();
+        var result = LobbyTeamService.getInstance().joinTeam(userId, teamId);
+        if (!result) {
+          var builder = new FlatBufferBuilder(0);
+          JoinTeamResponse.startJoinTeamResponse(builder);
+          var joinTeamResponse = JoinTeamResponse.endJoinTeamResponse(builder);
+
+          var response =
+              Response.createResponse(
+                  builder,
+                  ResponseErrorEnum.JOIN_TEAM_ERROR,
+                  ResponseUnion.JoinTeamResponse,
+                  joinTeamResponse);
+          builder.finish(response);
+
+          var dataBuffer = builder.dataBuffer();
+          NetworkUtil.sendResponse(userId, dataBuffer);
+          return;
+        }
+        {
+          // Response to player who join team
+          var builder = new FlatBufferBuilder(0);
+          var joinTeamResponse = JoinTeamResponse.createJoinTeamResponse(builder, teamId);
+
+          var response =
+              Response.createResponse(
+                  builder,
+                  ResponseErrorEnum.SUCCESS,
+                  ResponseUnion.JoinTeamResponse,
+                  joinTeamResponse);
+          builder.finish(response);
+
+          var dataBuffer = builder.dataBuffer();
+          NetworkUtil.sendResponse(userId, dataBuffer);
+        }
+        {
+          // Response to other player in team
+          var builder = new FlatBufferBuilder(0);
+          var userName = builder.createString(user.getName());
+          var newUserJoinTeamResponse =
+              NewUserJoinTeamResponse.createNewUserJoinTeamResponse(builder, userId, userName);
+
+          var response =
+              Response.createResponse(
+                  builder,
+                  ResponseErrorEnum.SUCCESS,
+                  ResponseUnion.NewUserJoinTeamResponse,
+                  newUserJoinTeamResponse);
+          builder.finish(response);
+
+          var dataBuffer = builder.dataBuffer();
+          NetworkUtil.sendResponse(teamMemberIds, dataBuffer);
+        }
+      }
+      case RequestUnion.FindMatchRequest -> {
+        var optTeam = LobbyTeamService.getInstance().getTeamOfPlayer(userId);
+        if (optTeam.isEmpty()) {
+          createTeam(userId);
+          optTeam = LobbyTeamService.getInstance().getTeamOfPlayer(userId);
+        }
+        var optMatchId = FindMatchService.getInstance().findMatch(optTeam.get().getId());
+        if (optMatchId.isEmpty()) {
+          log.warn("matchId is not present");
+          break;
+        }
+        var matchId = optMatchId.get();
+        var builder = new FlatBufferBuilder(0);
+        var findMatchResponse = FindMatchResponse.createFindMatchResponse(builder, matchId);
+
+        Response.startResponse(builder);
+        Response.addResponseType(builder, ResponseUnion.FindMatchResponse);
+        Response.addResponse(builder, findMatchResponse);
+        var response = Response.endResponse(builder);
+        builder.finish(response);
+
+        var match = MatchingService.getInstance().getMatchById(matchId).get();
+
+        NetworkUtil.sendResponse(match.getAllPlayerIds(), builder.dataBuffer());
+
+        match.responseMatchInfoOnStart();
       }
       case RequestUnion.MatchInfoRequest -> {
         var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
@@ -124,7 +256,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           break;
         }
         var playerMoveRequest = new PlayerMoveRequest();
-        request.request(request);
+        request.request(playerMoveRequest);
 
         var match = optMatch.get();
         match.onReceivePlayerAction(
@@ -140,7 +272,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
           break;
         }
         var playerChangeWeaponRequest = new PlayerChangeWeaponRequest();
-        request.request(request);
+        request.request(playerChangeWeaponRequest);
 
         var match = optMatch.get();
         match.onReceivePlayerAction(
@@ -191,7 +323,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
       case RequestUnion.PingByPlayerMoveRequest -> {
         var builder = new FlatBufferBuilder(0);
         PingByPlayerMoveResponse.startPingByPlayerMoveResponse(builder);
-        PingByPlayerMoveResponse.addPlayerId(builder, SamplePingData.userId);
+        PingByPlayerMoveResponse.addPlayerId(builder, SamplePingData.playerId);
         Vector2Struct.createVector2Struct(
             builder, SamplePingData.position.x, SamplePingData.position.y);
         PingByPlayerMoveResponse.addRotation(builder, SamplePingData.rotation);

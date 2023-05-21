@@ -2,6 +2,7 @@ include "common.fbs";
 namespace survival2d.flatbuffers;
 
 table LoginRequest {
+  userName: string;
 }
 
 table GetUserInfoRequest {
@@ -11,6 +12,7 @@ table CreateTeamRequest {
 }
 
 table JoinTeamRequest {
+  teamId: int;
 }
 
 table FindMatchRequest {

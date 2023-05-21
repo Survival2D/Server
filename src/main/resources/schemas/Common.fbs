@@ -13,6 +13,7 @@ struct CircleStruct {
 
 table PlayerTable {
   playerId: int;
+  playerName: string;
   position: Vector2Struct;
   rotation: float;
   team: int;
@@ -144,8 +145,10 @@ table WeaponTable {
   data: WeaponUnion;
 }
 
-enum ErrorEnum: byte {
+enum ResponseErrorEnum: byte {
   SUCCESS,
+  TEAM_NOT_FOUND,
+  JOIN_TEAM_ERROR,
   NOT_FOUND_YET,
-  FAILURE,
+  UNKNOWN,
 }

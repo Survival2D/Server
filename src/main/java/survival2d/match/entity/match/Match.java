@@ -93,9 +93,9 @@ import survival2d.match.type.AttachType;
 import survival2d.match.type.BulletType;
 import survival2d.match.type.ItemType;
 import survival2d.match.util.AStar;
-import survival2d.match.util.Point;
 import survival2d.match.util.MapGenerator;
 import survival2d.match.util.MatchUtil;
+import survival2d.match.util.Point;
 import survival2d.match.util.TileObject;
 import survival2d.match.util.VisionUtil;
 import survival2d.network.NetworkUtil;
@@ -173,7 +173,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     return true;
   }
 
-  public Collection<Integer> getAllUsernames() {
+  public Collection<Integer> getAllPlayerIds() {
     return players.keySet();
   }
 
@@ -585,7 +585,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
 
-      NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+      NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
 
       checkEndGame();
     }
@@ -613,7 +613,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
 
-      NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+      NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
 
       stop();
     }
@@ -643,7 +643,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   public void responseMatchInfoOnStart(int username) {
@@ -822,12 +822,12 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   public void init() {
     // FIXME:
-    var testPing = true;
+    var testPing = false;
     if (!testPing) {
       timer.schedule(
           new TimerTask() {
@@ -942,7 +942,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   public void update() {
@@ -983,7 +983,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
 
-      NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+      NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
     }
     if (currentSafeZone >= safeZones.size() - 1) {
       return;
@@ -1018,7 +1018,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   private void updateMapObjects() {
@@ -1212,7 +1212,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllUsernames(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   private void onPlayerUseHealItem(int playerId, ItemType itemType) {

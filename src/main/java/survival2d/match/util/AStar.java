@@ -10,10 +10,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 /** <a href="https://www.geeksforgeeks.org/a-search-algorithm/">Source</a> */
 @Slf4j
@@ -105,7 +103,7 @@ public class AStar {
       }
     }
     for (int i = 0; i < 100; i++) {
-      val randomPoint =
+      var randomPoint =
           new Point(
               ThreadLocalRandom.current().nextInt(row), ThreadLocalRandom.current().nextInt(col));
       if (isValid(randomPoint) && isUnBlocked(randomPoint)) {
@@ -147,7 +145,7 @@ public class AStar {
       }
     }
 
-    val beginCell = getCellAtPoint(src);
+    var beginCell = getCellAtPoint(src);
     beginCell.g = 0;
     beginCell.h = 0;
     beginCell.setParent(beginCell);
@@ -157,12 +155,12 @@ public class AStar {
     open.add(beginCell);
 
     while (!open.isEmpty()) {
-      val cell = open.remove();
+      var cell = open.remove();
       closed.add(cell);
 
-      val neighbours = getNeighbours(cell);
+      var neighbours = getNeighbours(cell);
 
-      for (val neighbour : neighbours) {
+      for (var neighbour : neighbours) {
         if (isDestination(neighbour, dest)) {
           neighbour.setParent(cell);
           return getPath(dest);
@@ -187,5 +185,4 @@ public class AStar {
   private List<AStarCell> getNeighbours(AStarCell cell) {
     return allowDiagonals ? get8Neighbours(cell) : get4Neighbours(cell);
   }
-
 }

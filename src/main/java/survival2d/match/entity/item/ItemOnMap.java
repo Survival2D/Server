@@ -4,9 +4,6 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import java.util.Collections;
 import java.util.List;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import survival2d.match.entity.base.Containable;
