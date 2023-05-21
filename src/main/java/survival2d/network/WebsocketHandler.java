@@ -66,26 +66,48 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
   private void onHandshakeComplete(Channel channel) {
     var user = ServerData.getInstance().newUser(channel);
     log.info("User {} connected", user.getId());
-    new Thread(
-            () -> {
-              var builder = new FlatBufferBuilder(0);
-              var responseOffset = LoginResponse.createLoginResponse(builder, user.getId());
-
-              Response.startResponse(builder);
-              Response.addResponseType(builder, ResponseUnion.LoginResponse);
-              Response.addResponse(builder, responseOffset);
-              var packetOffset = Response.endResponse(builder);
-              builder.finish(packetOffset);
-
-              var dataBuffer = builder.dataBuffer();
-              NetworkUtil.sendResponse(user.getId(), dataBuffer);
-            })
-        .start();
+//    new Thread(
+//            () -> {
+//              try {
+//                Thread.sleep(1000);
+//              } catch (InterruptedException e) {
+//                log.error("onHandshakeComplete error", e);
+//              }
+//              var builder = new FlatBufferBuilder(0);
+//              var responseOffset = LoginResponse.createLoginResponse(builder, user.getId());
+//
+//              Response.startResponse(builder);
+//              Response.addResponseType(builder, ResponseUnion.LoginResponse);
+//              Response.addResponse(builder, responseOffset);
+//              var packetOffset = Response.endResponse(builder);
+//              builder.finish(packetOffset);
+//
+//              var dataBuffer = builder.dataBuffer();
+//              NetworkUtil.sendResponse(user.getId(), dataBuffer);
+//            })
+//        .start();
   }
 
   private void handleBinaryData(ChannelHandlerContext ctx, Request request) {
-    var userId = ServerData.getInstance().getUserId(ctx.channel());
+    var channel = ctx.channel();
+    var user = ServerData.getInstance().getUser(channel);
+    var userId = user.getId();
     switch (request.requestType()) {
+      case RequestUnion.LoginRequest -> {
+        var builder = new FlatBufferBuilder(0);
+        var responseOffset = LoginResponse.createLoginResponse(builder, user.getId());
+
+        Response.startResponse(builder);
+        Response.addResponseType(builder, ResponseUnion.LoginResponse);
+        Response.addResponse(builder, responseOffset);
+        var packetOffset = Response.endResponse(builder);
+        builder.finish(packetOffset);
+
+        var dataBuffer = builder.dataBuffer();
+        NetworkUtil.sendResponse(user.getId(), dataBuffer);
+//        NetworkUtil.sendResponse(channel, "abcxyz");
+//        channel.writeAndFlush(new TextWebSocketFrame("abcxyz"));
+      }
       case RequestUnion.MatchInfoRequest -> {
         var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
         if (optMatch.isEmpty()) {

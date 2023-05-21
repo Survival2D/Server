@@ -1,6 +1,9 @@
 package survival2d.network;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +18,7 @@ public class NetworkUtil {
   }
 
   public static void sendResponse(Channel channel, String response) {
-    channel.writeAndFlush(response);
+    channel.writeAndFlush(new TextWebSocketFrame(response));
   }
 
   public static void sendResponse(Collection<Integer> userIds, ByteBuffer byteBuffer) {
@@ -39,10 +42,10 @@ public class NetworkUtil {
   }
 
   public static void sendResponse(Channel channel, ByteBuffer byteBuffer) {
-    channel.writeAndFlush(byteBuffer);
+    channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(byteBuffer)));
   }
 
   public static void sendResponse(Channel channel, byte[] bytes) {
-    channel.writeAndFlush(bytes);
+    channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes)));
   }
 }
