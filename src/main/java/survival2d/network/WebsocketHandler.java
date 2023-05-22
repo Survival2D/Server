@@ -1,6 +1,7 @@
 package survival2d.network;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.common.base.Strings;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.gson.Gson;
 import io.netty.channel.Channel;
@@ -117,7 +118,11 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         request.request(loginRequest);
 
         var userName = loginRequest.userName();
-        user.setName(userName);
+        if (Strings.isNullOrEmpty(userName)) {
+          userName = user.getName();
+        } else {
+          user.setName(userName);
+        }
         log.info("User {} login with name {}", userId, userName);
 
         var builder = new FlatBufferBuilder(0);
