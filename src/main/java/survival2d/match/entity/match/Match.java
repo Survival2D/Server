@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import survival2d.ai.bot.Bot;
+import survival2d.data.ServerData;
 import survival2d.flatbuffers.BackPackItemTable;
 import survival2d.flatbuffers.BandageItemTable;
 import survival2d.flatbuffers.BulletItemTable;
@@ -692,6 +693,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       var player = players[i];
       PlayerTable.startPlayerTable(builder);
       PlayerTable.addPlayerId(builder, player.getPlayerId());
+      var playerName = builder.createString(ServerData.getInstance().getUser(player.getPlayerId()).getName());
+      PlayerTable.addPlayerName(builder, playerName);
       var positionOffset =
           Vector2Struct.createVector2Struct(
               builder, player.getPosition().x, player.getPosition().y);
