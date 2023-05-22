@@ -691,9 +691,13 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var players = matchPlayers.toArray(new Player[0]);
     for (int i = 0; i < players.length; i++) {
       var player = players[i];
+      var user = ServerData.getInstance().getUser(player.getPlayerId());
+      var name = user != null ? user.getName() : "User " + player.getPlayerId();
+
+      var playerName = builder.createString(name);
       PlayerTable.startPlayerTable(builder);
       PlayerTable.addPlayerId(builder, player.getPlayerId());
-      var playerName = builder.createString(ServerData.getInstance().getUser(player.getPlayerId()).getName());
+
       PlayerTable.addPlayerName(builder, playerName);
       var positionOffset =
           Vector2Struct.createVector2Struct(
