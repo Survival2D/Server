@@ -4,9 +4,11 @@ package survival2d.flatbuffers;
 
 public final class GunTypeEnum {
   private GunTypeEnum() { }
-  public static final byte NORMAL = 0;
+  public static final byte PISTOL = 0;
+  public static final byte SHOTGUN = 1;
+  public static final byte SNIPER = 2;
 
-  public static final String[] names = { "NORMAL", };
+  public static final String[] names = { "PISTOL", "SHOTGUN", "SNIPER", };
 
   public static String name(int e) { return names[e]; }
 }

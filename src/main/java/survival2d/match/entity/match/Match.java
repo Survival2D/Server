@@ -964,28 +964,30 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     }
     if (currentTick % GameConfig.getInstance().getTicksPerSafeZone() != 0) return;
     currentSafeZone++;
-    {
-      var safeZone = safeZones.get(currentSafeZone);
-      var builder = new FlatBufferBuilder(0);
-
-      SafeZoneMoveResponse.startSafeZoneMoveResponse(builder);
-      var safeZonePositionOffset =
-          CircleStruct.createCircleStruct(builder, safeZone.x, safeZone.y, safeZone.radius);
-      SafeZoneMoveResponse.addSafeZone(builder, safeZonePositionOffset);
-      var responseOffset = SafeZoneMoveResponse.endSafeZoneMoveResponse(builder);
-
-      Response.startResponse(builder);
-      Response.addResponseType(builder, ResponseUnion.SafeZoneMoveResponse);
-      Response.addResponse(builder, responseOffset);
-      var packetOffset = Response.endResponse(builder);
-      builder.finish(packetOffset);
-
-      NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
-    }
+    sendSafeZoneMove();
     if (currentSafeZone >= safeZones.size() - 1) {
       return;
     }
     sendNewSafeZoneInfo();
+  }
+
+  private void sendSafeZoneMove() {
+    var safeZone = safeZones.get(currentSafeZone);
+    var builder = new FlatBufferBuilder(0);
+
+    SafeZoneMoveResponse.startSafeZoneMoveResponse(builder);
+    var safeZonePositionOffset =
+        CircleStruct.createCircleStruct(builder, safeZone.x, safeZone.y, safeZone.radius);
+    SafeZoneMoveResponse.addSafeZone(builder, safeZonePositionOffset);
+    var responseOffset = SafeZoneMoveResponse.endSafeZoneMoveResponse(builder);
+
+    Response.startResponse(builder);
+    Response.addResponseType(builder, ResponseUnion.SafeZoneMoveResponse);
+    Response.addResponse(builder, responseOffset);
+    var packetOffset = Response.endResponse(builder);
+    builder.finish(packetOffset);
+
+    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
   private void safeZoneDealDamage() {

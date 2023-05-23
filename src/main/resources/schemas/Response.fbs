@@ -103,6 +103,7 @@ table PlayerDeadResponse {
 }
 
 table PlayerReloadWeaponResponse {
+  gunType: GunTypeEnum;
   remainBulletsInGun: int;
   remainBullets: int;
 }

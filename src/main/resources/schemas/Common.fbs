@@ -32,7 +32,9 @@ table WallTable {
 }
 
 enum GunTypeEnum: byte {
-  NORMAL
+  PISTOL,
+  SHOTGUN,
+  SNIPER,
 }
 
 table GunItemTable {
@@ -40,12 +42,8 @@ table GunItemTable {
   numBullet: int;
 }
 
-enum BulletTypeEnum: byte {
-  NORMAL
-}
-
 table BulletItemTable {
-  type: BulletTypeEnum;
+  type: GunTypeEnum;
   numBullet: int;
 }
 
@@ -118,13 +116,13 @@ table MapObjectTable {
 table BulletTable {
   id: int;
   position: Vector2Struct;
-  type: BulletTypeEnum;
+  type: GunTypeEnum;
   owner: int;
   direction: Vector2Struct;
 }
 
 table BulletWithQuantityTable {
-  type: BulletTypeEnum;
+  type: GunTypeEnum;
   num: int;
 }
 

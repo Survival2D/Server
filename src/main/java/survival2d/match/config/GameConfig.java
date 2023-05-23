@@ -20,7 +20,7 @@ public class GameConfig implements PostProcessable {
   private float mapWidth;
   private float mapHeight;
   private List<Float> safeZonesRadius;
-  private int minutePerSafeZone;
+  private int secondsPerSafeZone;
   private float defaultSafeZoneCenterX;
   private float defaultSafeZoneCenterY;
   private float defaultSafeZoneRadius;
@@ -58,7 +58,7 @@ public class GameConfig implements PostProcessable {
     defaultSafeZoneCenterX = mapWidth / 2;
     defaultSafeZoneCenterY = mapHeight / 2;
     defaultSafeZoneRadius = mapWidth;
-    ticksPerSafeZone = minutePerSafeZone * 60 * GameConstant.TICK_PER_SECOND;
+    ticksPerSafeZone = secondsPerSafeZone * GameConstant.TICK_PER_SECOND;
     medKitHeal = defaultPlayerHp;
 
     halfPlayerViewWidth = playerViewWidth / 2;
