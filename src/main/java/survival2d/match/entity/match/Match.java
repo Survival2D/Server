@@ -90,7 +90,7 @@ import survival2d.match.entity.player.Player;
 import survival2d.match.entity.quadtree.QuadTree;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
 import survival2d.match.entity.weapon.Bullet;
-import survival2d.match.type.AttachType;
+import survival2d.match.type.AttackType;
 import survival2d.match.type.BulletType;
 import survival2d.match.type.ItemType;
 import survival2d.match.util.AStar;
@@ -117,7 +117,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   @GsonTransient private final List<Circle> safeZones = new ArrayList<>();
   @GsonTransient private final List<Vector2> spawnPoints = new ArrayList<>();
   private final Map<Integer, Bot> bots = new ConcurrentHashMap<>();
-  private final int NUM_BOTS = 1;
+  private final int NUM_BOTS = 0;
   @GsonTransient int currentSafeZone;
   @GsonTransient private int currentMapObjectId;
   @GsonTransient private TimerTask gameLoopTask;
@@ -233,15 +233,15 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       log.error("player {} is null", playerId);
       return;
     }
-    var oldPosition = player.getPosition();
+    var oldPosition = player.getPosition().cpy();
     if (!direction.isZero()) {
       var unitDirection = direction.nor();
       var moveBy = unitDirection.scl(player.getSpeed());
       player.moveBy(moveBy);
       if (!isValidToMove(player)) {
         log.warn("Player {} can not move to {}", playerId, player.getPosition());
-        var reverse = moveBy.scl(-1);
-        player.moveBy(reverse);
+        moveBy.scl(-1);
+        player.moveBy(moveBy);
       }
     }
     player.setRotation(rotation);
@@ -251,30 +251,16 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     if (!VisionUtil.isSameVisionX(oldPosition, newPosition)) {
       var boundary = VisionUtil.getBoundaryXAxis(oldPosition, newPosition);
       var query = quadTree.query(boundary);
-      //      log.warn("BoundaryX {}", boundary);
-      //      log.warn("QueryX {}", query);
       newMapObjects.addAll(query);
     }
     if (!VisionUtil.isSameVisionY(oldPosition, newPosition)) {
       var boundary = VisionUtil.getBoundaryYAxis(oldPosition, newPosition);
       var query = quadTree.query(boundary);
-      //      log.warn("BoundaryY {}", boundary);
-      //      log.warn("QueryY {}", query);
       newMapObjects.addAll(query);
     }
     newMapObjects.removeIf(
-        (o) -> {
-          if (o instanceof Player enemy) {
-            return isUnderTree(enemy.getPosition());
-          }
-          return false;
-        });
+        (object) -> object instanceof Player enemy && isUnderTree(enemy.getPosition()));
     if (!newMapObjects.isEmpty()) {
-      //      log.warn(
-      //          "Map objects {}",
-      //          newMapObjects.stream()
-      //              .map(object -> object.getClass().getSimpleName())
-      //              .collect(Collectors.joining(",")));
       var data = getMatchInfoData(newMapObjects);
       NetworkUtil.sendResponse(playerId, data);
     }
@@ -373,14 +359,17 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   public void onPlayerAttack(int playerId, Vector2 direction) {
     var player = players.get(playerId);
     var currentWeapon = player.getCurrentWeapon().get();
-    if (currentWeapon.getAttachType() == AttachType.MELEE) {
+    if (currentWeapon.getAttackType() == AttackType.MELEE) {
       createDamage(
           playerId,
           new Circle(
-              player.getPosition().add(player.getAttackDirection().scl(Player.BODY_RADIUS + 10)),
+              player
+                  .getPosition()
+                  .cpy()
+                  .add(player.getAttackDirection().scl(Player.BODY_RADIUS + 10)),
               GameConfig.getInstance().getMeleeAttackRadius()),
           GameConfig.getInstance().getMeleeAttackDamage());
-    } else if (currentWeapon.getAttachType() == AttachType.RANGE) {
+    } else if (currentWeapon.getAttackType() == AttackType.RANGE) {
       if (!player.getGun().isReadyToShoot()) {
         return;
       }
@@ -388,6 +377,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
           playerId,
           player
               .getPosition()
+              .cpy()
               .add(
                   player
                       .getAttackDirection()

@@ -19,11 +19,11 @@ public class FlatBuffersDecoder extends MessageToMessageDecoder<BinaryWebSocketF
       BinaryWebSocketFrame binaryWebSocketFrame,
       List<Object> list) {
     var byteBuf = binaryWebSocketFrame.content();
-    byteBuf.retain();
+//    byteBuf.retain();
 
     var bytes = ByteBufUtil.getBytes(byteBuf);
 
-    log.info(Arrays.toString(bytes));
+    log.debug(Arrays.toString(bytes));
 
     var byteBuffer = ByteBuffer.wrap(bytes);
 

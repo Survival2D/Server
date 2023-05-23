@@ -50,7 +50,7 @@ public class Survival2D {
         .group(parentGroup, childGroup)
         .channel(channelClass)
         .localAddress(new InetSocketAddress(ServerConstant.FBS_PORT))
-        .handler(new LoggingHandler(LogLevel.DEBUG))
+        .handler(new LoggingHandler(LogLevel.INFO))
         .childHandler(
             new ChannelInitializer<>() {
 

@@ -8,7 +8,7 @@ import survival2d.match.type.WeaponType;
 @RequiredArgsConstructor
 @Getter
 public class Gun extends Weapon {
-  private final WeaponType weaponType = WeaponType.GUN;
+  private final WeaponType weaponType = WeaponType.PISTOL;
 
   private final GunType type;
   private int remainBullets = 10;

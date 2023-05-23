@@ -10,7 +10,7 @@ import survival2d.match.type.WeaponType;
 public class GunItem implements Item {
 
   final ItemType itemType = ItemType.WEAPON;
-  final WeaponType weaponType = WeaponType.GUN;
+  final WeaponType weaponType = WeaponType.PISTOL;
   GunType gunType;
   int numBullet;
 

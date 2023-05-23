@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum WeaponType {
-  HAND(AttachType.MELEE),
-  GUN(AttachType.RANGE);
+  HAND(AttackType.MELEE),
+  PISTOL(AttackType.RANGE),
+  SHOTGUN(AttackType.RANGE),
+  AR(AttackType.RANGE);
 
-  private final AttachType attachType;
+  private final AttackType attackType;
 }

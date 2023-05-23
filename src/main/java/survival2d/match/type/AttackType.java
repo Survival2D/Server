@@ -1,6 +1,6 @@
 package survival2d.match.type;
 
-public enum AttachType {
+public enum AttackType {
   RANGE,
   MELEE,
 }
