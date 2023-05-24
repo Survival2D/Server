@@ -21,16 +21,16 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
 
   Vector2 position;
 
-  Vector2 rawPosition;
+  Vector2 originPosition;
   Vector2 direction;
   BulletType type;
   boolean isDestroyed;
   Circle shape;
 
-  public Bullet(int ownerId, Vector2 rawPosition, Vector2 direction, BulletType type) {
+  public Bullet(int ownerId, Vector2 originPosition, Vector2 direction, BulletType type) {
     this.ownerId = ownerId;
-    this.rawPosition = rawPosition;
-    this.position = rawPosition;
+    this.originPosition = originPosition;
+    this.position = originPosition;
     this.direction = direction; // *speed
     this.type = type;
   }
@@ -41,6 +41,6 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
   }
 
   public boolean isOutOfBound() {
-    return position.dst(rawPosition) > type.getMaxRange();
+    return position.dst(originPosition) > type.getMaxRange();
   }
 }

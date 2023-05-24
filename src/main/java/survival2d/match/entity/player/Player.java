@@ -62,7 +62,7 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     this.playerId = playerId;
     this.team = team;
     weapons.add(new Hand());
-    Gun gun = new Gun(GunType.NORMAL);
+    Gun gun = new Gun(GunType.PISTOL);
     //    gun.reload(100);
     weapons.add(gun);
   }

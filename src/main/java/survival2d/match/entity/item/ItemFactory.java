@@ -34,7 +34,7 @@ public class ItemFactory {
   public static Item create(ItemType itemType) {
     switch (itemType) {
       case WEAPON:
-        return new GunItem(GunType.NORMAL, 10);
+        return new GunItem(GunType.PISTOL, 10);
       case BULLET:
         return new BulletItem(BulletType.NORMAL, 30);
       case BACKPACK:
