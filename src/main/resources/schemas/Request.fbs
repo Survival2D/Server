@@ -36,10 +36,6 @@ table PlayerChangeWeaponRequest {
 table PlayerAttackRequest {
 }
 
-table PlayerDropItemRequest {
-  id: int;
-}
-
 table PlayerReloadWeaponRequest {
 }
 

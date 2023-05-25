@@ -81,7 +81,7 @@ table EndGameResponse {
 table PlayerInfoResponse {
   hp: double;
   weapon: [WeaponTable];
-  bullets: [BulletWithQuantityTable];
+  bullets: [BulletItemTable];
 }
 
 table ObstacleDestroyResponse {
@@ -141,10 +141,6 @@ table PingByMatchInfoResponse {
   players: [PlayerTable];
   mapObjects: [MapObjectUnion];
   safeZone: Vector2Struct;
-}
-
-table ErrorResponse {
-
 }
 
 union ResponseUnion {

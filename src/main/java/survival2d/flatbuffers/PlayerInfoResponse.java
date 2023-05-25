@@ -21,11 +21,11 @@ public final class PlayerInfoResponse extends Table {
   public int weaponLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
   public survival2d.flatbuffers.WeaponTable.Vector weaponVector() { return weaponVector(new survival2d.flatbuffers.WeaponTable.Vector()); }
   public survival2d.flatbuffers.WeaponTable.Vector weaponVector(survival2d.flatbuffers.WeaponTable.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
-  public survival2d.flatbuffers.BulletWithQuantityTable bullets(int j) { return bullets(new survival2d.flatbuffers.BulletWithQuantityTable(), j); }
-  public survival2d.flatbuffers.BulletWithQuantityTable bullets(survival2d.flatbuffers.BulletWithQuantityTable obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public survival2d.flatbuffers.BulletItemTable bullets(int j) { return bullets(new survival2d.flatbuffers.BulletItemTable(), j); }
+  public survival2d.flatbuffers.BulletItemTable bullets(survival2d.flatbuffers.BulletItemTable obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int bulletsLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.BulletWithQuantityTable.Vector bulletsVector() { return bulletsVector(new survival2d.flatbuffers.BulletWithQuantityTable.Vector()); }
-  public survival2d.flatbuffers.BulletWithQuantityTable.Vector bulletsVector(survival2d.flatbuffers.BulletWithQuantityTable.Vector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.BulletItemTable.Vector bulletsVector() { return bulletsVector(new survival2d.flatbuffers.BulletItemTable.Vector()); }
+  public survival2d.flatbuffers.BulletItemTable.Vector bulletsVector(survival2d.flatbuffers.BulletItemTable.Vector obj) { int o = __offset(8); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createPlayerInfoResponse(FlatBufferBuilder builder,
       double hp,

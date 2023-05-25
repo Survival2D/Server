@@ -6,18 +6,16 @@ public final class MapObjectUnion {
   private MapObjectUnion() { }
   public static final byte NONE = 0;
   public static final byte BulletItemTable = 1;
-  public static final byte GunItemTable = 2;
-  public static final byte VestItemTable = 3;
-  public static final byte HelmetItemTable = 4;
-  public static final byte BandageItemTable = 5;
-  public static final byte MedKitItemTable = 6;
-  public static final byte BackPackItemTable = 7;
-  public static final byte TreeTable = 8;
-  public static final byte ContainerTable = 9;
-  public static final byte StoneTable = 10;
-  public static final byte WallTable = 11;
+  public static final byte VestItemTable = 2;
+  public static final byte HelmetItemTable = 3;
+  public static final byte BandageItemTable = 4;
+  public static final byte MedKitItemTable = 5;
+  public static final byte TreeTable = 6;
+  public static final byte ContainerTable = 7;
+  public static final byte StoneTable = 8;
+  public static final byte WallTable = 9;
 
-  public static final String[] names = { "NONE", "BulletItemTable", "GunItemTable", "VestItemTable", "HelmetItemTable", "BandageItemTable", "MedKitItemTable", "BackPackItemTable", "TreeTable", "ContainerTable", "StoneTable", "WallTable", };
+  public static final String[] names = { "NONE", "BulletItemTable", "VestItemTable", "HelmetItemTable", "BandageItemTable", "MedKitItemTable", "TreeTable", "ContainerTable", "StoneTable", "WallTable", };
 
   public static String name(int e) { return names[e]; }
 }

@@ -71,35 +71,22 @@ table BandageItemTable {
 table MedKitItemTable {
 }
 
-enum BackPackTypeEnum: byte {
-  LEVEL_0,
-  LEVEL_1,
-  LEVEL_2,
-}
-
-table BackPackItemTable {
-  type: BackPackTypeEnum;
-}
-
 union ItemUnion {
   BulletItemTable,
   GunItemTable,
   VestItemTable,
   HelmetItemTable,
   BandageItemTable,
-  MedKitItemTable,
-  BackPackItemTable
+  MedKitItemTable
 }
 
 union MapObjectUnion {
   //Item
   BulletItemTable,
-  GunItemTable,
   VestItemTable,
   HelmetItemTable,
   BandageItemTable,
   MedKitItemTable,
-  BackPackItemTable,
   //Obstacle
   TreeTable,
   ContainerTable,
@@ -119,11 +106,6 @@ table BulletTable {
   type: GunTypeEnum;
   owner: int;
   direction: Vector2Struct;
-}
-
-table BulletWithQuantityTable {
-  type: GunTypeEnum;
-  num: int;
 }
 
 table HandTable {
