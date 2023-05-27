@@ -30,11 +30,12 @@ public final class ResponseUnion {
   public static final byte NewSafeZoneResponse = 23;
   public static final byte SafeZoneMoveResponse = 24;
   public static final byte UseHealItemResponse = 25;
-  public static final byte PingResponse = 26;
-  public static final byte PingByPlayerMoveResponse = 27;
-  public static final byte PingByMatchInfoResponse = 28;
+  public static final byte SetAutoPlayResponse = 26;
+  public static final byte PingResponse = 27;
+  public static final byte PingByPlayerMoveResponse = 28;
+  public static final byte PingByMatchInfoResponse = 29;
 
-  public static final String[] names = { "NONE", "LoginResponse", "GetUserInfoResponse", "CreateTeamResponse", "JoinTeamResponse", "NewUserJoinTeamResponse", "FindMatchResponse", "GetConfigResponse", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "UseHealItemResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
+  public static final String[] names = { "NONE", "LoginResponse", "GetUserInfoResponse", "CreateTeamResponse", "JoinTeamResponse", "NewUserJoinTeamResponse", "FindMatchResponse", "GetConfigResponse", "MatchInfoResponse", "PlayerMoveResponse", "PlayerAttackResponse", "PlayerInfoResponse", "CreateBulletOnMapResponse", "CreateItemOnMapResponse", "ObstacleTakeDamageResponse", "ObstacleDestroyResponse", "PlayerTakeDamageResponse", "PlayerDeadResponse", "PlayerReloadWeaponResponse", "PlayerChangeWeaponResponse", "PlayerTakeItemResponse", "StartGameResponse", "EndGameResponse", "NewSafeZoneResponse", "SafeZoneMoveResponse", "UseHealItemResponse", "SetAutoPlayResponse", "PingResponse", "PingByPlayerMoveResponse", "PingByMatchInfoResponse", };
 
   public static String name(int e) { return names[e]; }
 }

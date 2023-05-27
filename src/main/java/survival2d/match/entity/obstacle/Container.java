@@ -17,8 +17,7 @@ import survival2d.util.serialize.GsonTransient;
 @Setter
 public class Container extends BaseMapObject implements Destroyable, HasHp, Obstacle, Containable {
   @GsonTransient int id;
-  @GsonTransient double hp = 100;
-  Vector2 position;
+  @GsonTransient double hp = GameConfig.getInstance().getContainerHp();
 
   @GsonTransient
   Rectangle shape =

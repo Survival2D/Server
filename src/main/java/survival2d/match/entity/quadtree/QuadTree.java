@@ -1,5 +1,6 @@
 package survival2d.match.entity.quadtree;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import java.util.Collection;
@@ -17,10 +18,10 @@ public class QuadTree<T extends Node> {
   Rectangle treeBoundary;
   boolean partitioned = false;
   Map<Integer, T> nodes = new ConcurrentHashMap<>();
-  QuadTree<T> northwest;
-  QuadTree<T> northeast;
-  QuadTree<T> southwest;
-  QuadTree<T> southeast;
+  QuadTree<T> quadrant1;
+  QuadTree<T> quadrant2;
+  QuadTree<T> quadrant3;
+  QuadTree<T> quadrant4;
 
   public QuadTree(float x, float y, float width, float height) {
     treeBoundary = new Rectangle(x, y, width, height);
@@ -41,24 +42,24 @@ public class QuadTree<T extends Node> {
     }
 
     if (!partitioned) partition();
-    if (northwest.treeBoundary.contains(node.getPosition())) {
-      northwest.add(node);
-    } else if (northeast.treeBoundary.contains(node.getPosition())) {
-      northeast.add(node);
-    } else if (southwest.treeBoundary.contains(node.getPosition())) {
-      southwest.add(node);
-    } else if (southeast.treeBoundary.contains(node.getPosition())) {
-      southeast.add(node);
+    if (quadrant1.treeBoundary.contains(node.getPosition())) {
+      quadrant1.add(node);
+    } else if (quadrant2.treeBoundary.contains(node.getPosition())) {
+      quadrant2.add(node);
+    } else if (quadrant3.treeBoundary.contains(node.getPosition())) {
+      quadrant3.add(node);
+    } else if (quadrant4.treeBoundary.contains(node.getPosition())) {
+      quadrant4.add(node);
     }
   }
 
   public void remove(T node) {
     nodes.remove(node.getId());
     if (!partitioned) return;
-    northwest.remove(node);
-    northeast.remove(node);
-    southwest.remove(node);
-    southeast.remove(node);
+    quadrant3.remove(node);
+    quadrant4.remove(node);
+    quadrant2.remove(node);
+    quadrant1.remove(node);
   }
 
   private void partition() {
@@ -68,10 +69,10 @@ public class QuadTree<T extends Node> {
     var height = treeBoundary.height;
     var halfWidth = width / 2;
     var halfHeight = height / 2;
-    northwest = new QuadTree<>(x, y, halfWidth, halfHeight);
-    northeast = new QuadTree<>(x, y + halfHeight, halfWidth, halfHeight);
-    southwest = new QuadTree<>(x + halfWidth, y, halfWidth, halfHeight);
-    southeast = new QuadTree<>(x + halfWidth, y + halfHeight, halfWidth, halfHeight);
+    quadrant1 = new QuadTree<>(x + halfWidth, y + halfHeight, halfWidth, halfHeight);
+    quadrant2 = new QuadTree<>(x + halfWidth, y, halfWidth, halfHeight);
+    quadrant3 = new QuadTree<>(x, y, halfWidth, halfHeight);
+    quadrant4 = new QuadTree<>(x, y + halfHeight, halfWidth, halfHeight);
     partitioned = true;
   }
 
@@ -79,13 +80,13 @@ public class QuadTree<T extends Node> {
     if (MatchUtil.isIntersect(treeBoundary, boundary)) {
       var result =
           nodes.values().stream()
-              .filter(node -> boundary.contains(node.getPosition()))
+              .filter(node -> MatchUtil.isIntersect(boundary, node.getShape()))
               .collect(Collectors.toList());
       if (partitioned) {
-        result.addAll(northwest.query(boundary));
-        result.addAll(northeast.query(boundary));
-        result.addAll(southwest.query(boundary));
-        result.addAll(southeast.query(boundary));
+        result.addAll(quadrant1.query(boundary));
+        result.addAll(quadrant2.query(boundary));
+        result.addAll(quadrant3.query(boundary));
+        result.addAll(quadrant4.query(boundary));
       }
       return result;
     }
@@ -95,10 +96,10 @@ public class QuadTree<T extends Node> {
   public Collection<T> getAllObjects(Collection<T> relevantNodes) {
     relevantNodes.addAll(nodes.values());
     if (partitioned) {
-      northwest.getAllObjects(relevantNodes);
-      northeast.getAllObjects(relevantNodes);
-      southwest.getAllObjects(relevantNodes);
-      southeast.getAllObjects(relevantNodes);
+      quadrant1.getAllObjects(relevantNodes);
+      quadrant2.getAllObjects(relevantNodes);
+      quadrant3.getAllObjects(relevantNodes);
+      quadrant4.getAllObjects(relevantNodes);
     }
     return relevantNodes;
   }

@@ -39,7 +39,6 @@ public class Player extends BaseMapObject implements Movable, HasHp {
   int id; // mapObjectId
   int playerId; // userId của player
   int team;
-  Vector2 position = MatchUtil.randomPosition(100, 900, 100, 900);
   float rotation;
   @GsonTransient float speed = GameConfig.getInstance().getDefaultPlayerSpeed();
   @GsonTransient double hp = GameConfig.getInstance().getDefaultPlayerHp();
@@ -55,6 +54,7 @@ public class Player extends BaseMapObject implements Movable, HasHp {
   public Player(int playerId, int team) {
     this.playerId = playerId;
     this.team = team;
+    position = MatchUtil.randomPosition(100, 900, 100, 900);
     weapons.add(new Hand());
     weapons.add(new Gun(GunType.PISTOL));
     weapons.add(new Gun(GunType.SHOTGUN));
@@ -69,7 +69,7 @@ public class Player extends BaseMapObject implements Movable, HasHp {
   }
 
   public Vector2 getAttackDirection() {
-    return new Vector2(MathUtils.cos(rotation), MathUtils.sin(rotation));
+    return new Vector2(MathUtils.cos(rotation), MathUtils.sin(rotation)).nor();
   }
 
   private boolean isValidWeaponIndex(int index) {

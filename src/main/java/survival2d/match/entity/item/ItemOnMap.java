@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.MapObject;
@@ -17,11 +18,11 @@ public class ItemOnMap extends BaseMapObject implements Containable, MapObject {
   Circle shape;
   int id;
   Item item;
-  Vector2 position;
 
   public ItemOnMap(Item item, Vector2 position) {
     this.item = item;
     this.position = position;
+    this.shape = new Circle(position, GameConfig.getInstance().getItemOnMapRadius());
   }
 
   @Override

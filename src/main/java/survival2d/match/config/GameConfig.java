@@ -34,10 +34,14 @@ public class GameConfig implements PostProcessable {
 
   private float treeRootRadius;
   private float treeFoliageRadius;
+  private double treeHp;
   private float containerSize;
+  private double containerHp;
   private int numMaxItemInContainer;
   private float stoneRadius;
+  private double stoneHp;
   private float wallSize;
+  private float itemOnMapRadius;
 
   private double defaultPlayerHp;
   private float defaultPlayerSpeed;

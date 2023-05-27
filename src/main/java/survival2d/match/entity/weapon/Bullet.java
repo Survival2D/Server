@@ -19,9 +19,6 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
 
   int id;
   int ownerId;
-
-  Vector2 position;
-
   Vector2 originPosition;
   Vector2 direction;
   GunType type;

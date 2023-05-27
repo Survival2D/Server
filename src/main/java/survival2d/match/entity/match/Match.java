@@ -448,8 +448,6 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   }
 
   public void createDamage(int playerId, Circle damageShape, double damage) {
-    log.warn("match is not present");
-
     var builder = new FlatBufferBuilder(0);
 
     PlayerAttackResponse.startPlayerAttackResponse(builder);
@@ -472,7 +470,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
 
   public void makeDamage(int playerId, Shape2D shape, double damage) {
     var currentPlayer = players.get(playerId);
-    for (var object : getObjectsIntersectWithBoundary(shape)) {
+    var intersectedObjects = getObjectsIntersectWithBoundary(shape);
+    for (var object : intersectedObjects) {
       if (object instanceof Player player) {
         // Cùng team thì không tính damage
         if (player.getTeam() == currentPlayer.getTeam()) continue;

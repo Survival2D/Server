@@ -361,6 +361,30 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         var data = dataBuffer.array();
         log.info("pingByMatchInfoByte's size {}", data.length);
       }
+      case RequestUnion.SetAutoPlayRequest -> {
+        var setAutoPlayRequest = new SetAutoPlayRequest();
+        request.request(setAutoPlayRequest);
+
+        var optMatch = MatchingService.getInstance().getMatchOfUser(userId);
+        if (optMatch.isEmpty()) {
+          log.warn("match is not present");
+          return;
+        }
+        var match = optMatch.get();
+        var isEnable = setAutoPlayRequest.enable();
+        match.setPlayerAutoPlay(userId, isEnable);
+
+        var builder = new FlatBufferBuilder(0);
+        var responseOffset = SetAutoPlayResponse.createSetAutoPlayResponse(builder, isEnable);
+        Response.startResponse(builder);
+        Response.addResponseType(builder, ResponseUnion.SetAutoPlayResponse);
+        Response.addResponse(builder, responseOffset);
+        var packetOffset = Response.endResponse(builder);
+        builder.finish(packetOffset);
+
+        var dataBuffer = builder.dataBuffer();
+        NetworkUtil.sendResponse(userId, dataBuffer);
+      }
       default -> log.warn("not handle requestType {} from user {}", request.requestType(), userId);
     }
   }
