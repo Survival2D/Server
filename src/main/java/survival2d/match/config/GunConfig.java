@@ -1,9 +1,8 @@
 package survival2d.match.config;
 
-public class GunConfig {
-    int bulletCapacity;
-    double damage;
-    double maxRange;
-    double damageRadius;
-    double speed;
+import lombok.Getter;
+
+@Getter
+public class GunConfig extends WeaponConfig {
+  int capacity;
 }

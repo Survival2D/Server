@@ -1,8 +1,14 @@
 package survival2d.match.config;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import lombok.Getter;
 import survival2d.match.constant.GameConstant;
+import survival2d.match.type.GunType;
+import survival2d.match.type.HelmetType;
+import survival2d.match.type.ItemType;
+import survival2d.match.type.VestType;
 import survival2d.util.config.ConfigReader;
 import survival2d.util.serialize.GsonHolder;
 import survival2d.util.serialize.PostProcessable;
@@ -20,33 +26,47 @@ public class GameConfig implements PostProcessable {
   private float mapWidth;
   private float mapHeight;
   private List<Float> safeZonesRadius;
+  private float defaultSafeZoneCenterX; // self-calculation
+  private float defaultSafeZoneCenterY; // self-calculation
+  private float defaultSafeZoneRadius; // self-calculation
   private int secondsPerSafeZone;
-  private float defaultSafeZoneCenterX;
-  private float defaultSafeZoneCenterY;
-  private float defaultSafeZoneRadius;
-  private int ticksPerSafeZone;
-  private double defaultPlayerHp;
-  private float defaultPlayerSpeed;
-  private double bandageHeal;
-  private double medKitHeal;
-  private int numMaxItemInContainer;
-  private float playerViewWidth;
-  private float playerViewHeight;
-  private double playerViewWidthPlus1;
-  private double playerViewHeightPlus1;
-  private float playerViewWidthPlus2;
-  private float playerViewHeightPlus2;
-  private double halfPlayerViewWidth;
-  private double halfPlayerViewHeight;
-  private float playerHeadRadius;
-  private float playerBodyRadius;
-  private float meleeAttackRadius;
-  private float meleeAttackDamage;
+  private int ticksPerSafeZone; // self-calculation
+
   private float treeRootRadius;
   private float treeFoliageRadius;
+  private float containerSize;
+  private int numMaxItemInContainer;
   private float stoneRadius;
   private float wallSize;
-  private float containerSize;
+
+  private double defaultPlayerHp;
+  private float defaultPlayerSpeed;
+  private float playerViewWidth;
+  private float playerViewHeight;
+  private float playerViewWidthPlus2; // self-calculation
+  private float playerViewHeightPlus2; // self-calculation
+  private double halfPlayerViewWidth; // self-calculation
+  private double halfPlayerViewHeight; // self-calculation
+  private float playerHeadRadius;
+  private float playerBodyRadius;
+
+  private Map<VestType, Double> vestReduceDamagePercent;
+  private Map<HelmetType, Double> helmetReduceDamagePercent;
+  private double bandageHeal;
+  private double medKitHeal;
+  private Map<ItemType, Integer> itemWeights;
+  private int maxItemRandomWeight; // self-calculation
+  private TreeMap<Integer, ItemType> itemRandomWeights; // self-calculation
+  private Map<GunType, Integer> bulletWeights;
+  private int maxBulletRandomWeight; // self-calculation
+  private TreeMap<Integer, GunType> bulletRandomWeights; // self-calculation
+  private int bulletPerBlock;
+  private int maxBulletBlockPerItem;
+
+  private WeaponConfig handConfig;
+  private Map<GunType, GunConfig> gunConfigs;
+  private float bulletSpeed;
+  private float bulletDamageRadius;
 
   public static void load() {
     instance =
@@ -57,15 +77,27 @@ public class GameConfig implements PostProcessable {
   public void postProcess() {
     defaultSafeZoneCenterX = mapWidth / 2;
     defaultSafeZoneCenterY = mapHeight / 2;
-    defaultSafeZoneRadius = mapWidth;
+    defaultSafeZoneRadius = mapWidth * (float) Math.sqrt(2);
+
     ticksPerSafeZone = secondsPerSafeZone * GameConstant.TICK_PER_SECOND;
-    medKitHeal = defaultPlayerHp;
 
     halfPlayerViewWidth = playerViewWidth / 2;
     halfPlayerViewHeight = playerViewHeight / 2;
-    playerViewWidthPlus1 = playerViewWidth + 1;
-    playerViewHeightPlus1 = playerViewHeight + 1;
     playerViewWidthPlus2 = playerViewWidth + 2;
     playerViewHeightPlus2 = playerViewHeight + 2;
+
+    itemRandomWeights = new TreeMap<>();
+    maxItemRandomWeight = 0;
+    for (var entry : itemWeights.entrySet()) {
+      maxItemRandomWeight += entry.getValue();
+      itemRandomWeights.put(maxItemRandomWeight, entry.getKey());
+    }
+
+    bulletRandomWeights = new TreeMap<>();
+    maxBulletRandomWeight = 0;
+    for (var entry : bulletWeights.entrySet()) {
+      maxBulletRandomWeight += entry.getValue();
+      bulletRandomWeights.put(maxBulletRandomWeight, entry.getKey());
+    }
   }
 }

@@ -22,7 +22,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import survival2d.ai.bot.Bot;
 import survival2d.data.ServerData;
-import survival2d.flatbuffers.BackPackItemTable;
 import survival2d.flatbuffers.BandageItemTable;
 import survival2d.flatbuffers.BulletItemTable;
 import survival2d.flatbuffers.BulletTable;
@@ -31,7 +30,6 @@ import survival2d.flatbuffers.ContainerTable;
 import survival2d.flatbuffers.CreateBulletOnMapResponse;
 import survival2d.flatbuffers.CreateItemOnMapResponse;
 import survival2d.flatbuffers.EndGameResponse;
-import survival2d.flatbuffers.GunItemTable;
 import survival2d.flatbuffers.HelmetItemTable;
 import survival2d.flatbuffers.ItemUnion;
 import survival2d.flatbuffers.MapObjectTable;
@@ -72,10 +70,8 @@ import survival2d.match.entity.base.Destroyable;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.MapObject;
-import survival2d.match.entity.item.BackPackItem;
 import survival2d.match.entity.item.BandageItem;
 import survival2d.match.entity.item.BulletItem;
-import survival2d.match.entity.item.GunItem;
 import survival2d.match.entity.item.HelmetItem;
 import survival2d.match.entity.item.ItemFactory;
 import survival2d.match.entity.item.ItemOnMap;
@@ -90,8 +86,9 @@ import survival2d.match.entity.player.Player;
 import survival2d.match.entity.quadtree.QuadTree;
 import survival2d.match.entity.quadtree.SpatialPartitionGeneric;
 import survival2d.match.entity.weapon.Bullet;
-import survival2d.match.type.AttackType;
-import survival2d.match.type.BulletType;
+import survival2d.match.entity.weapon.Gun;
+import survival2d.match.entity.weapon.Hand;
+import survival2d.match.type.GunType;
 import survival2d.match.type.ItemType;
 import survival2d.match.util.AStar;
 import survival2d.match.util.MapGenerator;
@@ -358,18 +355,23 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
 
   public void onPlayerAttack(int playerId, Vector2 direction) {
     var player = players.get(playerId);
-    var currentWeapon = player.getCurrentWeapon().get();
-    if (currentWeapon.getAttackType() == AttackType.MELEE) {
+    var currentWeapon = player.getCurrentWeapon();
+    if (currentWeapon instanceof Hand hand) {
       createDamage(
           playerId,
           new Circle(
               player
                   .getPosition()
                   .cpy()
-                  .add(player.getAttackDirection().scl(Player.BODY_RADIUS + 10)),
-              GameConfig.getInstance().getMeleeAttackRadius()),
-          GameConfig.getInstance().getMeleeAttackDamage());
-    } else if (currentWeapon.getAttackType() == AttackType.RANGE) {
+                  .add(
+                      player
+                          .getAttackDirection()
+                          .scl(
+                              GameConfig.getInstance().getPlayerBodyRadius()
+                                  + hand.getConfig().getRange())),
+              hand.getConfig().getRange()),
+          hand.getConfig().getDamage());
+    } else if (currentWeapon instanceof Gun gun) {
       if (!player.getGun().isReadyToShoot()) {
         return;
       }
@@ -383,7 +385,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
                       .getAttackDirection()
                       .scl(Player.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
           direction,
-          BulletType.NORMAL);
+          gun.getType());
     }
   }
 
@@ -483,8 +485,12 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
           var totalDamage = damage * damageMultiple;
           var reduceDamage =
               isHeadshot
-                  ? player.getHelmetType().getReduceDamage()
-                  : player.getVestType().getReduceDamage();
+                  ? GameConfig.getInstance()
+                      .getHelmetReduceDamagePercent()
+                      .getOrDefault(player.getHelmetType(), 0.0)
+                  : GameConfig.getInstance()
+                      .getVestReduceDamagePercent()
+                      .getOrDefault(player.getVestType(), 0.0);
           var finalDamage = totalDamage - reduceDamage;
           onPlayerTakeDamage(player.getPlayerId(), finalDamage);
         }
@@ -610,7 +616,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     }
   }
 
-  public void createBullet(int playerId, Vector2 position, Vector2 direction, BulletType type) {
+  public void createBullet(int playerId, Vector2 position, Vector2 direction, GunType type) {
     var bullet = new Bullet(playerId, position, direction, type);
     addMapObject(bullet);
 
@@ -711,17 +717,10 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       if (object instanceof BulletItem bulletItem) {
         objectDataType = MapObjectUnion.BulletItemTable;
         BulletItemTable.startBulletItemTable(builder);
-        BulletItemTable.addType(builder, (byte) bulletItem.getBulletType().ordinal());
+        BulletItemTable.addType(builder, (byte) bulletItem.getGunType().ordinal());
         objectDataOffset = BulletItemTable.endBulletItemTable(builder);
         //        var bulletItemOffset = BulletItem.endBulletItem(builder);
         //        MapObject.addResponse(builder, bulletItemOffset);
-      } else if (object instanceof GunItem gunItem) {
-        objectDataType = MapObjectUnion.GunItemTable;
-        GunItemTable.startGunItemTable(builder);
-        GunItemTable.addType(builder, (byte) gunItem.getGunType().ordinal());
-        objectDataOffset = GunItemTable.endGunItemTable(builder);
-        //        var gunItemOffset = GunItem.endGunItem(builder);
-        //        MapObject.addResponse(builder, gunItemOffset);
       } else if (object instanceof HelmetItem helmetItem) {
         objectDataType = MapObjectUnion.HelmetItemTable;
         objectDataOffset =
@@ -739,10 +738,6 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         objectDataType = MapObjectUnion.BandageItemTable;
         BandageItemTable.startBandageItemTable(builder);
         objectDataOffset = BandageItemTable.endBandageItemTable(builder);
-      } else if (object instanceof BackPackItem backPackItem) {
-        objectDataType = MapObjectUnion.BackPackItemTable;
-        BackPackItemTable.startBackPackItemTable(builder);
-        objectDataOffset = BackPackItemTable.endBackPackItemTable(builder);
       } else if (object instanceof Tree tree) {
         objectDataType = MapObjectUnion.TreeTable;
         TreeTable.startTreeTable(builder);
@@ -1042,8 +1037,9 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
               log.warn("player {} is hit by bullet {}", player.getPlayerId(), bullet.getId());
               makeDamage(
                   ownerId,
-                  new Circle(bullet.getPosition(), bullet.getType().getDamageRadius()),
-                  bullet.getType().getDamage());
+                  new Circle(
+                      bullet.getPosition(), GameConfig.getInstance().getBulletDamageRadius()),
+                  GameConfig.getInstance().getGunConfigs().get(bullet.getType()).getDamage());
               bullet.setDestroyed(true);
             }
           } else {
@@ -1059,8 +1055,9 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
               log.info("object {} is hit by bullet {}", object.getId(), bullet.getId());
               makeDamage(
                   ownerId,
-                  new Circle(bullet.getPosition(), bullet.getType().getDamageRadius()),
-                  bullet.getType().getDamageRadius());
+                  new Circle(
+                      bullet.getPosition(), GameConfig.getInstance().getBulletDamageRadius()),
+                  GameConfig.getInstance().getGunConfigs().get(bullet.getType()).getDamage());
               bullet.setDestroyed(true);
             }
           }
@@ -1117,12 +1114,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       itemType = ItemUnion.BulletItemTable;
       itemOffset =
           BulletItemTable.createBulletItemTable(
-              builder, (byte) bulletItem.getBulletType().ordinal(), bulletItem.getNumBullet());
-    } else if (item instanceof GunItem gunItem) {
-      itemType = ItemUnion.GunItemTable;
-      itemOffset =
-          GunItemTable.createGunItemTable(
-              builder, (byte) gunItem.getGunType().ordinal(), gunItem.getNumBullet());
+              builder, (byte) bulletItem.getGunType().ordinal(), bulletItem.getNumBullet());
     } else if (item instanceof HelmetItem helmetItem) {
       itemType = ItemUnion.HelmetItemTable;
       itemOffset =
@@ -1140,10 +1132,6 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       itemType = ItemUnion.BandageItemTable;
       BandageItemTable.startBandageItemTable(builder);
       itemOffset = BandageItemTable.endBandageItemTable(builder);
-    } else if (item instanceof BackPackItem backPackItem) {
-      itemType = ItemUnion.BackPackItemTable;
-      BackPackItemTable.startBackPackItemTable(builder);
-      itemOffset = BackPackItemTable.endBackPackItemTable(builder);
     } else {
       log.warn("Unknown item type {}", item.getClass());
     }
@@ -1203,7 +1191,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
 
     var responseOffset =
         PlayerReloadWeaponResponse.createPlayerReloadWeaponResponse(
-            builder, gun.getRemainBullets(), player.getNumBullet());
+            builder, gun.getFbsGun(), gun.getRemainBullets(), player.getNumBullet(gun.getType()));
 
     Response.startResponse(builder);
     Response.addResponseType(builder, ResponseUnion.PlayerReloadWeaponResponse);

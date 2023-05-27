@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.HasHp;
 import survival2d.match.entity.base.Item;
 import survival2d.match.entity.base.Movable;
-import survival2d.match.entity.item.BackPackItem;
 import survival2d.match.entity.item.BulletItem;
 import survival2d.match.entity.item.HelmetItem;
 import survival2d.match.entity.item.VestItem;
@@ -25,8 +23,6 @@ import survival2d.match.entity.quadtree.BaseMapObject;
 import survival2d.match.entity.weapon.Gun;
 import survival2d.match.entity.weapon.Hand;
 import survival2d.match.entity.weapon.Weapon;
-import survival2d.match.type.BackPackType;
-import survival2d.match.type.BulletType;
 import survival2d.match.type.GunType;
 import survival2d.match.type.HelmetType;
 import survival2d.match.type.ItemType;
@@ -40,21 +36,19 @@ import survival2d.util.serialize.GsonTransient;
 public class Player extends BaseMapObject implements Movable, HasHp {
 
   public static final int BODY_RADIUS = 30;
-  int id; // Id trên map
-  int playerId; // Username của player
+  int id; // mapObjectId
+  int playerId; // userId của player
+  int team;
   Vector2 position = MatchUtil.randomPosition(100, 900, 100, 900);
   float rotation;
   @GsonTransient float speed = GameConfig.getInstance().getDefaultPlayerSpeed();
   @GsonTransient double hp = GameConfig.getInstance().getDefaultPlayerHp();
-  @GsonTransient Vector2 direction;
   @GsonTransient List<Weapon> weapons = new ArrayList<>();
-  @GsonTransient BackPackType backPackType = BackPackType.LEVEL_0;
   @GsonTransient HelmetType helmetType = HelmetType.LEVEL_0;
   @GsonTransient VestType vestType = VestType.LEVEL_0;
-  @GsonTransient Map<BulletType, Integer> bullets = new HashMap<>(); // Map bullet to quantity
+  @GsonTransient Map<GunType, Integer> bullets = new HashMap<>(); // Map bullet to quantity
   @GsonTransient Map<ItemType, Integer> items = new HashMap<>(); // Chỉ map những item 1 loại
   @GsonTransient int currentWeaponIndex;
-  int team;
   @GsonTransient Circle body = new Circle(0, 0, GameConfig.getInstance().getPlayerBodyRadius());
   @GsonTransient Circle head = new Circle(0, 0, GameConfig.getInstance().getPlayerHeadRadius());
 
@@ -62,9 +56,9 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     this.playerId = playerId;
     this.team = team;
     weapons.add(new Hand());
-    Gun gun = new Gun(GunType.PISTOL);
-    //    gun.reload(100);
-    weapons.add(gun);
+    weapons.add(new Gun(GunType.PISTOL));
+    weapons.add(new Gun(GunType.SHOTGUN));
+    weapons.add(new Gun(GunType.SNIPER));
   }
 
   @Override
@@ -78,45 +72,42 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     return new Vector2(MathUtils.cos(rotation), MathUtils.sin(rotation));
   }
 
+  private boolean isValidWeaponIndex(int index) {
+    return index >= 0 && index < weapons.size();
+  }
+
   public void switchWeapon(int index) {
-    if (index >= 0 && index < weapons.size()) {
+    if (isValidWeaponIndex(index)) {
       currentWeaponIndex = index;
     }
   }
 
-  public Optional<Weapon> getCurrentWeapon() {
-    if (currentWeaponIndex < 0 || currentWeaponIndex >= weapons.size()) {
-      return Optional.empty();
+  public Weapon getCurrentWeapon() {
+    if (!isValidWeaponIndex(currentWeaponIndex)) {
+      return null;
     }
-    return Optional.of(weapons.get(currentWeaponIndex));
+    return weapons.get(currentWeaponIndex);
   }
 
   public void reloadWeapon() {
-    var optWeapon = getCurrentWeapon();
-    if (!optWeapon.isPresent()) {
-      log.warn("current weapon is not present");
+    var weapon = getCurrentWeapon();
+    if (weapon == null) {
+      log.error("current weapon is null");
       return;
     }
-    var weapon = optWeapon.get();
     if (weapon instanceof Gun gun) {
       var gunType = gun.getType();
-      var bulletType = gunType.getBulletType();
-      gun.reload(bullets.getOrDefault(bulletType, 0));
+      var numBullets = bullets.getOrDefault(gunType, 0);
+      var numLoadedBullets = gun.reload(numBullets);
+      bullets.merge(gunType, -numLoadedBullets, Integer::sum);
     }
   }
 
   public void takeItem(Item item) {
     switch (item.getItemType()) {
-      case WEAPON:
-        // TODO:
-        break;
-      case BACKPACK:
-        var backPackItem = (BackPackItem) item;
-        takeBackPack(backPackItem.getBackPackType());
-        break;
       case BULLET:
         var bulletItem = (BulletItem) item;
-        takeBullet(bulletItem.getBulletType(), bulletItem.getNumBullet());
+        takeBullet(bulletItem.getGunType(), bulletItem.getNumBullet());
         break;
       case HELMET:
         var helmetItem = (HelmetItem) item;
@@ -135,14 +126,8 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     }
   }
 
-  private void takeBackPack(BackPackType backPackType) {
-    if (backPackType.compareTo(this.backPackType) > 0) {
-      this.backPackType = backPackType;
-    }
-  }
-
-  private void takeBullet(BulletType bulletType, int numBullet) {
-    bullets.merge(bulletType, numBullet, Integer::sum);
+  private void takeBullet(GunType type, int numBullet) {
+    bullets.merge(type, numBullet, Integer::sum);
   }
 
   private void takeHelmet(HelmetType helmetType) {
@@ -187,9 +172,8 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     return items.getOrDefault(itemType, 0);
   }
 
-  public int getNumBullet() {
-    if (bullets.isEmpty()) return 0;
-    return bullets.get(BulletType.NORMAL);
+  public int getNumBullet(GunType type) {
+    return bullets.getOrDefault(type, 0);
   }
 
   private void heal(double amount) {

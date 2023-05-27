@@ -49,7 +49,7 @@ public class Survival2D {
     serverBootstrap
         .group(parentGroup, childGroup)
         .channel(channelClass)
-        .localAddress(new InetSocketAddress(ServerConstant.FBS_PORT))
+        .localAddress(new InetSocketAddress(ServerConstant.GAME_PORT))
         .handler(new LoggingHandler(LogLevel.INFO))
         .childHandler(
             new ChannelInitializer<>() {
@@ -90,7 +90,7 @@ public class Survival2D {
     serverBootstrap
         .group(parentGroup, childGroup)
         .channel(channelClass)
-        .localAddress(new InetSocketAddress(ServerConstant.FBS_PORT))
+        .localAddress(new InetSocketAddress(ServerConstant.GAME_PORT))
         .handler(new LoggingHandler(LogLevel.DEBUG))
         .childHandler(
             new ChannelInitializer<>() {

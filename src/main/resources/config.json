@@ -1,26 +1,76 @@
 {
   "mapWidth": 10000,
   "mapHeight": 10000,
-  "numMaxItemInContainer": 5,
   "safeZonesRadius": [
-    250,
-    150,
-    50,
+    2500,
+    900,
+    100,
     0
   ],
-  "secondsPerSafeZone": 10,
+  "secondsPerSafeZone": 60,
+  "treeRootRadius": 50,
+  "treeFoliageRadius": 150,
+  "containerSize": 100,
+  "numMaxItemInContainer": 3,
+  "stoneRadius": 100,
+  "wallSize": 100,
   "defaultPlayerHp": 100,
   "defaultPlayerSpeed": 10,
-  "bandageHeal": 10,
   "playerViewWidth": 2400,
   "playerViewHeight": 1200,
   "playerBodyRadius": 50,
   "playerHeadRadius": 10,
-  "meleeAttackRadius": 10,
-  "meleeAttackDamage": 3,
-  "treeRootRadius": 50,
-  "treeFoliageRadius": 150,
-  "stoneRadius": 100,
-  "wallSize": 100,
-  "containerSize": 100
+  "vestReduceDamagePercent": {
+    "LEVEL_0": 0,
+    "LEVEL_1": 30
+  },
+  "helmetReduceDamagePercent": {
+    "LEVEL_0": 0,
+    "LEVEL_1": 30
+  },
+  "bandageHeal": 20,
+  "medKitHeal": 80,
+  "itemWeights": {
+    "BULLET": 100,
+    "HELMET": 10,
+    "VEST": 10,
+    "BANDAGE": 30,
+    "MEDKIT": 10
+  },
+  "bulletWeights": {
+    "PISTOL": 100,
+    "SHOTGUN": 10,
+    "SNIPER": 10
+  },
+  "bulletPerBlock": 10,
+  "maxBulletBlockPerItem": 3,
+  "handConfig": {
+    "range": 10,
+    "damage": 5,
+    "headshotDamage": 15
+  },
+  "gunConfigs": {
+    "PISTOL": {
+      "range": 100,
+      "damage": 10,
+      "headshotDamage": 30,
+      "capacity": 20
+    },
+    "SHOTGUN": {
+      "range": 100,
+      "damage": 20,
+      "headshotDamage": 60,
+      "capacity": 5,
+      "lines": 5,
+      "angle": 15
+    },
+    "SNIPER": {
+      "range": 1000,
+      "damage": 30,
+      "headshotDamage": 90,
+      "capacity": 10
+    }
+  },
+  "bulletSpeed": 30,
+  "bulletDamageRadius": 10
 }

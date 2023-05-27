@@ -37,11 +37,6 @@ enum GunTypeEnum: byte {
   SNIPER,
 }
 
-table GunItemTable {
-  type: GunTypeEnum;
-  numBullet: int;
-}
-
 table BulletItemTable {
   type: GunTypeEnum;
   numBullet: int;
@@ -73,7 +68,6 @@ table MedKitItemTable {
 
 union ItemUnion {
   BulletItemTable,
-  GunItemTable,
   VestItemTable,
   HelmetItemTable,
   BandageItemTable,

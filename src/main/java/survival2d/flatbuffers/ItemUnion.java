@@ -6,13 +6,12 @@ public final class ItemUnion {
   private ItemUnion() { }
   public static final byte NONE = 0;
   public static final byte BulletItemTable = 1;
-  public static final byte GunItemTable = 2;
-  public static final byte VestItemTable = 3;
-  public static final byte HelmetItemTable = 4;
-  public static final byte BandageItemTable = 5;
-  public static final byte MedKitItemTable = 6;
+  public static final byte VestItemTable = 2;
+  public static final byte HelmetItemTable = 3;
+  public static final byte BandageItemTable = 4;
+  public static final byte MedKitItemTable = 5;
 
-  public static final String[] names = { "NONE", "BulletItemTable", "GunItemTable", "VestItemTable", "HelmetItemTable", "BandageItemTable", "MedKitItemTable", };
+  public static final String[] names = { "NONE", "BulletItemTable", "VestItemTable", "HelmetItemTable", "BandageItemTable", "MedKitItemTable", };
 
   public static String name(int e) { return names[e]; }
 }

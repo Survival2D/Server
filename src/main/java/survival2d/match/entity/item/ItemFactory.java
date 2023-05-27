@@ -1,67 +1,47 @@
 package survival2d.match.entity.item;
 
-import static survival2d.match.type.ItemType.BACKPACK;
-import static survival2d.match.type.ItemType.BANDAGE;
-import static survival2d.match.type.ItemType.BULLET;
-import static survival2d.match.type.ItemType.HELMET;
-import static survival2d.match.type.ItemType.MEDKIT;
-import static survival2d.match.type.ItemType.VEST;
-import static survival2d.match.type.ItemType.WEAPON;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.concurrent.ThreadLocalRandom;
+import org.apache.commons.lang3.RandomUtils;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.Item;
-import survival2d.match.type.BulletType;
 import survival2d.match.type.GunType;
 import survival2d.match.type.ItemType;
 
 public class ItemFactory {
-  private static final TreeMap<Integer, ItemType> itemsToRandom = new TreeMap<>();
-
-  static {
-    itemsToRandom.put(50, WEAPON);
-    itemsToRandom.put(itemsToRandom.lastKey() + 100, BULLET);
-    itemsToRandom.put(itemsToRandom.lastKey() + 10, BACKPACK);
-    itemsToRandom.put(itemsToRandom.lastKey() + 10, HELMET);
-    itemsToRandom.put(itemsToRandom.lastKey() + 10, VEST);
-    itemsToRandom.put(itemsToRandom.lastKey() + 20, BANDAGE);
-    itemsToRandom.put(itemsToRandom.lastKey() + 20, MEDKIT);
-  }
 
   public static Item create(ItemType itemType) {
-    switch (itemType) {
-      case WEAPON:
-        return new GunItem(GunType.PISTOL, 10);
-      case BULLET:
-        return new BulletItem(BulletType.NORMAL, 30);
-      case BACKPACK:
-        return new BackPackItem();
-      case HELMET:
-        return new HelmetItem();
-      case VEST:
-        return new VestItem();
-      case BANDAGE:
-        return new BandageItem();
-      case MEDKIT:
-        return new MedKitItem();
-    }
-    return null;
+    return switch (itemType) {
+      case BULLET -> new BulletItem(randomGunType(), randomNumBullets());
+      case HELMET -> new HelmetItem();
+      case VEST -> new VestItem();
+      case BANDAGE -> new BandageItem();
+      case MEDKIT -> new MedKitItem();
+    };
+  }
+
+  public static int randomNumBullets() {
+    var numBlock = RandomUtils.nextInt(1, GameConfig.getInstance().getMaxBulletBlockPerItem());
+    var numBullets = numBlock * GameConfig.getInstance().getBulletPerBlock();
+    return numBullets;
+  }
+
+  public static GunType randomGunType() {
+    var randomKey = RandomUtils.nextInt(0, GameConfig.getInstance().getMaxBulletRandomWeight());
+    var gunType =
+        GameConfig.getInstance().getBulletRandomWeights().ceilingEntry(randomKey).getValue();
+    return gunType;
   }
 
   public static Item randomItem() {
+    var randomKey = RandomUtils.nextInt(0, GameConfig.getInstance().getMaxItemRandomWeight());
     var itemType =
-        itemsToRandom
-            .ceilingEntry(ThreadLocalRandom.current().nextInt(itemsToRandom.lastKey()))
-            .getValue();
+        GameConfig.getInstance().getItemRandomWeights().ceilingEntry(randomKey).getValue();
     return create(itemType);
   }
 
   public static List<Item> randomItems() {
-    var numItems =
-        ThreadLocalRandom.current().nextInt(1, GameConfig.getInstance().getNumMaxItemInContainer());
+    var numItems = RandomUtils.nextInt(1, GameConfig.getInstance().getNumMaxItemInContainer());
     return randomItems(numItems);
   }
 
