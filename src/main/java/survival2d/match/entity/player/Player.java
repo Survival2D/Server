@@ -1,5 +1,6 @@
 package survival2d.match.entity.player;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -34,6 +35,7 @@ import survival2d.util.serialize.GsonTransient;
 @Setter
 @Slf4j
 public class Player extends BaseMapObject implements Movable, HasHp {
+  @Deprecated
 
   public static final int BODY_RADIUS = 30;
   int id; // mapObjectId
@@ -59,6 +61,9 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     weapons.add(new Gun(GunType.PISTOL));
     weapons.add(new Gun(GunType.SHOTGUN));
     weapons.add(new Gun(GunType.SNIPER));
+    for (var gunType: GunType.values()) {
+      bullets.put(gunType, GameConfig.getInstance().getDefaultBullets());
+    }
   }
 
   @Override
@@ -105,24 +110,20 @@ public class Player extends BaseMapObject implements Movable, HasHp {
 
   public void takeItem(Item item) {
     switch (item.getItemType()) {
-      case BULLET:
+      case BULLET -> {
         var bulletItem = (BulletItem) item;
         takeBullet(bulletItem.getGunType(), bulletItem.getNumBullet());
-        break;
-      case HELMET:
+      }
+      case HELMET -> {
         var helmetItem = (HelmetItem) item;
         takeHelmet(helmetItem.getHelmetType());
-        break;
-      case VEST:
+      }
+      case VEST -> {
         var vestItem = (VestItem) item;
         takeVest(vestItem.getVestType());
-        break;
-      case MEDKIT:
-        takeMedKit();
-        break;
-      case BANDAGE:
-        takeBandage();
-        break;
+      }
+      case MEDKIT -> takeMedKit();
+      case BANDAGE -> takeBandage();
     }
   }
 
@@ -184,10 +185,6 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     var width = GameConfig.getInstance().getPlayerViewWidth();
     var height = GameConfig.getInstance().getPlayerViewHeight();
     return new Rectangle(position.x - width / 2, position.y - height / 2, width, height);
-  }
-
-  public Gun getGun() {
-    return (Gun) weapons.get(1);
   }
 
   @Override

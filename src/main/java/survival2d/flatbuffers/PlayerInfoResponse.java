@@ -16,11 +16,11 @@ public final class PlayerInfoResponse extends Table {
   public PlayerInfoResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public double hp() { int o = __offset(4); return o != 0 ? bb.getDouble(o + bb_pos) : 0.0; }
-  public survival2d.flatbuffers.WeaponTable weapon(int j) { return weapon(new survival2d.flatbuffers.WeaponTable(), j); }
-  public survival2d.flatbuffers.WeaponTable weapon(survival2d.flatbuffers.WeaponTable obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-  public int weaponLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
-  public survival2d.flatbuffers.WeaponTable.Vector weaponVector() { return weaponVector(new survival2d.flatbuffers.WeaponTable.Vector()); }
-  public survival2d.flatbuffers.WeaponTable.Vector weaponVector(survival2d.flatbuffers.WeaponTable.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
+  public survival2d.flatbuffers.WeaponTable weapons(int j) { return weapons(new survival2d.flatbuffers.WeaponTable(), j); }
+  public survival2d.flatbuffers.WeaponTable weapons(survival2d.flatbuffers.WeaponTable obj, int j) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int weaponsLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
+  public survival2d.flatbuffers.WeaponTable.Vector weaponsVector() { return weaponsVector(new survival2d.flatbuffers.WeaponTable.Vector()); }
+  public survival2d.flatbuffers.WeaponTable.Vector weaponsVector(survival2d.flatbuffers.WeaponTable.Vector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
   public survival2d.flatbuffers.BulletItemTable bullets(int j) { return bullets(new survival2d.flatbuffers.BulletItemTable(), j); }
   public survival2d.flatbuffers.BulletItemTable bullets(survival2d.flatbuffers.BulletItemTable obj, int j) { int o = __offset(8); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
   public int bulletsLength() { int o = __offset(8); return o != 0 ? __vector_len(o) : 0; }
@@ -29,20 +29,20 @@ public final class PlayerInfoResponse extends Table {
 
   public static int createPlayerInfoResponse(FlatBufferBuilder builder,
       double hp,
-      int weaponOffset,
+      int weaponsOffset,
       int bulletsOffset) {
     builder.startTable(3);
     PlayerInfoResponse.addHp(builder, hp);
     PlayerInfoResponse.addBullets(builder, bulletsOffset);
-    PlayerInfoResponse.addWeapon(builder, weaponOffset);
+    PlayerInfoResponse.addWeapons(builder, weaponsOffset);
     return PlayerInfoResponse.endPlayerInfoResponse(builder);
   }
 
   public static void startPlayerInfoResponse(FlatBufferBuilder builder) { builder.startTable(3); }
   public static void addHp(FlatBufferBuilder builder, double hp) { builder.addDouble(0, hp, 0.0); }
-  public static void addWeapon(FlatBufferBuilder builder, int weaponOffset) { builder.addOffset(1, weaponOffset, 0); }
-  public static int createWeaponVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
-  public static void startWeaponVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static void addWeapons(FlatBufferBuilder builder, int weaponsOffset) { builder.addOffset(1, weaponsOffset, 0); }
+  public static int createWeaponsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startWeaponsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addBullets(FlatBufferBuilder builder, int bulletsOffset) { builder.addOffset(2, bulletsOffset, 0); }
   public static int createBulletsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startBulletsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }

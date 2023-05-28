@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import survival2d.ai.bot.Bot;
 import survival2d.data.ServerData;
 import survival2d.flatbuffers.BandageItemTable;
@@ -30,6 +31,8 @@ import survival2d.flatbuffers.ContainerTable;
 import survival2d.flatbuffers.CreateBulletOnMapResponse;
 import survival2d.flatbuffers.CreateItemOnMapResponse;
 import survival2d.flatbuffers.EndGameResponse;
+import survival2d.flatbuffers.GunTable;
+import survival2d.flatbuffers.HandTable;
 import survival2d.flatbuffers.HelmetItemTable;
 import survival2d.flatbuffers.ItemUnion;
 import survival2d.flatbuffers.MapObjectTable;
@@ -42,6 +45,7 @@ import survival2d.flatbuffers.ObstacleTakeDamageResponse;
 import survival2d.flatbuffers.PlayerAttackResponse;
 import survival2d.flatbuffers.PlayerChangeWeaponResponse;
 import survival2d.flatbuffers.PlayerDeadResponse;
+import survival2d.flatbuffers.PlayerInfoResponse;
 import survival2d.flatbuffers.PlayerMoveResponse;
 import survival2d.flatbuffers.PlayerReloadWeaponResponse;
 import survival2d.flatbuffers.PlayerTable;
@@ -56,6 +60,8 @@ import survival2d.flatbuffers.UseHealItemResponse;
 import survival2d.flatbuffers.Vector2Struct;
 import survival2d.flatbuffers.VestItemTable;
 import survival2d.flatbuffers.WallTable;
+import survival2d.flatbuffers.WeaponTable;
+import survival2d.flatbuffers.WeaponUnion;
 import survival2d.match.action.PlayerAction;
 import survival2d.match.action.PlayerAttack;
 import survival2d.match.action.PlayerChangeWeapon;
@@ -64,6 +70,7 @@ import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.match.action.PlayerUseHealItem;
 import survival2d.match.config.GameConfig;
+import survival2d.match.config.ShotgunConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
@@ -176,13 +183,13 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   }
 
   // Thường dùng cho obstacle, để gửi thông tin cho user có vùng nhìn ở đây
-  public Collection<Integer> getUsernamesCanSeeAt(Vector2 position) {
+  public Collection<Integer> getPlayerIdsCanSeeAt(Vector2 position) {
     var result = new HashSet<Integer>();
     getNearByPlayer(position).forEach(p -> result.add(p.getPlayerId()));
     return result;
   }
 
-  public Collection<Integer> getUsernamesCanSeeAtAndCheckUnderTree(Vector2 position) {
+  public Collection<Integer> getPlayerIdsCanSeeAtAndCheckUnderTree(Vector2 position) {
     var result = new HashSet<Integer>();
     var nearBy = getNearByInVision(position);
     var nearByTrees =
@@ -279,8 +286,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     builder.finish(packetOffset);
 
     var userReceivePackets = new HashSet<Integer>();
-    userReceivePackets.addAll(getUsernamesCanSeeAtAndCheckUnderTree(oldPosition));
-    userReceivePackets.addAll(getUsernamesCanSeeAtAndCheckUnderTree(player.getPosition()));
+    userReceivePackets.addAll(getPlayerIdsCanSeeAtAndCheckUnderTree(oldPosition));
+    userReceivePackets.addAll(getPlayerIdsCanSeeAtAndCheckUnderTree(player.getPosition()));
     NetworkUtil.sendResponse(userReceivePackets, builder.dataBuffer());
   }
 
@@ -364,28 +371,43 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
                   .getPosition()
                   .cpy()
                   .add(
-                      player
-                          .getAttackDirection()
-                          .scl(
-                              GameConfig.getInstance().getPlayerBodyRadius()
-                                  + hand.getConfig().getRange())),
+                      direction.scl(
+                          GameConfig.getInstance().getPlayerBodyRadius()
+                              + hand.getConfig().getRange())),
               hand.getConfig().getRange()),
           hand.getConfig().getDamage());
     } else if (currentWeapon instanceof Gun gun) {
-      if (!player.getGun().isReadyToShoot()) {
+      if (!gun.isReadyToShoot()) {
         return;
       }
-      createBullet(
-          playerId,
-          player
-              .getPosition()
-              .cpy()
-              .add(
-                  player
-                      .getAttackDirection()
-                      .scl(Player.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
-          direction,
-          gun.getType());
+      if (gun.getType() == GunType.SHOTGUN) {
+        var config = (ShotgunConfig) gun.getConfig();
+        for (int i = 0; i < config.getLines(); i++) {
+          var randomDirection = new Vector2(direction);
+          randomDirection.rotateDeg(RandomUtils.nextFloat(-config.getAngle(), config.getAngle()));
+          createBullet(
+              playerId,
+              player
+                  .getPosition()
+                  .cpy()
+                  .add(
+                      randomDirection
+                          .cpy()
+                          .scl(Player.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
+              randomDirection,
+              gun.getType());
+        }
+      } else {
+        createBullet(
+            playerId,
+            player
+                .getPosition()
+                .cpy()
+                .add(
+                    direction.cpy().scl(Player.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
+            direction,
+            gun.getType());
+      }
     }
   }
 
@@ -429,14 +451,14 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         .collect(Collectors.toList());
   }
 
-  public void setPlayerAutoPlay(int username, boolean enable) {
-    var player = players.get(username);
+  public void setPlayerAutoPlay(int playerId, boolean enable) {
+    var player = players.get(playerId);
     var bot =
         bots.computeIfAbsent(
-            username,
+            playerId,
             (k) -> {
               Bot b = new Bot();
-              b.setMatch(this, username);
+              b.setMatch(this, playerId);
               b.setConfidencePercent(1.0);
               return b;
             });
@@ -463,7 +485,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     builder.finish(packetOffset);
 
     NetworkUtil.sendResponse(
-        getUsernamesCanSeeAt(new Vector2(damageShape.x, damageShape.y)), builder.dataBuffer());
+        getPlayerIdsCanSeeAt(new Vector2(damageShape.x, damageShape.y)), builder.dataBuffer());
 
     makeDamage(playerId, damageShape, damage);
   }
@@ -519,7 +541,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
             builder.finish(packetOffset);
 
             NetworkUtil.sendResponse(
-                getUsernamesCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
+                getPlayerIdsCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
           }
           if (destroyable.isDestroyed()) {
             log.info("Obstacle {} destroyed", obstacle.getId());
@@ -536,7 +558,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
             builder.finish(packetOffset);
 
             NetworkUtil.sendResponse(
-                getUsernamesCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
+                getPlayerIdsCanSeeAt(obstacle.getPosition()), builder.dataBuffer());
 
             if (obstacle instanceof Containable containable) {
               for (var item : containable.getItems()) {
@@ -566,7 +588,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
 
-      NetworkUtil.sendResponse(getUsernamesCanSeeAt(player.getPosition()), builder.dataBuffer());
+      NetworkUtil.sendResponse(getPlayerIdsCanSeeAt(player.getPosition()), builder.dataBuffer());
     }
     if (player.isDestroyed()) {
       var builder = new FlatBufferBuilder(0);
@@ -642,14 +664,55 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
   }
 
-  public void responseMatchInfoOnStart(int username) {
+  public void responseMatchInfoOnStart(int playerId) {
     //    final byte[] bytes = getMatchInfoData(objects.values());
-    var player = players.get(username);
+    var player = players.get(playerId);
     var objects = new HashSet<MapObject>();
     objects.addAll(quadTree.query(player.getPlayerView()));
     objects.addAll(players.values());
     var data = getMatchInfoData(objects);
-    NetworkUtil.sendResponse(username, data);
+    NetworkUtil.sendResponse(playerId, data);
+  }
+
+  public void responsePlayerInfo(int playerId) {
+    var player = players.get(playerId);
+    var builder = new FlatBufferBuilder(0);
+
+    int[] weaponsOffsets = new int[player.getWeapons().size()];
+    for (int i = 0; i < player.getWeapons().size(); i++) {
+      var weapon = player.getWeapons().get(i);
+      if (weapon instanceof Hand hand) {
+        HandTable.startHandTable(builder);
+        var handData = HandTable.endHandTable(builder);
+        weaponsOffsets[i] = WeaponTable.createWeaponTable(builder, WeaponUnion.HandTable, handData);
+      } else if (weapon instanceof Gun gun) {
+        var gunData = GunTable.createGunTable(builder, gun.getFbsGunType(), gun.getRemainBullets());
+        weaponsOffsets[i] = WeaponTable.createWeaponTable(builder, WeaponUnion.GunTable, gunData);
+      }
+    }
+    var bullets = player.getBullets().entrySet();
+    int[] bulletsOffsets = new int[bullets.size()];
+    int bulletIndex = 0;
+    for (var bullet : bullets) {
+      bulletsOffsets[bulletIndex] =
+          BulletItemTable.createBulletItemTable(
+              builder, bullet.getKey().toFbsGunType(), bullet.getValue());
+      bulletIndex++;
+    }
+
+    var weaponsOffset = PlayerInfoResponse.createWeaponsVector(builder, weaponsOffsets);
+    var bulletsOffset = PlayerInfoResponse.createBulletsVector(builder, bulletsOffsets);
+    var responseOffset =
+        PlayerInfoResponse.createPlayerInfoResponse(
+            builder, player.getHp(), weaponsOffset, bulletsOffset);
+
+    Response.startResponse(builder);
+    Response.addResponseType(builder, ResponseUnion.PlayerInfoResponse);
+    Response.addResponse(builder, responseOffset);
+    var packetOffset = Response.endResponse(builder);
+    builder.finish(packetOffset);
+
+    NetworkUtil.sendResponse(playerId, builder.dataBuffer());
   }
 
   private ByteBuffer getMatchInfoInBoundary(Shape2D boundary) {
@@ -790,6 +853,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     //    EzyFoxUtil.stream(bytes, getAllUsernames());
     for (var player : players.values()) {
       responseMatchInfoOnStart(player.getPlayerId());
+      responsePlayerInfo(player.getPlayerId());
     }
     sendNewSafeZoneInfo();
   }
@@ -1152,7 +1216,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getUsernamesCanSeeAt(position), builder.dataBuffer());
+    NetworkUtil.sendResponse(getPlayerIdsCanSeeAt(position), builder.dataBuffer());
   }
 
   private void onPlayerTakeItem(int playerId) {
@@ -1177,7 +1241,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         builder.finish(packetOffset);
 
         NetworkUtil.sendResponse(
-            getUsernamesCanSeeAt(itemOnMap.getPosition()), builder.dataBuffer());
+            getPlayerIdsCanSeeAt(itemOnMap.getPosition()), builder.dataBuffer());
       }
     }
   }
@@ -1185,12 +1249,18 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   private void onPlayerReloadWeapon(int playerId) {
     var player = players.get(playerId);
     player.reloadWeapon();
+    var weapon = player.getCurrentWeapon();
+    if (!(weapon instanceof Gun gun)) {
+      return;
+    }
     var builder = new FlatBufferBuilder(0);
-    var gun = player.getGun();
 
     var responseOffset =
         PlayerReloadWeaponResponse.createPlayerReloadWeaponResponse(
-            builder, gun.getFbsGun(), gun.getRemainBullets(), player.getNumBullet(gun.getType()));
+            builder,
+            gun.getFbsGunType(),
+            gun.getRemainBullets(),
+            player.getNumBullet(gun.getType()));
 
     Response.startResponse(builder);
     Response.addResponseType(builder, ResponseUnion.PlayerReloadWeaponResponse);
@@ -1229,12 +1299,12 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       var packetOffset = Response.endResponse(builder);
       builder.finish(packetOffset);
 
-      NetworkUtil.sendResponse(getUsernamesCanSeeAt(player.getPosition()), builder.dataBuffer());
+      NetworkUtil.sendResponse(getPlayerIdsCanSeeAt(player.getPosition()), builder.dataBuffer());
     }
   }
 
-  public Player getPlayerInfo(int username) {
-    return players.get(username);
+  public Player getPlayerInfo(int playerId) {
+    return players.get(playerId);
   }
 
   public MapObject getObjectsById(int id) {

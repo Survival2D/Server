@@ -72,6 +72,7 @@ public class GameConfig implements PostProcessable {
   private float bulletSpeed;
   private float bulletDamageRadius;
   private float bulletRadius;
+  private int defaultBullets;
 
   public static void load() {
     instance =

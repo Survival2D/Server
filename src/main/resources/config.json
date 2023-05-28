@@ -77,5 +77,6 @@
   },
   "bulletSpeed": 30,
   "bulletDamageRadius": 10,
-  "bulletRadius": 1
+  "bulletRadius": 1,
+  "defaultBullets": 10
 }

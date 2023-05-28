@@ -80,7 +80,7 @@ table EndGameResponse {
 
 table PlayerInfoResponse {
   hp: double;
-  weapon: [WeaponTable];
+  weapons: [WeaponTable];
   bullets: [BulletItemTable];
 }
 

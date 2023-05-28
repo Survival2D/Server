@@ -253,6 +253,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         }
         var match = optMatch.get();
         match.responseMatchInfoOnStart(userId);
+        match.responsePlayerInfo(userId);
       }
       case RequestUnion.PlayerMoveRequest -> {
         var optMatch = MatchingService.getInstance().getMatchOfUser(userId);

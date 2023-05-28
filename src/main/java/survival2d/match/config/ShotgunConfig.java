@@ -5,5 +5,5 @@ import lombok.Getter;
 @Getter
 public class ShotgunConfig extends GunConfig {
   int lines;
-  double angle;
+  float angle;
 }

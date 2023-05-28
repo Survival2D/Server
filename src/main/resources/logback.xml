@@ -40,11 +40,9 @@
   <import class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy"/>
   <import class="ch.qos.logback.core.ConsoleAppender"/>
 
-  <!--  <logger name="survival2d">-->
-  <!--    <appender-ref ref="Console"/>-->
-  <!--    <appender-ref ref="Info"/>-->
-  <!--  </logger>-->
+
   <logger name="io.netty" level="INFO"/>
+  <logger name="survival2d" level="INFO"/>
 
   <root>
     <appender-ref ref="Console"/>
