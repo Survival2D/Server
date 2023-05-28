@@ -36,7 +36,7 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
 
   public void move() {
     var speed = GameConfig.getInstance().getBulletSpeed();
-    moveBy(direction.scl(speed));
+    moveBy(direction.cpy().scl(speed));
     //    log.info("position: {}", position);
   }
 

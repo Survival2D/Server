@@ -49,7 +49,7 @@
   "bulletPerBlock": 10,
   "maxBulletBlockPerItem": 3,
   "handConfig": {
-    "range": 100,
+    "range": 10,
     "damage": 5,
     "headshotDamage": 15
   },
@@ -64,9 +64,7 @@
       "range": 100,
       "damage": 20,
       "headshotDamage": 60,
-      "capacity": 5,
-      "lines": 5,
-      "angle": 15
+      "capacity": 5
     },
     "SNIPER": {
       "range": 1000,
@@ -75,6 +73,8 @@
       "capacity": 10
     }
   },
+  "shotGunLines": 5,
+  "shotGunSpread": 30,
   "bulletSpeed": 30,
   "bulletDamageRadius": 10,
   "bulletRadius": 1,

@@ -69,6 +69,9 @@ public class GameConfig implements PostProcessable {
 
   private WeaponConfig handConfig;
   private Map<GunType, GunConfig> gunConfigs;
+  private int shotGunLines;
+  private float shotGunSpread;
+  private float halfShotGunSpread; // self-calculation
   private float bulletSpeed;
   private float bulletDamageRadius;
   private float bulletRadius;
@@ -105,5 +108,7 @@ public class GameConfig implements PostProcessable {
       maxBulletRandomWeight += entry.getValue();
       bulletRandomWeights.put(maxBulletRandomWeight, entry.getKey());
     }
+
+    halfShotGunSpread = shotGunSpread / 2;
   }
 }

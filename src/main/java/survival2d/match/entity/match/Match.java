@@ -70,7 +70,6 @@ import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.match.action.PlayerUseHealItem;
 import survival2d.match.config.GameConfig;
-import survival2d.match.config.ShotgunConfig;
 import survival2d.match.constant.GameConstant;
 import survival2d.match.entity.base.Containable;
 import survival2d.match.entity.base.Destroyable;
@@ -381,10 +380,11 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         return;
       }
       if (gun.getType() == GunType.SHOTGUN) {
-        var config = (ShotgunConfig) gun.getConfig();
-        for (int i = 0; i < config.getLines(); i++) {
+        for (int i = 0; i < GameConfig.getInstance().getShotGunLines(); i++) {
           var randomDirection = new Vector2(direction);
-          randomDirection.rotateDeg(RandomUtils.nextFloat(-config.getAngle(), config.getAngle()));
+          randomDirection.rotateDeg(
+              RandomUtils.nextFloat(0, GameConfig.getInstance().getShotGunSpread())
+                  - GameConfig.getInstance().getHalfShotGunSpread());
           createBullet(
               playerId,
               player
