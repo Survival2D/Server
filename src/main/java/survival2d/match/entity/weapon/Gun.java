@@ -37,4 +37,8 @@ public class Gun extends Weapon {
   public final byte getFbsGunType() {
     return type.toFbsGunType();
   }
+
+  public void reduceAmmo() {
+    remainBullets--;
+  }
 }

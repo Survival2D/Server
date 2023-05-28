@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import lombok.extern.slf4j.Slf4j;
+import survival2d.match.config.GameConfig;
 
 @Slf4j
 public class MatchUtil {
@@ -34,5 +35,16 @@ public class MatchUtil {
         s1.getClass().getSimpleName(),
         s2.getClass().getSimpleName());
     return false;
+  }
+
+  public static boolean isInMap(float x, float y) {
+    return x >= 0
+        && x <= GameConfig.getInstance().getMapWidth()
+        && y >= 0
+        && y <= GameConfig.getInstance().getMapHeight();
+  }
+
+  public static boolean isInMap(Vector2 position) {
+    return isInMap(position.x, position.y);
   }
 }

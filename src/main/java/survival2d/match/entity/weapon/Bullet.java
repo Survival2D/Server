@@ -11,6 +11,7 @@ import survival2d.match.entity.base.MapObject;
 import survival2d.match.entity.base.Movable;
 import survival2d.match.entity.quadtree.BaseMapObject;
 import survival2d.match.type.GunType;
+import survival2d.match.util.MatchUtil;
 
 @Getter
 @Setter
@@ -47,7 +48,7 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
   }
 
   public boolean isOutOfBound() {
-    return position.dst(originPosition)
+    return !MatchUtil.isInMap(position) || position.dst(originPosition)
         > GameConfig.getInstance().getGunConfigs().get(type).getRange();
   }
 }

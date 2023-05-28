@@ -379,6 +379,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       if (!gun.isReadyToShoot()) {
         return;
       }
+      gun.reduceAmmo();
       if (gun.getType() == GunType.SHOTGUN) {
         for (int i = 0; i < GameConfig.getInstance().getShotGunLines(); i++) {
           var randomDirection = new Vector2(direction);
