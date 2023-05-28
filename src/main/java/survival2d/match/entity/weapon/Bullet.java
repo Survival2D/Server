@@ -29,14 +29,21 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
     this.ownerId = ownerId;
     this.originPosition = originPosition;
     this.position = originPosition;
-    this.direction = direction; // *speed
+    this.direction = direction;
     this.type = type;
+    shape = new Circle(position, GameConfig.getInstance().getBulletRadius());
   }
 
   public void move() {
     var speed = GameConfig.getInstance().getBulletSpeed();
     moveBy(direction.scl(speed));
     //    log.info("position: {}", position);
+  }
+
+  @Override
+  public void setPosition(Vector2 position) {
+    super.setPosition(position);
+    shape.setPosition(position);
   }
 
   public boolean isOutOfBound() {

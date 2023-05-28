@@ -71,6 +71,7 @@ public class GameConfig implements PostProcessable {
   private Map<GunType, GunConfig> gunConfigs;
   private float bulletSpeed;
   private float bulletDamageRadius;
+  private float bulletRadius;
 
   public static void load() {
     instance =

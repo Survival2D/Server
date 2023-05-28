@@ -76,5 +76,6 @@
     }
   },
   "bulletSpeed": 30,
-  "bulletDamageRadius": 10
+  "bulletDamageRadius": 10,
+  "bulletRadius": 1
 }
