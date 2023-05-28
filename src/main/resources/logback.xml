@@ -44,6 +44,7 @@
   <!--    <appender-ref ref="Console"/>-->
   <!--    <appender-ref ref="Info"/>-->
   <!--  </logger>-->
+  <logger name="io.netty" level="INFO"/>
 
   <root>
     <appender-ref ref="Console"/>
