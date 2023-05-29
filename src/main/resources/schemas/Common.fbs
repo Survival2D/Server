@@ -85,7 +85,9 @@ union MapObjectUnion {
   TreeTable,
   ContainerTable,
   StoneTable,
-  WallTable
+  WallTable,
+  //Bullet
+  BulletTable,
 }
 
 table MapObjectTable {
@@ -96,6 +98,7 @@ table MapObjectTable {
 
 table BulletTable {
   id: int;
+  rawPosition: Vector2Struct;
   position: Vector2Struct;
   type: GunTypeEnum;
   owner: int;

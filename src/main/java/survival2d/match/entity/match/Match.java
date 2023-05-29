@@ -391,7 +391,6 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
               playerId,
               player
                   .getPosition()
-                  .cpy()
                   .add(
                       randomDirection
                           .cpy()
@@ -404,7 +403,6 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
             playerId,
             player
                 .getPosition()
-                .cpy()
                 .add(
                     direction.cpy().scl(Player.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
             direction,
@@ -649,10 +647,12 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var builder = new FlatBufferBuilder(0);
 
     BulletTable.startBulletTable(builder);
-    BulletTable.addType(builder, (byte) type.ordinal());
+    BulletTable.addType(builder, type.toFbsGunType());
     BulletTable.addId(builder, bullet.getId());
     var positionOffset = Vector2Struct.createVector2Struct(builder, position.x, position.y);
     BulletTable.addPosition(builder, positionOffset);
+    var rawPositionOffset = Vector2Struct.createVector2Struct(builder, position.x, position.y);
+    BulletTable.addRawPosition(builder, rawPositionOffset);
     var directionOffset = Vector2Struct.createVector2Struct(builder, direction.x, direction.y);
     BulletTable.addDirection(builder, directionOffset);
     BulletTable.addOwner(builder, playerId);
@@ -829,6 +829,25 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         objectDataOffset = WallTable.endWallTable(builder);
         //        var wallOffset = Wall.endWall(builder);
         //        MapObject.addResponse(builder, wallOffset);
+      } else if (object instanceof Bullet bullet) {
+        objectDataType = MapObjectUnion.BulletTable;
+        BulletTable.startBulletTable(builder);
+        BulletTable.addType(builder, bullet.getType().toFbsGunType());
+        BulletTable.addId(builder, bullet.getId());
+        var positionOffset =
+            Vector2Struct.createVector2Struct(
+                builder, bullet.getPosition().x, bullet.getPosition().y);
+        BulletTable.addPosition(builder, positionOffset);
+        var rawPositionOffset =
+            Vector2Struct.createVector2Struct(
+                builder, bullet.getRawPosition().x, bullet.getRawPosition().y);
+        BulletTable.addRawPosition(builder, rawPositionOffset);
+        var directionOffset =
+            Vector2Struct.createVector2Struct(
+                builder, bullet.getDirection().x, bullet.getDirection().y);
+        BulletTable.addDirection(builder, directionOffset);
+        BulletTable.addOwner(builder, bullet.getOwnerId());
+        objectDataOffset = BulletTable.endBulletTable(builder);
       }
       MapObjectTable.startMapObjectTable(builder);
       MapObjectTable.addId(builder, object.getId());

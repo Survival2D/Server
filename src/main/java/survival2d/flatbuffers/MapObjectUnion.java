@@ -14,8 +14,9 @@ public final class MapObjectUnion {
   public static final byte ContainerTable = 7;
   public static final byte StoneTable = 8;
   public static final byte WallTable = 9;
+  public static final byte BulletTable = 10;
 
-  public static final String[] names = { "NONE", "BulletItemTable", "VestItemTable", "HelmetItemTable", "BandageItemTable", "MedKitItemTable", "TreeTable", "ContainerTable", "StoneTable", "WallTable", };
+  public static final String[] names = { "NONE", "BulletItemTable", "VestItemTable", "HelmetItemTable", "BandageItemTable", "MedKitItemTable", "TreeTable", "ContainerTable", "StoneTable", "WallTable", "BulletTable", };
 
   public static String name(int e) { return names[e]; }
 }

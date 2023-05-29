@@ -20,16 +20,16 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
 
   int id;
   int ownerId;
-  Vector2 originPosition;
+  Vector2 rawPosition;
   Vector2 direction;
   GunType type;
   boolean isDestroyed;
   Circle shape;
 
-  public Bullet(int ownerId, Vector2 originPosition, Vector2 direction, GunType type) {
+  public Bullet(int ownerId, Vector2 rawPosition, Vector2 direction, GunType type) {
     this.ownerId = ownerId;
-    this.originPosition = originPosition;
-    this.position = originPosition;
+    this.rawPosition = rawPosition;
+    this.position = rawPosition;
     this.direction = direction;
     this.type = type;
     shape = new Circle(position, GameConfig.getInstance().getBulletRadius());
@@ -48,7 +48,8 @@ public class Bullet extends BaseMapObject implements MapObject, Movable, Destroy
   }
 
   public boolean isOutOfBound() {
-    return !MatchUtil.isInMap(position) || position.dst(originPosition)
-        > GameConfig.getInstance().getGunConfigs().get(type).getRange();
+    if (!MatchUtil.isInMap(position)) return true;
+    var bulletRange = GameConfig.getInstance().getGunConfigs().get(type).getRange();
+    return position.dst2(rawPosition) > bulletRange * bulletRange;
   }
 }
