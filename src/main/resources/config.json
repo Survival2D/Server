@@ -19,7 +19,7 @@
   "stoneRadius": 100,
   "stoneHp": 100,
   "wallSize": 100,
-  "itemOnMapRadius": 35,
+  "itemOnMapRadius": 40,
   "defaultPlayerHp": 100,
   "defaultPlayerSpeed": 10,
   "playerViewWidth": 2400,
