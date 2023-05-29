@@ -23,6 +23,8 @@ public class GameConfig implements PostProcessable {
     load();
   }
 
+  private int maxPlayerInTeam;
+
   private float mapWidth;
   private float mapHeight;
   private List<Float> safeZonesRadius;
@@ -31,6 +33,7 @@ public class GameConfig implements PostProcessable {
   private float defaultSafeZoneRadius; // self-calculation
   private int secondsPerSafeZone;
   private int ticksPerSafeZone; // self-calculation
+  private double safeZoneDamage;
 
   private float treeRootRadius;
   private float treeFoliageRadius;
@@ -69,9 +72,11 @@ public class GameConfig implements PostProcessable {
 
   private WeaponConfig handConfig;
   private Map<GunType, GunConfig> gunConfigs;
+  private float headshotDamageMultiplier;
   private int shotGunLines;
   private float shotGunSpread;
   private float halfShotGunSpread; // self-calculation
+  private float bulletOffset;
   private float bulletSpeed;
   private float bulletDamageRadius;
   private float bulletRadius;

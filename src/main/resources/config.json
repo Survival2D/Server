@@ -1,4 +1,5 @@
 {
+  "maxPlayerInTeam": 4,
   "mapWidth": 2500,
   "mapHeight": 2500,
   "safeZonesRadius": [
@@ -8,6 +9,7 @@
     0
   ],
   "secondsPerSafeZone": 60,
+  "safeZoneDamage": 1,
   "treeRootRadius": 50,
   "treeFoliageRadius": 150,
   "treeHp": 100,
@@ -73,8 +75,10 @@
       "capacity": 10
     }
   },
+  "headshotDamageMultiplier": 3,
   "shotGunLines": 5,
   "shotGunSpread": 30,
+  "bulletOffset": 10,
   "bulletSpeed": 30,
   "bulletDamageRadius": 10,
   "bulletRadius": 1,

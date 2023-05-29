@@ -380,7 +380,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         return;
       }
       gun.reduceAmmo();
-      sendPlayerAttack(playerId, player.getPosition());
+      sendPlayerAttack(playerId, player.getPosition().add(direction));
       if (gun.getType() == GunType.SHOTGUN) {
         for (int i = 0; i < GameConfig.getInstance().getShotGunLines(); i++) {
           var randomDirection = new Vector2(direction);
@@ -394,7 +394,9 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
                   .add(
                       randomDirection
                           .cpy()
-                          .scl(Player.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
+                          .scl(
+                              GameConfig.getInstance().getPlayerBodyRadius()
+                                  + GameConfig.getInstance().getBulletOffset())),
               randomDirection,
               gun.getType());
         }
@@ -404,7 +406,11 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
             player
                 .getPosition()
                 .add(
-                    direction.cpy().scl(Player.BODY_RADIUS + GameConstant.INITIAL_BULLET_DISTANCE)),
+                    direction
+                        .cpy()
+                        .scl(
+                            GameConfig.getInstance().getPlayerBodyRadius()
+                                + GameConfig.getInstance().getBulletOffset())),
             direction,
             gun.getType());
       }
@@ -504,7 +510,8 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         if (player.isDestroyed()) continue;
         if (MatchUtil.isIntersect(player.getShape(), shape)) {
           var isHeadshot = MatchUtil.isIntersect(player.getHead(), shape);
-          var damageMultiple = isHeadshot ? GameConstant.HEADSHOT_DAMAGE : GameConstant.BODY_DAMAGE;
+          var damageMultiple =
+              isHeadshot ? GameConfig.getInstance().getHeadshotDamageMultiplier() : 1;
           var totalDamage = damage * damageMultiple;
           var reduceDamage =
               isHeadshot
@@ -665,7 +672,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(getAllPlayerIds(), builder.dataBuffer());
+    NetworkUtil.sendResponse(getPlayerIdsCanSeeAt(position), builder.dataBuffer());
   }
 
   public void responseMatchInfoOnStart(int playerId) {
@@ -1010,7 +1017,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
             update();
           }
         };
-    timer.scheduleAtFixedRate(gameLoopTask, 0, GameConstant.PERIOD_PER_TICK);
+    timer.scheduleAtFixedRate(gameLoopTask, 0, GameConstant.MILLIS_PER_TICK);
   }
 
   private void sendMatchStart() {
@@ -1077,7 +1084,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       for (var player : players.values()) {
         if (player.isDestroyed()) continue;
         if (safeZone.contains(player.getPosition())) continue;
-        onPlayerTakeDamage(player.getPlayerId(), GameConstant.SAFE_ZONE_DAMAGE);
+        onPlayerTakeDamage(player.getPlayerId(), GameConfig.getInstance().getSafeZoneDamage());
       }
     }
   }
