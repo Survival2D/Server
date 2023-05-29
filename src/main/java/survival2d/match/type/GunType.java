@@ -12,4 +12,10 @@ public enum GunType {
       case SNIPER -> survival2d.flatbuffers.GunTypeEnum.SNIPER;
     };
   }
+
+  public static GunType parse(int index) {
+    if (index < 0 || index >= values().length)
+      return null;
+    return values()[index];
+  }
 }

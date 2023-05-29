@@ -18,6 +18,7 @@ import survival2d.match.entity.item.ItemOnMap;
 import survival2d.match.entity.match.Match;
 import survival2d.match.entity.obstacle.Container;
 import survival2d.match.entity.player.Player;
+import survival2d.match.entity.weapon.Gun;
 import survival2d.match.type.GunType;
 import survival2d.match.type.WeaponType;
 import survival2d.match.util.MatchUtil;
@@ -209,14 +210,15 @@ public class Bot {
   }
 
   private boolean commandThrowAttack() {
-    if (curTick - lastTickAttack < 6) {
+    if (curTick - lastTickAttack < 30) {
       return false;
     }
 
     int weaponIndex = 0;
     boolean needReload = false;
     for (var gunType: GunType.values()) {
-      var numBulletInGun = this.player.getGun(gunType).getRemainBullets();
+      Gun gun = this.player.getGun(gunType);
+      var numBulletInGun = gun.getRemainBullets();
       var numRemainBullet = this.player.getNumBullet(gunType);
       if (numBulletInGun + numRemainBullet > 0) {
         weaponIndex = gunType.ordinal() + 1;
@@ -226,6 +228,18 @@ public class Bot {
         break;
       }
     }
+
+    float range;
+    if (weaponIndex == 0) {
+      range = GameConfig.getInstance().getHandConfig().getRange();
+    }
+    else {
+      Gun gun = this.player.getGun(GunType.parse(weaponIndex - 1));
+      range = gun.getConfig().getRange();
+    }
+
+    var distance2 = this.player.getPosition().dst2(destPos);
+    if (distance2 > range*range) return false;
 
     this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(weaponIndex));
     if (needReload) {
