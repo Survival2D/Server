@@ -43,6 +43,7 @@
 
   <logger name="io.netty" level="INFO"/>
   <logger name="survival2d" level="INFO"/>
+  <logger name="survival2d.ai" level="DEBUG"/>
 
   <root>
     <appender-ref ref="Console"/>

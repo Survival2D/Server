@@ -6,9 +6,11 @@ import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import survival2d.ai.btree.BTNode;
 import survival2d.ai.btree.BehaviorTree;
 import survival2d.match.action.PlayerChangeWeapon;
+import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.match.config.GameConfig;
 import survival2d.match.entity.base.MapObject;
@@ -16,10 +18,13 @@ import survival2d.match.entity.item.ItemOnMap;
 import survival2d.match.entity.match.Match;
 import survival2d.match.entity.obstacle.Container;
 import survival2d.match.entity.player.Player;
+import survival2d.match.type.GunType;
+import survival2d.match.type.WeaponType;
 import survival2d.match.util.MatchUtil;
 
 @Getter
 @Setter
+@Slf4j
 public class Bot {
   static final double NUM_TICK_CHANGE_STATUS = 1;
 
@@ -116,20 +121,11 @@ public class Bot {
       return false;
     }
 
-    this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
+    boolean isThrew = this.commandThrowAttack();
 
-    if (curTick - lastTickAttack < 30) {
-      return false;
-    }
+    if (isThrew) log.debug("Bot {} fire enemy", controlId);
 
-    Vector2 attackDirection = destPos.sub(this.player.getPosition());
-    this.match.onPlayerAttack(controlId, attackDirection.nor());
-
-    lastTickAttack = curTick;
-
-    System.out.println(controlId + "fire enemy");
-
-    return true;
+    return isThrew;
   }
 
   public boolean getNearbyCrate() {
@@ -162,20 +158,11 @@ public class Bot {
       return false;
     }
 
-    this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(1));
+    boolean isThrew = this.commandThrowAttack();
 
-    if (curTick - lastTickAttack < 10) {
-      return false;
-    }
+    if (isThrew) log.debug("Bot {} break crate", controlId);
 
-    Vector2 attackDirection = destPos.sub(this.player.getPosition());
-    this.match.onPlayerAttack(controlId, attackDirection.nor());
-
-    lastTickAttack = curTick;
-
-    System.out.println(controlId + "break crate");
-
-    return true;
+    return isThrew;
   }
 
   public boolean getNearbyItem() {
@@ -197,7 +184,7 @@ public class Bot {
       return;
     }
 
-    System.out.println(controlId + "taking item");
+    log.debug("Bot {} taking item", controlId);
 
     destPos = item.getPosition();
     this.commandMove();
@@ -205,7 +192,7 @@ public class Bot {
     if (MatchUtil.isIntersect(item.getShape(), this.player.getShape())) {
       this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
       this.commandStopMove();
-      System.out.println(controlId + "taken item");
+      log.debug("Bot {} taken item", controlId);
     }
   }
 
@@ -214,11 +201,43 @@ public class Bot {
     for (ItemOnMap item : items) {
       if (MatchUtil.isIntersect(item.getShape(), this.player.getShape())) {
         this.match.onReceivePlayerAction(controlId, new PlayerTakeItem());
-        System.out.println(controlId + "taken a nearby item");
+        log.debug("Bot {} taken a nearby item", controlId);
         return true;
       }
     }
     return false;
+  }
+
+  private boolean commandThrowAttack() {
+    if (curTick - lastTickAttack < 6) {
+      return false;
+    }
+
+    int weaponIndex = 0;
+    boolean needReload = false;
+    for (var gunType: GunType.values()) {
+      var numBulletInGun = this.player.getGun(gunType).getRemainBullets();
+      var numRemainBullet = this.player.getNumBullet(gunType);
+      if (numBulletInGun + numRemainBullet > 0) {
+        weaponIndex = gunType.ordinal() + 1;
+        if (numBulletInGun == 0) {
+          needReload = true;
+        }
+        break;
+      }
+    }
+
+    this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(weaponIndex));
+    if (needReload) {
+      this.match.onReceivePlayerAction(controlId, new PlayerReloadWeapon());
+    }
+
+    Vector2 attackDirection = destPos.cpy().sub(this.player.getPosition());
+    this.match.onPlayerAttack(controlId, attackDirection.nor());
+
+    lastTickAttack = curTick;
+
+    return true;
   }
 
   public void commandMove() {
@@ -231,7 +250,7 @@ public class Bot {
     if (this.path.isEmpty()) {
       this.commandStopMove();
     } else {
-      Vector2 nextPosition = this.path.get(0);
+      Vector2 nextPosition = this.path.get(0).cpy();
       if (nextPosition.dst(this.player.getPosition())
           <= GameConfig.getInstance().getDefaultPlayerSpeed()) {
         this.path.remove(0);
@@ -239,7 +258,7 @@ public class Bot {
       if (this.path.isEmpty()) {
         this.commandStopMove();
       } else {
-        nextPosition = this.path.get(0);
+        nextPosition = this.path.get(0).cpy();
         Vector2 moveVector = nextPosition.sub(this.player.getPosition());
         this.match.onPlayerMove(controlId, moveVector, this.player.getRotation());
       }
@@ -250,7 +269,7 @@ public class Bot {
     destPos = null;
     this.path = null;
 
-    System.out.println(controlId + "stop move");
+    log.debug("{} stop move", controlId);
   }
 
   public boolean findSafePosition() {
@@ -264,7 +283,7 @@ public class Bot {
   public void commandMoveToSafePosition() {
     this.commandMove();
 
-    System.out.println(controlId + "move to safe position");
+    log.debug("Bot {} move to safe position", controlId);
   }
 
   public void commandMoveToCenter() {
@@ -275,7 +294,7 @@ public class Bot {
             GameConfig.getInstance().getMapHeight() / 2);
     this.commandMove();
 
-    System.out.println(controlId + "move to center");
+    log.debug("Bot {} move to center", controlId);
   }
 
   public void commandMoveRandom() {
@@ -286,7 +305,7 @@ public class Bot {
     Vector2 moveVector = dest.sub(this.player.getPosition());
     this.match.onPlayerMove(controlId, moveVector, this.player.getRotation());
 
-    System.out.println(controlId + "move random");
+    log.debug("Bot {} move random", controlId);
   }
 
   public boolean isMoving() {

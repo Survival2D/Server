@@ -13,4 +13,8 @@ import lombok.Setter;
 public abstract class BaseNode<T extends BaseNode<?>> implements Node {
   protected int id;
   protected Vector2 position;
+
+  public Vector2 getPosition() {
+    return position.cpy();
+  }
 }
