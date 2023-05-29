@@ -11,7 +11,7 @@
   "treeRootRadius": 50,
   "treeFoliageRadius": 150,
   "treeHp": 100,
-  "containerSize": 100,
+  "containerSize": 200,
   "containerHp": 100,
   "numMaxItemInContainer": 3,
   "stoneRadius": 100,
@@ -22,7 +22,7 @@
   "defaultPlayerSpeed": 10,
   "playerViewWidth": 2400,
   "playerViewHeight": 1200,
-  "playerBodyRadius": 50,
+  "playerBodyRadius": 30,
   "playerHeadRadius": 10,
   "vestReduceDamagePercent": {
     "LEVEL_0": 0,
