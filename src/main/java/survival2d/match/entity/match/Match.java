@@ -380,6 +380,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         return;
       }
       gun.reduceAmmo();
+      sendPlayerAttack(playerId, player.getPosition());
       if (gun.getType() == GunType.SHOTGUN) {
         for (int i = 0; i < GameConfig.getInstance().getShotGunLines(); i++) {
           var randomDirection = new Vector2(direction);
@@ -471,12 +472,18 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   }
 
   public void createDamage(int playerId, Circle damageShape, double damage) {
+    sendPlayerAttack(playerId, new Vector2(damageShape.x, damageShape.y));
+    makeDamage(playerId, damageShape, damage);
+  }
+
+  private void sendPlayerAttack(int playerId, Vector2 position) {
     var builder = new FlatBufferBuilder(0);
 
     PlayerAttackResponse.startPlayerAttackResponse(builder);
     PlayerAttackResponse.addPlayerId(builder, playerId);
-    var positionOffset = Vector2Struct.createVector2Struct(builder, damageShape.x, damageShape.y);
-    PlayerMoveResponse.addPosition(builder, positionOffset);
+    var positionOffset = Vector2Struct.createVector2Struct(builder, position.x, position.y);
+    PlayerAttackResponse.addPosition(builder, positionOffset);
+    PlayerAttackResponse.addSlot(builder, (byte) players.get(playerId).getCurrentWeaponIndex());
     var responseOffset = PlayerAttackResponse.endPlayerAttackResponse(builder);
 
     Response.startResponse(builder);
@@ -485,10 +492,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var packetOffset = Response.endResponse(builder);
     builder.finish(packetOffset);
 
-    NetworkUtil.sendResponse(
-        getPlayerIdsCanSeeAt(new Vector2(damageShape.x, damageShape.y)), builder.dataBuffer());
-
-    makeDamage(playerId, damageShape, damage);
+    NetworkUtil.sendResponse(getPlayerIdsCanSeeAt(position), builder.dataBuffer());
   }
 
   public void makeDamage(int playerId, Shape2D shape, double damage) {
