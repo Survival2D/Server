@@ -453,7 +453,6 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   }
 
   public void setPlayerAutoPlay(int playerId, boolean enable) {
-    var player = players.get(playerId);
     var bot =
         bots.computeIfAbsent(
             playerId,

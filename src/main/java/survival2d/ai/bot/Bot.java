@@ -232,7 +232,7 @@ public class Bot {
       this.match.onReceivePlayerAction(controlId, new PlayerReloadWeapon());
     }
 
-    Vector2 attackDirection = destPos.sub(this.player.getPosition());
+    Vector2 attackDirection = destPos.cpy().sub(this.player.getPosition());
     this.match.onPlayerAttack(controlId, attackDirection.nor());
 
     lastTickAttack = curTick;
@@ -250,7 +250,7 @@ public class Bot {
     if (this.path.isEmpty()) {
       this.commandStopMove();
     } else {
-      Vector2 nextPosition = this.path.get(0);
+      Vector2 nextPosition = this.path.get(0).cpy();
       if (nextPosition.dst(this.player.getPosition())
           <= GameConfig.getInstance().getDefaultPlayerSpeed()) {
         this.path.remove(0);
@@ -258,7 +258,7 @@ public class Bot {
       if (this.path.isEmpty()) {
         this.commandStopMove();
       } else {
-        nextPosition = this.path.get(0);
+        nextPosition = this.path.get(0).cpy();
         Vector2 moveVector = nextPosition.sub(this.player.getPosition());
         this.match.onPlayerMove(controlId, moveVector, this.player.getRotation());
       }
