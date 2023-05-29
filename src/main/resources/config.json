@@ -1,6 +1,6 @@
 {
-  "mapWidth": 10000,
-  "mapHeight": 10000,
+  "mapWidth": 2500,
+  "mapHeight": 2500,
   "safeZonesRadius": [
     2500,
     900,

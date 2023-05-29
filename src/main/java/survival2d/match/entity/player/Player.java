@@ -177,6 +177,15 @@ public class Player extends BaseMapObject implements Movable, HasHp {
     return bullets.getOrDefault(type, 0);
   }
 
+  public Gun getGun(GunType type) {
+    for (var weapon: weapons) {
+      if (weapon instanceof Gun gun && gun.getType() == type) {
+        return gun;
+      }
+    }
+    return null;
+  }
+
   private void heal(double amount) {
     hp = Math.min(hp + amount, GameConfig.getInstance().getDefaultPlayerHp());
   }
