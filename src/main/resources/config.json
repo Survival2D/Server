@@ -57,19 +57,19 @@
   },
   "gunConfigs": {
     "PISTOL": {
-      "range": 100,
+      "range": 500,
       "damage": 10,
       "headshotDamage": 30,
       "capacity": 20
     },
     "SHOTGUN": {
-      "range": 100,
+      "range": 500,
       "damage": 20,
       "headshotDamage": 60,
       "capacity": 5
     },
     "SNIPER": {
-      "range": 1000,
+      "range": 1500,
       "damage": 30,
       "headshotDamage": 90,
       "capacity": 10
