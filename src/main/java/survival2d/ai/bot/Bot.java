@@ -114,18 +114,28 @@ public class Bot {
     float rotation = this.calculateRotation(this.player.getPosition(), destPos);
     this.player.setRotation(rotation);
 
-    this.commandMove();
-
-//    if (!this.isMoving()) {
-//      destEnemy = null;
-//      return false;
-//    }
-
     boolean isThrew = this.commandThrowAttack();
 
     if (isThrew) log.debug("Bot {} fire enemy", controlId);
+    else {
+      float range;
+      int weaponIndex = this.player.getCurrentWeaponIndex();
+      if (weaponIndex == 0) {
+        range = GameConfig.getInstance().getHandConfig().getRange();
+      }
+      else {
+        Gun gun = this.player.getGun(GunType.parse(weaponIndex - 1));
+        range = gun.getConfig().getRange();
+      }
 
-    return isThrew;
+      var distance2 = this.player.getPosition().dst2(destEnemy.getPosition());
+      if (distance2 > range*range) {
+        this.commandMove();
+        log.debug("Bot {} running to enemy to attack", controlId);
+      }
+    }
+
+    return true;
   }
 
   public boolean getNearbyCrate() {
@@ -150,18 +160,13 @@ public class Bot {
     var rotation = this.calculateRotation(this.player.getPosition(), destPos);
     this.player.setRotation(rotation);
 
-    this.commandMove();
-
-    if (!this.isMoving()) {
-      destCrate = null;
-      return false;
-    }
-
     boolean isThrew = this.commandThrowAttack();
 
     if (isThrew) log.debug("Bot {} break crate", controlId);
 
-    return isThrew;
+    this.commandMove();
+
+    return true;
   }
 
   public boolean getNearbyItem() {
@@ -226,6 +231,11 @@ public class Bot {
       }
     }
 
+    this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(weaponIndex));
+    if (needReload) {
+      this.match.onReceivePlayerAction(controlId, new PlayerReloadWeapon());
+    }
+
     float range;
     if (weaponIndex == 0) {
       range = GameConfig.getInstance().getHandConfig().getRange();
@@ -237,11 +247,6 @@ public class Bot {
 
     var distance2 = this.player.getPosition().dst2(destPos);
     if (distance2 > range*range) return false;
-
-    this.match.onReceivePlayerAction(controlId, new PlayerChangeWeapon(weaponIndex));
-    if (needReload) {
-      this.match.onReceivePlayerAction(controlId, new PlayerReloadWeapon());
-    }
 
     Vector2 attackDirection = destPos.cpy().sub(this.player.getPosition());
     this.match.onPlayerAttack(controlId, attackDirection.nor());
@@ -321,6 +326,10 @@ public class Bot {
 
   public boolean isMoving() {
     return this.destPos != null;
+  }
+
+  public boolean isFighting() {
+    return this.destEnemy != null;
   }
 
   public boolean isDisabled() {
