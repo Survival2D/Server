@@ -161,10 +161,10 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
     var player = players.get(playerId);
     var newPosition =
         MatchUtil.randomPosition(
-            Player.BODY_RADIUS,
-            GameConfig.getInstance().getMapWidth() - Player.BODY_RADIUS,
-            Player.BODY_RADIUS,
-            GameConfig.getInstance().getMapHeight() - Player.BODY_RADIUS);
+            GameConfig.getInstance().getPlayerBodyRadius(),
+            GameConfig.getInstance().getMapWidth() - GameConfig.getInstance().getPlayerBodyRadius(),
+                GameConfig.getInstance().getPlayerBodyRadius(),
+            GameConfig.getInstance().getMapHeight() - GameConfig.getInstance().getPlayerBodyRadius());
 
     player.setPosition(newPosition);
     for (var object : getNearBy(newPosition)) {
@@ -332,10 +332,10 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   }
 
   private boolean isValidPositionForPlayer(Vector2 position) {
-    return position.x - Player.BODY_RADIUS >= 0
-        && position.x + Player.BODY_RADIUS <= GameConfig.getInstance().getMapWidth()
-        && position.y - Player.BODY_RADIUS >= 0
-        && position.y + Player.BODY_RADIUS <= GameConfig.getInstance().getMapHeight();
+    return position.x - GameConfig.getInstance().getPlayerBodyRadius() >= 0
+        && position.x + GameConfig.getInstance().getPlayerBodyRadius() <= GameConfig.getInstance().getMapWidth()
+        && position.y - GameConfig.getInstance().getPlayerBodyRadius() >= 0
+        && position.y + GameConfig.getInstance().getPlayerBodyRadius() <= GameConfig.getInstance().getMapHeight();
   }
 
   private boolean isValidToMove(MapObject mapObject) {
