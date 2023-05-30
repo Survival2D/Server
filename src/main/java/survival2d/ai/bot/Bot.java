@@ -96,7 +96,6 @@ public class Bot {
     Collection<Player> players = this.match.getNearByPlayer(this.player.getPosition());
     for (Player player : players) {
       if (player.getPlayerId() != controlId) {
-        destPos = player.getPosition();
         destEnemy = player;
         return true;
       }
@@ -117,10 +116,10 @@ public class Bot {
 
     this.commandMove();
 
-    if (!this.isMoving()) {
-      destEnemy = null;
-      return false;
-    }
+//    if (!this.isMoving()) {
+//      destEnemy = null;
+//      return false;
+//    }
 
     boolean isThrew = this.commandThrowAttack();
 
@@ -134,7 +133,6 @@ public class Bot {
     destCrate = null;
     Collection<Container> crates = this.match.getNearByContainer(this.player.getPosition());
     for (Container crate : crates) {
-      destPos = crate.getPosition();
       destCrate = crate;
       return true;
     }
@@ -171,7 +169,6 @@ public class Bot {
     destItemId = -1;
     Collection<ItemOnMap> items = this.match.getNearByItem(this.player.getPosition());
     for (ItemOnMap item : items) {
-      destPos = item.getPosition();
       destItemId = item.getId();
       return true;
     }
