@@ -24,6 +24,7 @@ public class GameConfig implements PostProcessable {
   }
 
   private int maxPlayerInTeam;
+  private int numTeamsPerMatch;
 
   private float mapWidth;
   private float mapHeight;

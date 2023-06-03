@@ -336,7 +336,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         builder.finish(packetOffset);
 
         NetworkUtil.sendResponse(userId, builder.sizedByteArray());
-        log.info("pingEmpty's size {}", builder.sizedByteArray().length);
+//        log.info("pingEmpty's size {}", builder.sizedByteArray().length);
       }
       case RequestUnion.PingByPlayerMoveRequest -> {
         var builder = new FlatBufferBuilder(0);
@@ -354,7 +354,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         builder.finish(packetOffset);
 
         NetworkUtil.sendResponse(userId, builder.sizedByteArray());
-        log.info("pingByPlayerMoveByte's size {}", builder.sizedByteArray().length);
+//        log.info("pingByPlayerMoveByte's size {}", builder.sizedByteArray().length);
       }
       case RequestUnion.PingByMatchInfoRequest -> {
         var builder = new FlatBufferBuilder(0);
@@ -368,7 +368,7 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         builder.finish(packetOffset);
 
         NetworkUtil.sendResponse(userId, builder.sizedByteArray());
-        log.info("pingByMatchInfoByte's size {}", builder.sizedByteArray().length);
+//        log.info("pingByMatchInfoByte's size {}", builder.sizedByteArray().length);
       }
       case RequestUnion.SetAutoPlayRequest -> {
         var setAutoPlayRequest = new SetAutoPlayRequest();

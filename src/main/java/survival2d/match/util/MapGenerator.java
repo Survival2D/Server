@@ -11,8 +11,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class MapGenerator {
-  public static final int MAP_WIDTH = 100;
-  public static final int MAP_HEIGHT = 100;
+  public static final int MAP_WIDTH = 50;
+  public static final int MAP_HEIGHT = 50;
   public static final int MAX_DEPT = 4;
   public static final int MIN_RECT_WIDTH = 10;
   public static final int MIN_RECT_HEIGHT = 10;

@@ -1,5 +1,6 @@
 {
   "maxPlayerInTeam": 4,
+  "numTeamsPerMatch": 2,
   "mapWidth": 2500,
   "mapHeight": 2500,
   "safeZonesRadius": [

@@ -263,7 +263,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
       newMapObjects.addAll(query);
     }
     newMapObjects.removeIf(
-        (object) -> object instanceof Player enemy && isUnderTree(enemy.getPosition()));
+        (object) -> object instanceof Player enemy && (enemy.isDestroyed() || isUnderTree(enemy.getPosition())));
     if (!newMapObjects.isEmpty()) {
       var data = getMatchInfoData(newMapObjects);
       NetworkUtil.sendResponse(playerId, data);

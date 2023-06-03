@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import survival2d.match.config.GameConfig;
 
 @Slf4j
 public class FindMatchService {
@@ -21,18 +22,13 @@ public class FindMatchService {
       log.warn("Team {} is already in matchingTeams", teamId);
     }
     matchingTeams.add(teamId);
-    if (matchingTeams.size() < 2) {
+    if (matchingTeams.size() < GameConfig.getInstance().getNumTeamsPerMatch()) {
       return Optional.empty();
     }
-    var optTeam = matchingTeams.stream().filter(id -> id != teamId).findFirst();
-    if (optTeam.isEmpty()) {
-      return Optional.empty();
-    }
-    log.info("Match teams {} and {} together", teamId, optTeam.get());
-    matchingTeams.remove(teamId);
-    matchingTeams.remove(optTeam.get());
-    var matchId =
-        MatchingService.getInstance().createMatch(Lists.newArrayList(teamId, optTeam.get()));
+    var teams = matchingTeams.stream().toList();
+    matchingTeams.clear();
+    log.info("Match teams {} together", teams);
+    var matchId = MatchingService.getInstance().createMatch(Lists.newArrayList(teams));
     return Optional.of(matchId);
   }
 
