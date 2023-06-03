@@ -17,8 +17,6 @@ import survival2d.match.util.MatchUtil;
 @Setter
 @Slf4j
 public class Bullet extends BaseMapObject implements MapObject, Movable, Destroyable {
-
-  int id;
   int ownerId;
   Vector2 rawPosition;
   Vector2 direction;

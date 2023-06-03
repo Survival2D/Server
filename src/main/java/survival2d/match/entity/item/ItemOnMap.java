@@ -16,7 +16,6 @@ import survival2d.match.entity.quadtree.BaseMapObject;
 @Setter
 public class ItemOnMap extends BaseMapObject implements Containable, MapObject {
   Circle shape;
-  int id;
   Item item;
 
   public ItemOnMap(Item item, Vector2 position) {

@@ -6,6 +6,7 @@ import survival2d.network.json.BaseJsonPacket;
 public abstract class BaseJsonResponse extends BaseJsonPacket {
 
   private static final Gson gson = new Gson();
+  protected Object data;
 
   public String toJson() {
     return gson.toJson(this);

@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler.HandshakeComplete;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import java.nio.ByteBuffer;
 import lombok.extern.slf4j.Slf4j;
 import survival2d.data.ServerData;
 import survival2d.flatbuffers.*;
@@ -328,16 +329,14 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
       }
       case RequestUnion.PingEmptyRequest -> {
         var builder = new FlatBufferBuilder(0);
-        PingResponse.startPingResponse(builder);
-        var responseOffset = PingResponse.endPingResponse(builder);
+        PingEmptyResponse.startPingEmptyResponse(builder);
+        var responseOffset = PingEmptyResponse.endPingEmptyResponse(builder);
 
-        Response.startResponse(builder);
-        Response.addResponseType(builder, ResponseUnion.PingEmptyResponse);
-        Response.addResponse(builder, responseOffset);
-        var packetOffset = Response.endResponse(builder);
+        var packetOffset = Response.createResponse(builder, ResponseErrorEnum.SUCCESS, ResponseUnion.PingEmptyResponse, responseOffset);
         builder.finish(packetOffset);
 
-        NetworkUtil.sendResponse(userId, builder.dataBuffer());
+        NetworkUtil.sendResponse(userId, builder.sizedByteArray());
+        log.info("pingEmpty's size {}", builder.sizedByteArray().length);
       }
       case RequestUnion.PingByPlayerMoveRequest -> {
         var builder = new FlatBufferBuilder(0);
@@ -354,10 +353,8 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         var packetOffset = Response.endResponse(builder);
         builder.finish(packetOffset);
 
-        var dataBuffer = builder.dataBuffer();
-        NetworkUtil.sendResponse(userId, dataBuffer);
-        var data = dataBuffer.array();
-        log.info("pingByPlayerMoveByte's size {}", data.length);
+        NetworkUtil.sendResponse(userId, builder.sizedByteArray());
+        log.info("pingByPlayerMoveByte's size {}", builder.sizedByteArray().length);
       }
       case RequestUnion.PingByMatchInfoRequest -> {
         var builder = new FlatBufferBuilder(0);
@@ -370,10 +367,8 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
         var packetOffset = Response.endResponse(builder);
         builder.finish(packetOffset);
 
-        var dataBuffer = builder.dataBuffer();
-        NetworkUtil.sendResponse(userId, dataBuffer);
-        var data = dataBuffer.array();
-        log.info("pingByMatchInfoByte's size {}", data.length);
+        NetworkUtil.sendResponse(userId, builder.sizedByteArray());
+        log.info("pingByMatchInfoByte's size {}", builder.sizedByteArray().length);
       }
       case RequestUnion.SetAutoPlayRequest -> {
         var setAutoPlayRequest = new SetAutoPlayRequest();

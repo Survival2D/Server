@@ -31,7 +31,7 @@ public class Survival2D {
     log.trace("Begin init server");
     setupCommon();
     setupFbs();
-    setupJson();
+//    setupJson();
     log.trace("Complete init server!");
   }
 

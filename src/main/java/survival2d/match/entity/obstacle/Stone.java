@@ -13,7 +13,6 @@ import survival2d.util.serialize.GsonTransient;
 @Getter
 @Setter
 public class Stone extends BaseMapObject implements Destroyable, HasHp, Obstacle {
-  int id;
   @GsonTransient Circle shape = new Circle(0, 0, GameConfig.getInstance().getStoneRadius());
   double hp = GameConfig.getInstance().getStoneHp();
   ObstacleType type = ObstacleType.STONE;

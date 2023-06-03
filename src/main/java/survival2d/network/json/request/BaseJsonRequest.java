@@ -6,7 +6,7 @@ import survival2d.network.json.BaseJsonPacket;
 import survival2d.network.json.JsonPacketId;
 import survival2d.network.json.JsonPacketIdDeserializer;
 
-public abstract class BaseJsonRequest extends BaseJsonPacket {
+public class BaseJsonRequest extends BaseJsonPacket {
 
   private static final Gson gson =
       new GsonBuilder()

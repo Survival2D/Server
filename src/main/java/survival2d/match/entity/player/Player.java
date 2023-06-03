@@ -35,7 +35,6 @@ import survival2d.util.serialize.GsonTransient;
 @Setter
 @Slf4j
 public class Player extends BaseMapObject implements Movable, HasHp {
-  int id; // mapObjectId
   int playerId; // userId của player
   int team;
   float rotation;

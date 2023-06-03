@@ -6,5 +6,6 @@ public class PingEmptyResponseJson extends BaseJsonResponse {
 
   public PingEmptyResponseJson() {
     id = JsonPacketId.PING_EMPTY;
+    data = new Object();
   }
 }

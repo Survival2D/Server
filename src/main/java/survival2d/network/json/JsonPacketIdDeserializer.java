@@ -15,6 +15,6 @@ public class JsonPacketIdDeserializer implements JsonDeserializer<JsonPacketId> 
   public JsonPacketId deserialize(
       JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)
       throws JsonParseException {
-    return JsonPacketId.valueOf(jsonElement.getAsInt());
+    return JsonPacketId.valueOf(jsonElement.getAsString());
   }
 }

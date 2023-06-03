@@ -10,6 +10,7 @@ public class SamplePingData {
   public static Vector2 position = new Vector2(MathUtils.PI, MathUtils.PI);
   public static float rotation = new Vector2(1, 1).angleRad();
   public static Match match;
+  public static MoveResponse moveResponse = new MoveResponse(playerId, position, rotation);
 
   static {
     match = new Match(9999);
@@ -17,4 +18,6 @@ public class SamplePingData {
       match.addPlayer(0, i);
     }
   }
+
+  private record MoveResponse(int playerId, Vector2 position, float rotation) {}
 }
