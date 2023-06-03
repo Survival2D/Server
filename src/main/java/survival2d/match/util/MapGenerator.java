@@ -6,14 +6,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class MapGenerator {
-  public static final int MAP_WIDTH = 25;
-  public static final int MAP_HEIGHT = 25;
+  public static final int MAP_WIDTH = 100;
+  public static final int MAP_HEIGHT = 100;
   public static final int MAX_DEPT = 4;
   public static final int MIN_RECT_WIDTH = 10;
   public static final int MIN_RECT_HEIGHT = 10;
@@ -98,24 +97,22 @@ public class MapGenerator {
     longWalls.add(botWalls);
     longWalls.add(leftWalls);
 
-    // Chọn 3 trong 4 bức tường để "đục" tường tạo lối đi
-    var keepWalls = ThreadLocalRandom.current().nextInt(0, longWalls.size());
+    var keepWalls =
+        RandomUtils.nextFloat() < 1f / 4 ? RandomUtils.nextInt(0, longWalls.size()) : -1;
     for (var i = 0; i < longWalls.size(); i++) {
-      if (i != keepWalls) {
-        var removed = removeConsecutiveSegmentRandomly(longWalls.get(i));
+      var walls = longWalls.get(i);
+      if (i != keepWalls || walls.size() >= 10) {
+        var removed = removeConsecutiveSegmentRandomly(walls);
         var removedFrom = removed.getLeft();
         var removedTo = removed.getRight();
-        var removedWalls = Lists.newArrayList(longWalls.get(i).subList(removedFrom, removedTo + 1));
-        longWalls.get(i).removeAll(removedWalls);
+        var removedWalls = Lists.newArrayList(walls.subList(removedFrom, removedTo + 1));
+        walls.removeAll(removedWalls);
       }
     }
 
     // Thêm các hàng tường đã gen vào list
     mapWalls.add(new Position(offsetX + horizontalSplitPosition, offsetY + verticalSplitPosition));
-    mapWalls.addAll(
-        longWalls.stream()
-            .flatMap(Collection::stream)
-            .collect(Collectors.toCollection(LinkedList::new)));
+    mapWalls.addAll(longWalls.stream().flatMap(Collection::stream).toList());
 
     // Gen cho 4 ô nhỏ và thêm vào kết quả
 
