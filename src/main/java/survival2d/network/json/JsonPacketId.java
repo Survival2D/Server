@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public enum JsonPacketId {
-  PING,
-  LOGIN,
-  PLAYER_MOVE,
-  PLAYER_ATTACK,
-  MATCH_INFO,
+  PING_EMPTY,
+  PING_BY_PLAYER_MOVE,
+  PING_BY_MATCH_INFO,
   ;
 
   public static JsonPacketId valueOf(int id) {

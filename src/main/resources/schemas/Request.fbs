@@ -48,6 +48,8 @@ table SetAutoPlayRequest {
 
 table PingRequest {}
 
+table PingEmptyRequest {}
+
 table PingByPlayerMoveRequest {
   direction: Vector2Struct;
   rotation: double;
@@ -70,6 +72,8 @@ union RequestUnion {
   PlayerTakeItemRequest,
   SetAutoPlayRequest,
   PingRequest,
+  //Test ping
+  PingEmptyRequest,
   PingByPlayerMoveRequest,
   PingByMatchInfoRequest,
 }

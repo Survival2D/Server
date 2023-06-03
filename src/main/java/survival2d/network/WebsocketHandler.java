@@ -3,7 +3,6 @@ package survival2d.network;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.base.Strings;
 import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,8 +20,9 @@ import survival2d.match.action.PlayerMove;
 import survival2d.match.action.PlayerReloadWeapon;
 import survival2d.match.action.PlayerTakeItem;
 import survival2d.network.json.request.BaseJsonRequest;
-import survival2d.network.json.request.LoginJsonRequest;
-import survival2d.network.json.response.LoginJsonResponse;
+import survival2d.network.json.response.PingByMatchInfoResponseJson;
+import survival2d.network.json.response.PingByPlayerMoveResponseJson;
+import survival2d.network.json.response.PingEmptyResponseJson;
 import survival2d.ping.data.SamplePingData;
 import survival2d.service.FindMatchService;
 import survival2d.service.LobbyTeamService;
@@ -326,6 +326,19 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
 
         NetworkUtil.sendResponse(userId, builder.dataBuffer());
       }
+      case RequestUnion.PingEmptyRequest -> {
+        var builder = new FlatBufferBuilder(0);
+        PingResponse.startPingResponse(builder);
+        var responseOffset = PingResponse.endPingResponse(builder);
+
+        Response.startResponse(builder);
+        Response.addResponseType(builder, ResponseUnion.PingEmptyResponse);
+        Response.addResponse(builder, responseOffset);
+        var packetOffset = Response.endResponse(builder);
+        builder.finish(packetOffset);
+
+        NetworkUtil.sendResponse(userId, builder.dataBuffer());
+      }
       case RequestUnion.PingByPlayerMoveRequest -> {
         var builder = new FlatBufferBuilder(0);
         PingByPlayerMoveResponse.startPingByPlayerMoveResponse(builder);
@@ -393,12 +406,19 @@ public class WebsocketHandler extends ChannelInboundHandlerAdapter {
   private void handleTextData(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) {
     try {
       BaseJsonRequest request = BaseJsonRequest.fromJson(textWebSocketFrame.text());
-      if (request instanceof LoginJsonRequest loginRequest) {
-        var response =
-            new LoginJsonResponse(loginRequest.getUserId(), "user_" + loginRequest.getUserId());
-        NetworkUtil.sendResponse(ctx.channel(), response);
-      } else {
-        NetworkUtil.sendResponse(ctx.channel(), new Gson().toJson(request));
+      switch (request.getId()) {
+        case PING_EMPTY -> {
+          var response = new PingEmptyResponseJson();
+          NetworkUtil.sendResponse(ctx.channel(), response);
+        }
+        case PING_BY_PLAYER_MOVE -> {
+          var response = new PingByPlayerMoveResponseJson();
+          NetworkUtil.sendResponse(ctx.channel(), response);
+        }
+        case PING_BY_MATCH_INFO -> {
+          var response = new PingByMatchInfoResponseJson();
+          NetworkUtil.sendResponse(ctx.channel(), response);
+        }
       }
     } catch (Exception e) {
       log.error("can not parse text message: {}", textWebSocketFrame.text(), e);

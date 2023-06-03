@@ -19,10 +19,11 @@ public final class RequestUnion {
   public static final byte PlayerTakeItemRequest = 12;
   public static final byte SetAutoPlayRequest = 13;
   public static final byte PingRequest = 14;
-  public static final byte PingByPlayerMoveRequest = 15;
-  public static final byte PingByMatchInfoRequest = 16;
+  public static final byte PingEmptyRequest = 15;
+  public static final byte PingByPlayerMoveRequest = 16;
+  public static final byte PingByMatchInfoRequest = 17;
 
-  public static final String[] names = { "NONE", "LoginRequest", "GetUserInfoRequest", "CreateTeamRequest", "JoinTeamRequest", "FindMatchRequest", "GetConfigRequest", "MatchInfoRequest", "PlayerMoveRequest", "PlayerAttackRequest", "PlayerReloadWeaponRequest", "PlayerChangeWeaponRequest", "PlayerTakeItemRequest", "SetAutoPlayRequest", "PingRequest", "PingByPlayerMoveRequest", "PingByMatchInfoRequest", };
+  public static final String[] names = { "NONE", "LoginRequest", "GetUserInfoRequest", "CreateTeamRequest", "JoinTeamRequest", "FindMatchRequest", "GetConfigRequest", "MatchInfoRequest", "PlayerMoveRequest", "PlayerAttackRequest", "PlayerReloadWeaponRequest", "PlayerChangeWeaponRequest", "PlayerTakeItemRequest", "SetAutoPlayRequest", "PingRequest", "PingEmptyRequest", "PingByPlayerMoveRequest", "PingByMatchInfoRequest", };
 
   public static String name(int e) { return names[e]; }
 }

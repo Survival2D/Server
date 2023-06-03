@@ -129,6 +129,8 @@ table UseHealItemResponse {
 
 table PingResponse {}
 
+table PingEmptyResponse {}
+
 table PingByPlayerMoveResponse {
   playerId: int;
   position: Vector2Struct;
@@ -173,6 +175,8 @@ union ResponseUnion {
   UseHealItemResponse,
   SetAutoPlayResponse,
   PingResponse,
+  //Test ping
+  PingEmptyResponse,
   PingByPlayerMoveResponse,
   PingByMatchInfoResponse,
 }

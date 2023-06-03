@@ -119,7 +119,7 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
   @GsonTransient private final Timer timer = new Timer();
   @GsonTransient private final List<Circle> safeZones = new ArrayList<>();
   @GsonTransient private final List<Vector2> spawnPoints = new ArrayList<>();
-  private final Map<Integer, Bot> bots = new ConcurrentHashMap<>();
+  @GsonTransient private final Map<Integer, Bot> bots = new ConcurrentHashMap<>();
   private final int NUM_BOTS = 0;
   @GsonTransient int currentSafeZone;
   @GsonTransient private int currentMapObjectId;
@@ -163,8 +163,9 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
         MatchUtil.randomPosition(
             GameConfig.getInstance().getPlayerBodyRadius(),
             GameConfig.getInstance().getMapWidth() - GameConfig.getInstance().getPlayerBodyRadius(),
-                GameConfig.getInstance().getPlayerBodyRadius(),
-            GameConfig.getInstance().getMapHeight() - GameConfig.getInstance().getPlayerBodyRadius());
+            GameConfig.getInstance().getPlayerBodyRadius(),
+            GameConfig.getInstance().getMapHeight()
+                - GameConfig.getInstance().getPlayerBodyRadius());
 
     player.setPosition(newPosition);
     for (var object : getNearBy(newPosition)) {
@@ -333,9 +334,11 @@ public class Match extends SpatialPartitionGeneric<MapObject> {
 
   private boolean isValidPositionForPlayer(Vector2 position) {
     return position.x - GameConfig.getInstance().getPlayerBodyRadius() >= 0
-        && position.x + GameConfig.getInstance().getPlayerBodyRadius() <= GameConfig.getInstance().getMapWidth()
+        && position.x + GameConfig.getInstance().getPlayerBodyRadius()
+            <= GameConfig.getInstance().getMapWidth()
         && position.y - GameConfig.getInstance().getPlayerBodyRadius() >= 0
-        && position.y + GameConfig.getInstance().getPlayerBodyRadius() <= GameConfig.getInstance().getMapHeight();
+        && position.y + GameConfig.getInstance().getPlayerBodyRadius()
+            <= GameConfig.getInstance().getMapHeight();
   }
 
   private boolean isValidToMove(MapObject mapObject) {
